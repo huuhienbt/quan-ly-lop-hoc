@@ -1,0 +1,13 @@
+{
+  "name": "lop-hoc-hanh-phuc",
+  "compatibility_date": "2026-10-13",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lop-hoc-hanh-phuc",
+      // ID tạm chỉ dùng local. Sau d1 create, thay bằng database_id thật.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "database/migrations"
+    }
+  ]
+}

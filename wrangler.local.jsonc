@@ -1,0 +1,13 @@
+{
+  "name": "lophocthongminh-local-d1",
+  "main": "tools/d1-gateway.mjs",
+  "compatibility_date": "2026-10-13",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lop-hoc-hanh-phuc",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "database/migrations"
+    }
+  ]
+}

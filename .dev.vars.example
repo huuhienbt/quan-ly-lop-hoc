@@ -1,0 +1,3 @@
+# Worker local và Worker production cùng đọc tên D1_GATEWAY_TOKEN.
+# setup:local tự sinh khóa local; production dùng wrangler secret put.
+D1_GATEWAY_TOKEN=

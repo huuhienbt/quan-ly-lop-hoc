@@ -1,0 +1,39 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "setup:local": "node ../scripts/prepare-local.mjs",
+    "db:migrate:local": "node ../scripts/wrangler.mjs d1 migrations apply DB --local --config ../wrangler.jsonc --persist-to ../.wrangler/state",
+    "db:dev": "node ../scripts/wrangler.mjs dev --config ../wrangler.local.jsonc --local --ip 127.0.0.1 --port 8787 --persist-to ../.wrangler/state",
+    "db:migrate:remote": "node ../scripts/wrangler.mjs d1 migrations apply DB --remote --config ../wrangler.jsonc",
+    "db:deploy:gateway": "node ../scripts/wrangler.mjs deploy --config ../wrangler.gateway.jsonc",
+    "test": "node --conditions=react-server --import tsx --test tests/*.test.mjs",
+    "check:dev": "node ../scripts/check-dev.mjs"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "next-auth": "^4.24.15",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "wrangler": "^4.150.0"
+  }
+}
