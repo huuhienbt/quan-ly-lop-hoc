@@ -16,7 +16,9 @@ Mã ứng dụng đã được đẩy lên GitHub. Tên miền `e-class-vinhlong
 `web`. Đăng nhập Google trên Vercel chưa được xác nhận hoạt động.
 Database D1 `quan-ly-lop-hoc` đã nạp migration remote thành công ngày 14/10/2026:
 24 bảng ứng dụng, có trường Bến Tre và không có lỗi khóa ngoại. Gateway Worker
-đã triển khai; còn thiếu Secret `D1_GATEWAY_TOKEN` và cấu hình Google OAuth.
+đã có Secret `D1_GATEWAY_TOKEN`; health check và truy vấn trường Bến Tre có
+xác thực trên production đều trả HTTP 200. Google OAuth, các biến Production
+trên Vercel và đăng nhập trên website chưa được kiểm tra.
 Chỉ sang Giai đoạn 2 khi bạn nói “Giai đoạn 1 đã xong”.
 
 ## Kiến trúc
@@ -132,13 +134,17 @@ node ../scripts/wrangler.mjs d1 execute DB --remote \
 Kết quả cần có trường Bến Tre và không có dòng vi phạm foreign key. SQL chỉ
 seed trường; năm học và lớp Bốn 12 sẽ được tạo qua `/admin`.
 
-## Bước 4: triển khai gateway Worker
+## Bước 4: gateway Worker production đã hoạt động
 
 Worker `lophocthongminh-d1` đã triển khai và bind đúng database production.
 URL thực tế là `https://lophocthongminh-d1.huuhienbte.workers.dev`.
-Chưa đặt Secret `D1_GATEWAY_TOKEN`; các bước nhập khóa dưới đây vẫn cần làm.
+Secret `D1_GATEWAY_TOKEN` đã được đặt qua binding bảo mật của môi trường Codex
+vào Cloudflare API, trả HTTP 201. GET `/health` và POST `/query` có xác thực
+đều trả HTTP 200; truy vấn xác nhận đúng trường Bến Tre trong D1 production.
+Các giá trị bí mật không được in ra log hoặc ghi vào file.
 
-Vẫn trong `web/`, sau khi ID production đã đúng:
+Việc còn lại ở Vercel là nhập **cùng khóa đã lưu** trong Worker. Các lệnh dưới
+đây, chạy từ `web/`, phục vụ cập nhật Worker hoặc thay khóa khi có chủ đích:
 
 ```bash
 npm run db:deploy:gateway
@@ -146,15 +152,20 @@ node ../scripts/wrangler.mjs secret put D1_GATEWAY_TOKEN \
   --config ../wrangler.gateway.jsonc
 ```
 
-Tự tạo khóa ngẫu nhiên mạnh tối thiểu 32 ký tự cho D1_GATEWAY_TOKEN; nhập bằng
-prompt của Wrangler. Sau đó nhập cùng giá trị vào Vercel Environment Variables.
-Giữ khóa trong trình quản lý bí mật, không gửi qua chat. Nếu Codex thực hiện
-bước đặt Secret Worker, nhập cùng khóa vào mục `D1_GATEWAY_TOKEN` trong Secret
-của môi trường Codex, cho phép hai đích `api.cloudflare.com` và
-`lophocthongminh-d1.huuhienbte.workers.dev`, lưu rồi Publish môi trường.
+Khi thiết lập lại hoặc thay khóa, tạo khóa ngẫu nhiên mạnh tối thiểu 32 ký tự
+cho D1_GATEWAY_TOKEN, giữ trong trình quản lý bí mật và nhập qua prompt của
+Wrangler. Cập nhật cùng giá trị trong Vercel Environment Variables rồi redeploy.
+Không gửi khóa qua chat. Nếu Codex đặt Secret Worker, lưu cùng khóa vào mục
+`D1_GATEWAY_TOKEN` trong Secret của môi trường Codex, cho phép hai đích
+`api.cloudflare.com` và `lophocthongminh-d1.huuhienbte.workers.dev`, rồi Publish.
+Môi trường hiện tại đã Publish và binding này đã được kiểm tra hoạt động.
 Codex dùng binding qua proxy để gửi khóa tới Cloudflare API và kiểm tra gateway;
-không sao chép giá trị từ máy cloud. `.dev.vars` chỉ phục vụ
-local; nó không thay thế Secret của Worker production.
+không sao chép giá trị từ máy cloud. `.dev.vars` chỉ phục vụ local; nó không
+thay thế Secret của Worker production.
+
+Kết nối từ cloud tới hostname Worker trước đây bị proxy chặn; sau khi Publish
+cấu hình có đích này, kiểm tra lại đã thành công. Kiểm tra gateway từ cloud
+dùng Node.js fetch; request từ Python đã gặp lỗi Cloudflare 1010 do User-Agent.
 
 Wrangler cung cấp địa chỉ Worker thật. Biến phía Vercel cần là:
 
@@ -164,7 +175,6 @@ D1_GATEWAY_TOKEN=<cùng khóa đã đặt trong Worker>
 ```
 
 URL trên là địa chỉ Worker thực tế đã được Wrangler cấp cho account của dự án.
-Gateway thiếu secret hoặc secret ngắn sẽ từ chối hoạt động.
 Không cần gửi Cloudflare API token vào ứng dụng Next.js runtime.
 
 ## Bước 5: tạo Google OAuth Web client

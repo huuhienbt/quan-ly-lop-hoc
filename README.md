@@ -11,8 +11,8 @@ Chỉ chuyển sang Giai đoạn 2 khi chủ dự án nói **“Giai đoạn 1 �
 - Tên miền đã được Vercel xác nhận Valid Configuration, gắn Production của project `web`: `https://e-class-vinhlong.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
 - D1 production đã nạp đủ 24 bảng: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; kiểm tra khóa ngoại đạt.
-- Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; còn thiếu Secret `D1_GATEWAY_TOKEN`.
-- Google OAuth và biến Production trên Vercel còn cần cấu hình; chưa kiểm tra đăng nhập hoặc truy vấn qua gateway production.
+- Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; Secret `D1_GATEWAY_TOKEN` đã được đặt. Health check và truy vấn trường Bến Tre có xác thực trên production đều trả HTTP 200.
+- Google OAuth, các biến Production trên Vercel và đăng nhập tại `e-class-vinhlong.vercel.app` chưa được kiểm tra. Vercel cần dùng cùng token đã đặt trong Worker.
 
 ## Chạy local
 
