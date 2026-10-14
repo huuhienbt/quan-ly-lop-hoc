@@ -11,8 +11,9 @@
   tạm khóa/mở lại tài khoản. Server kiểm tra quyền mỗi lần đọc/ghi.
 - 24 bảng D1 cho cả bốn giai đoạn; chưa viết các tính năng Giai đoạn 2–4.
 
-Mã ứng dụng đã được đẩy lên GitHub. Tên miền `e-class.vercel.app` và đăng nhập
-Google trên Vercel chưa được xác nhận hoạt động.
+Mã ứng dụng đã được đẩy lên GitHub. Tên miền `e-class-vinhlong.vercel.app` đã
+được Vercel xác nhận **Valid Configuration**, gắn **Production** của project
+`web`. Đăng nhập Google trên Vercel chưa được xác nhận hoạt động.
 Database D1 `quan-ly-lop-hoc` đã nạp migration remote thành công ngày 14/10/2026:
 24 bảng ứng dụng, có trường Bến Tre và không có lỗi khóa ngoại. Gateway Worker
 đã triển khai; còn thiếu Secret `D1_GATEWAY_TOKEN` và cấu hình Google OAuth.
@@ -178,13 +179,13 @@ Trong Google Cloud Console của bạn:
 5. Thêm Authorized JavaScript origin production:
 
 ```text
-https://e-class.vercel.app
+https://e-class-vinhlong.vercel.app
 ```
 
 Thêm Authorized redirect URI chính xác:
 
 ```text
-https://e-class.vercel.app/api/auth/callback/google
+https://e-class-vinhlong.vercel.app/api/auth/callback/google
 ```
 
 Nếu thử Google OAuth local, thêm origin và redirect URI local vào cùng client:
@@ -197,22 +198,22 @@ http://localhost:3000/api/auth/callback/google
 Sao chép Client ID và Client secret vào Vercel Settings hoặc `.env.local` khi
 thử local. Không commit hoặc gửi các giá trị secret qua chat.
 
-## Bước 6: tạo project Vercel
+## Bước 6: hoàn tất project Vercel đã có
 
 Trong Vercel Dashboard:
 
-1. **Add New → Project**, import `huuhienbt/quan-ly-lop-hoc` sau khi đã push code.
-2. **Project Name:** `e-class`.
-3. **Framework Preset:** Next.js; **Root Directory:** `web`.
-4. Dùng Node.js 24. Thêm biến môi trường **Production** bên dưới trước khi login.
-5. Deploy và kiểm tra **Settings → Domains** để xác nhận Vercel cấp đúng
-   `e-class.vercel.app`. Tên miền chưa được đặt chỗ bằng thay đổi source.
-   Nếu tên đã được sử dụng, cần xử lý quyền sở hữu hoặc chọn tên khác rồi cập
-   nhật NEXTAUTH_URL và callback Google cùng nhau.
+1. Mở project **`web`**, đã kết nối repo `huuhienbt/quan-ly-lop-hoc`.
+2. Giữ **Framework Preset:** Next.js; **Root Directory:** `web`.
+3. Dùng Node.js 24. Thêm biến môi trường **Production** bên dưới trước khi login.
+4. **Settings → Domains** đã xác nhận `e-class-vinhlong.vercel.app` là
+   **Valid Configuration**, kết nối **Production**. Không cần tạo project mới.
+5. Sau khi lưu các biến môi trường, mở **Deployments → bản Production → Redeploy**.
+   Cập nhật NEXTAUTH_URL và Google OAuth origin/callback cùng tên miền mới;
+   thay đổi file mẫu trong Git không tự cập nhật Environment Variables của Vercel.
 
 | Tên biến | Giá trị / nguồn |
 | --- | --- |
-| `NEXTAUTH_URL` | `https://e-class.vercel.app` |
+| `NEXTAUTH_URL` | `https://e-class-vinhlong.vercel.app` |
 | `NEXTAUTH_SECRET` | Khóa ngẫu nhiên mạnh ít nhất 32 ký tự, riêng cho production |
 | `GOOGLE_CLIENT_ID` | Google Web OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | Google Web OAuth client secret |

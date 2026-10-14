@@ -35,11 +35,16 @@ Kiểm tra Cloudflare production ngày 14/10/2026:
   gateway remote. Kết nối từ cloud tới hostname Worker đang bị proxy chặn;
   cần Publish cấu hình có thêm hostname này rồi kiểm tra lại.
 
+Vercel Domains đã được xác nhận qua ảnh của chủ dự án:
+
+- Project `web`: `e-class-vinhlong.vercel.app` có **Valid Configuration**,
+  kết nối **Production**. Chưa xác nhận các biến Production hoặc đăng nhập.
+
 Chưa kiểm tra:
 
 - Google OAuth authorization/callback trên Google Cloud.
 - Health check và truy vấn có xác thực qua gateway Worker production.
-- Vercel deployment và quyền sử dụng hostname `e-class.vercel.app`.
+- Website Production, biến môi trường và đăng nhập tại `e-class-vinhlong.vercel.app`.
 
 Các mục này cần chủ dự án hoàn thành cấu hình theo
 [hướng dẫn triển khai](giai-doan-1.md) trước khi xác nhận hoàn tất Giai đoạn 1.
