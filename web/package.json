@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "setup:local": "node ../scripts/prepare-local.mjs",
-    "db:migrate:local": "node ../scripts/wrangler.mjs d1 migrations apply DB --local --config ../wrangler.jsonc --persist-to ../.wrangler/state",
+    "db:migrate:local": "node ../scripts/wrangler.mjs d1 migrations apply DB --local --config ../wrangler.local.jsonc --persist-to ../.wrangler/state",
     "db:dev": "node ../scripts/wrangler.mjs dev --config ../wrangler.local.jsonc --local --ip 127.0.0.1 --port 8787 --persist-to ../.wrangler/state",
     "db:migrate:remote": "node ../scripts/wrangler.mjs d1 migrations apply DB --remote --config ../wrangler.jsonc",
     "db:deploy:gateway": "node ../scripts/wrangler.mjs deploy --config ../wrangler.gateway.jsonc",

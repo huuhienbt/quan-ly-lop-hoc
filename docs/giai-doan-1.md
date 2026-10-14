@@ -12,7 +12,8 @@
 - 24 bảng D1 cho cả bốn giai đoạn; chưa viết các tính năng Giai đoạn 2–4.
 
 Đây là mã chạy local đã có, chưa phải website đã được xuất bản lên Vercel.
-Google OAuth thực tế và D1 production vẫn cần credentials/cấu hình của chủ dự án.
+Google OAuth và gateway production vẫn cần credentials/cấu hình của chủ dự án.
+Database D1 `quan-ly-lop-hoc` đã được tạo; chưa xác nhận chạy migration remote.
 Chỉ sang Giai đoạn 2 khi bạn nói “Giai đoạn 1 đã xong”.
 
 ## Kiến trúc
@@ -75,27 +76,41 @@ git push -u origin main
 
 Các file chứa giá trị thật `.env.local`, `.dev.vars`, cùng node_modules và dữ
 liệu D1 local được ignore. Chỉ template không chứa secret được đưa lên Git.
-Các lệnh commit/push này là hướng dẫn, chưa được chạy tự động trong lượt xây dựng.
+Mã Giai đoạn 1 đã được đẩy lên nhánh main. Các lệnh trên dùng cho những lần cập
+nhật tiếp theo khi có thay đổi chưa commit.
 
-## Bước 3: tạo database D1 production
+## Bước 3: nạp schema vào database D1 production đã có
 
 Trong Terminal có thể hoàn thành Cloudflare login bằng trình duyệt, từ `web/`:
 
 ```bash
 node ../scripts/wrangler.mjs login
-node ../scripts/wrangler.mjs d1 create lop-hoc-hanh-phuc \
-  --location apac --update-config false
 ```
 
-Cloudflare sẽ cung cấp database_id thật. Thay ID toàn số 0 trong **cả hai** file:
+Database đã được tạo trong Cloudflare Dashboard:
+
+```text
+Tên: quan-ly-lop-hoc
+Database ID: bed7e67a-c194-4e57-954b-70ce613ff948
+Account ID: 1cbb6895e6fe935d9acc42e27809d088
+```
+
+ID, tên và account đã được cập nhật trong **cả hai** file:
 
 ```text
 wrangler.jsonc
 wrangler.gateway.jsonc
 ```
 
-Giữ `wrangler.local.jsonc` dành riêng cho local. Nếu đã có D1 phù hợp, dùng ID
-của database đó thay vì tạo một database trùng.
+`wrangler.local.jsonc` dành riêng cho local và vẫn dùng UUID toàn số 0. Lệnh
+`db:migrate:local` cũng dùng file local này, nên ID production không ảnh hưởng
+database thử nghiệm. Không cần tạo lại database trên Cloudflare.
+
+Nếu để Codex chạy các lệnh remote trong cloud, thêm `CLOUDFLARE_API_TOKEN` bằng
+phần Secret của Environment settings, với đích HTTPS `api.cloudflare.com`.
+Token giới hạn vào account trên, có quyền D1 Edit và Workers Scripts Edit để
+chạy migration và triển khai gateway. Không gửi token qua chat. Đăng nhập
+Cloudflare trên dashboard không tự đăng nhập Wrangler trong máy cloud.
 
 Áp dụng SQL vào đúng D1 remote:
 

@@ -1,14 +1,14 @@
 {
   "name": "lophocthongminh-d1",
+  "account_id": "1cbb6895e6fe935d9acc42e27809d088",
   "main": "tools/d1-gateway.mjs",
   "compatibility_date": "2026-10-13",
   "workers_dev": true,
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "lop-hoc-hanh-phuc",
-      // Thay bằng database_id thật trước khi deploy gateway.
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "quan-ly-lop-hoc",
+      "database_id": "bed7e67a-c194-4e57-954b-70ce613ff948",
       "migrations_dir": "database/migrations"
     }
   ]
