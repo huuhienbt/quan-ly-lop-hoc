@@ -162,13 +162,13 @@ Trong Google Cloud Console của bạn:
 5. Thêm Authorized JavaScript origin production:
 
 ```text
-https://lophocthongminh.vercel.app
+https://e-class.vercel.app
 ```
 
 Thêm Authorized redirect URI chính xác:
 
 ```text
-https://lophocthongminh.vercel.app/api/auth/callback/google
+https://e-class.vercel.app/api/auth/callback/google
 ```
 
 Nếu thử Google OAuth local, thêm origin và redirect URI local vào cùng client:
@@ -186,17 +186,17 @@ thử local. Không commit hoặc gửi các giá trị secret qua chat.
 Trong Vercel Dashboard:
 
 1. **Add New → Project**, import `huuhienbt/quan-ly-lop-hoc` sau khi đã push code.
-2. **Project Name:** `lophocthongminh`.
+2. **Project Name:** `e-class`.
 3. **Framework Preset:** Next.js; **Root Directory:** `web`.
 4. Dùng Node.js 24. Thêm biến môi trường **Production** bên dưới trước khi login.
 5. Deploy và kiểm tra **Settings → Domains** để xác nhận Vercel cấp đúng
-   `lophocthongminh.vercel.app`. Tên miền chưa được đặt chỗ bằng thay đổi source.
+   `e-class.vercel.app`. Tên miền chưa được đặt chỗ bằng thay đổi source.
    Nếu tên đã được sử dụng, cần xử lý quyền sở hữu hoặc chọn tên khác rồi cập
    nhật NEXTAUTH_URL và callback Google cùng nhau.
 
 | Tên biến | Giá trị / nguồn |
 | --- | --- |
-| `NEXTAUTH_URL` | `https://lophocthongminh.vercel.app` |
+| `NEXTAUTH_URL` | `https://e-class.vercel.app` |
 | `NEXTAUTH_SECRET` | Khóa ngẫu nhiên mạnh ít nhất 32 ký tự, riêng cho production |
 | `GOOGLE_CLIENT_ID` | Google Web OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | Google Web OAuth client secret |

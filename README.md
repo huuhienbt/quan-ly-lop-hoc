@@ -8,7 +8,7 @@ Dashboard duyệt Teacher, tạo năm học/lớp, phân công GVCN và tạm kh
 Schema 24 bảng bao quát cả bốn giai đoạn; chưa triển khai tính năng Giai đoạn 2–4.
 Chỉ chuyển sang Giai đoạn 2 khi chủ dự án nói **“Giai đoạn 1 đã xong”**.
 
-- Tên miền production mong muốn: `https://lophocthongminh.vercel.app`.
+- Tên miền production mong muốn: `https://e-class.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
 - D1 production đã tạo: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`.
 - Website chưa được triển khai; tên miền chưa được xác nhận cấp trên Vercel.

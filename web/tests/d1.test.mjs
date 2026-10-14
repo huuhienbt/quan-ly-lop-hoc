@@ -10,7 +10,7 @@ afterEach(() => { fixture.restore(); });
 
 test("production refuses a local database override even when a valid remote gateway is available", () => {
   process.env.NODE_ENV = "production";
-  process.env.NEXTAUTH_URL = "https://lophocthongminh.vercel.app";
+  process.env.NEXTAUTH_URL = "https://e-class.vercel.app";
   process.env.D1_LOCAL_API_URL = "http://127.0.0.1:8787/query";
   process.env.D1_LOCAL_API_TOKEN = "local-test-token-with-at-least-32-characters";
   assert.throws(getDatabaseConfig, (error) => error instanceof ConfigurationError && error.missing.includes("D1_LOCAL_API_URL"));

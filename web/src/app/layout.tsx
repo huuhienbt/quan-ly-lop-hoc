@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lophocthongminh.vercel.app"),
+  metadataBase: new URL("https://e-class.vercel.app"),
   title: {
     default: "Lớp học hạnh phúc · Tiểu học Bến Tre",
     template: "%s · Lớp học hạnh phúc",

@@ -12,4 +12,4 @@ npm run db:dev
 ```
 
 Ở terminal thứ hai chạy `npm run dev`. Production Vercel dùng Root Directory
-`web`; tên project mong muốn `lophocthongminh`.
+`web`; tên project mong muốn `e-class`.

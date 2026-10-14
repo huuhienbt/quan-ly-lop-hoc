@@ -28,7 +28,7 @@ Chưa kiểm tra với tài khoản dịch vụ thật:
 
 - Google OAuth authorization/callback trên Google Cloud.
 - D1 remote và gateway Worker đã triển khai trên Cloudflare.
-- Vercel deployment và quyền sử dụng hostname `lophocthongminh.vercel.app`.
+- Vercel deployment và quyền sử dụng hostname `e-class.vercel.app`.
 
 Các mục này cần chủ dự án hoàn thành cấu hình theo
 [hướng dẫn triển khai](giai-doan-1.md) trước khi xác nhận hoàn tất Giai đoạn 1.
