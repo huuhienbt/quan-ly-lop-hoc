@@ -24,10 +24,21 @@ Kiểm tra trình duyệt với D1 local thật và dữ liệu tạm:
 Browser fixture dùng JWT ký hợp lệ phục vụ kiểm tra local và được xóa sau chạy.
 Ứng dụng không có đường đăng nhập demo hoặc bỏ qua Google trong production.
 
-Chưa kiểm tra với tài khoản dịch vụ thật:
+Kiểm tra Cloudflare production ngày 14/10/2026:
+
+- Token Cloudflare truy cập đúng account/database thành công.
+- D1 remote chạy migration `0001_initial.sql` đủ 62 lệnh; xác nhận 24 bảng ứng
+  dụng, có trường Bến Tre và `PRAGMA foreign_key_check` không có dòng lỗi.
+- Worker `lophocthongminh-d1` đã triển khai, bind D1 `quan-ly-lop-hoc`, URL thực
+  tế `https://lophocthongminh-d1.huuhienbte.workers.dev`.
+- Chưa đặt Secret `D1_GATEWAY_TOKEN`; chưa kiểm tra truy vấn có xác thực qua
+  gateway remote. Kết nối từ cloud tới hostname Worker đang bị proxy chặn;
+  cần Publish cấu hình có thêm hostname này rồi kiểm tra lại.
+
+Chưa kiểm tra:
 
 - Google OAuth authorization/callback trên Google Cloud.
-- D1 remote và gateway Worker đã triển khai trên Cloudflare.
+- Health check và truy vấn có xác thực qua gateway Worker production.
 - Vercel deployment và quyền sử dụng hostname `e-class.vercel.app`.
 
 Các mục này cần chủ dự án hoàn thành cấu hình theo

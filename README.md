@@ -10,9 +10,9 @@ Chỉ chuyển sang Giai đoạn 2 khi chủ dự án nói **“Giai đoạn 1 �
 
 - Tên miền production mong muốn: `https://e-class.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
-- D1 production đã tạo: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`.
-- Website chưa được triển khai; tên miền chưa được xác nhận cấp trên Vercel.
-- D1 production cần nạp schema; gateway và Google OAuth cần hoàn tất cấu hình trước khi dùng thật.
+- D1 production đã nạp đủ 24 bảng: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; kiểm tra khóa ngoại đạt.
+- Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; còn thiếu Secret `D1_GATEWAY_TOKEN`.
+- Tên miền `e-class.vercel.app` chưa được xác nhận cấp trên Vercel; Google OAuth và biến Production cần hoàn tất trước khi dùng thật.
 
 ## Chạy local
 
