@@ -1,8 +1,10 @@
 import "server-only";
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { batch, execute, query } from "@/lib/d1";
 import { getSuperAdminEmails } from "@/lib/config";
+import { authorizeStudentCredentials, isAuthorizedStudentCredentialUser } from "@/lib/student-credentials";
 
 interface IdentityUser {
   id: string;
@@ -86,6 +88,14 @@ export const authOptions: NextAuthOptions = {
     authorization: { params: { scope: "openid email profile", prompt: "select_account" } },
     checks: ["pkce", "state", "nonce"],
     allowDangerousEmailAccountLinking: false,
+  }), CredentialsProvider({
+    id: "student",
+    name: "Tài khoản học sinh",
+    credentials: {
+      phone: { label: "Số điện thoại", type: "tel" },
+      password: { label: "Mật khẩu", type: "password" },
+    },
+    authorize: authorizeStudentCredentials,
   })],
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
@@ -98,6 +108,10 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
+      if (account?.provider === "student") {
+        return account.type === "credentials" && isAuthorizedStudentCredentialUser(user);
+      }
+      if (user.kind === "student") return false;
       if (account?.provider !== "google" || !profile ||
         !("email_verified" in profile) || profile.email_verified !== true ||
         !("sub" in profile) || typeof profile.sub !== "string" || !profile.sub ||
@@ -119,12 +133,26 @@ export const authOptions: NextAuthOptions = {
         return "/?error=AuthenticationUnavailable";
       }
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       // No role/status/email claim is used as authorization. D1 owns current permissions.
+      if (user && (user.kind === "student" || account?.provider === "student")) {
+        if (account?.provider === "student" && account.type === "credentials" &&
+          isAuthorizedStudentCredentialUser(user)) {
+          return { studentAccountId: user.studentAccountId, studentSessionVersion: user.studentSessionVersion };
+        }
+        return {};
+      }
       if (user) return { userId: user.id };
       return token;
     },
     async session({ session, token }) {
+      if ("studentAccountId" in token || "studentSessionVersion" in token) {
+        return { ...session, user: {
+          id: "", kind: "student",
+          studentAccountId: typeof token.studentAccountId === "string" ? token.studentAccountId : undefined,
+          studentSessionVersion: Number.isSafeInteger(token.studentSessionVersion) ? token.studentSessionVersion : undefined,
+        } };
+      }
       return { ...session, user: { id: typeof token.userId === "string" ? token.userId : "" } };
     },
   },

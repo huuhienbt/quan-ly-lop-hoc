@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 
 /**
@@ -8,12 +8,10 @@ import { DatabaseSync } from "node:sqlite";
  */
 export function createD1Fixture() {
   const database = new DatabaseSync(":memory:");
-  database.exec(
-    readFileSync(
-      new URL("../../database/migrations/0001_initial.sql", import.meta.url),
-      "utf8",
-    ),
-  );
+  const migrations = new URL("../../database/migrations/", import.meta.url);
+  for (const migration of readdirSync(migrations).filter((name) => /^\d+.*\.sql$/.test(name)).sort()) {
+    database.exec(readFileSync(new URL(migration, migrations), "utf8"));
+  }
   const originalFetch = globalThis.fetch;
   const previousEnvironment = new Map();
   const testEnvironment = {

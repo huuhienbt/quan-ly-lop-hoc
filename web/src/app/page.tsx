@@ -1,25 +1,30 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getSetupState } from "@/lib/config";
 import { getCurrentUser } from "@/lib/rbac";
+import { getCurrentStudentAccount } from "@/lib/student-session";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const setup = getSetupState();
+  const student = await getCurrentStudentAccount();
+  if (student) redirect(student.must_change_password ? "/hoc-sinh/doi-mat-khau" : "/hoc-sinh");
   const user = await getCurrentUser();
   const query = await searchParams;
   const authError = typeof query.error === "string";
 
   return (
     <div className="site-shell">
-      <header className="site-header page-width">
+      <header className="site-header page-width student-home-header">
         <Brand />
         <nav aria-label="Điều hướng chính" className="header-actions">
           <a className="nav-link" href="#cung-dong-hanh">Về lớp học</a>
+          <Link className="student-home-link" href="/hoc-sinh/dang-nhap">Học sinh</Link>
           {user ? <SignOutButton /> : <a className="button button-outline" href="#bat-dau">Dành cho thầy cô <ArrowIcon /></a>}
         </nav>
       </header>
@@ -68,6 +73,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
               {!setup.ready && <p className="setup-note"><span className="status-dot" /> Đăng nhập đang được thiết lập</p>}
               <GoogleSignInButton enabled={setup.ready} />
               <p className="sign-in-note">Không cần tạo mật khẩu mới.<br />Quyền quản lý được xét duyệt riêng cho từng tài khoản.</p>
+              <p className="student-home-access">Em là học sinh? <Link href="/hoc-sinh/dang-nhap">Đăng nhập tại đây <ArrowIcon /></Link></p>
             </>}
           </div>
         </section>

@@ -11,10 +11,14 @@ async function handler(request: NextRequest, context: RouteContext) {
   const setup = getSetupState();
   const { nextauth } = await context.params;
   const existingSessionAction = ["session", "csrf", "signout"].includes(nextauth[0]);
-  if (existingSessionAction ? !setup.sessionReady : !setup.ready) {
+  const studentAction = ["signin", "callback"].includes(nextauth[0]) && nextauth[1] === "student";
+  const providersAction = nextauth[0] === "providers";
+  const available = existingSessionAction ? setup.sessionReady :
+    studentAction || providersAction ? setup.studentAuthReady : setup.ready;
+  if (!available) {
     return Response.json({
       error: "ConfigurationUnavailable",
-      message: "Đăng nhập Google chưa được cấu hình đầy đủ. Vui lòng liên hệ quản trị viên.",
+      message: "Đăng nhập chưa được cấu hình đầy đủ. Vui lòng liên hệ quản trị viên.",
     }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
   return NextAuth(request, context, authOptions);

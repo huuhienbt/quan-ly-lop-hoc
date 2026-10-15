@@ -66,6 +66,7 @@ export function getSetupState() {
     databaseReady,
     ready: authReady && databaseReady,
     sessionReady: databaseReady && (process.env.NEXTAUTH_SECRET?.length ?? 0) >= 32,
+    studentAuthReady: databaseReady && (process.env.NEXTAUTH_SECRET?.length ?? 0) >= 32 && validAuthUrl(),
     adminBootstrapReady: getSuperAdminEmails().size > 0,
     missing: [...authMissing, ...databaseMissing],
   };

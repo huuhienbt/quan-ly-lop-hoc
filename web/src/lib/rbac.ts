@@ -24,7 +24,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   // Existing sessions remain usable if Google sign-ins are temporarily disabled.
   if (!getSetupState().sessionReady) return null;
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return null;
+  if (!session?.user?.id || session.user.kind === "student") return null;
   const user = (await query<CurrentUser>(
     `SELECT id, email, name, image_url, role, status FROM users
      WHERE id = ? AND status = 'ACTIVE' AND email_verified_at IS NOT NULL`,

@@ -5,14 +5,27 @@ Nền tảng cho lớp Bốn 12, Trường Tiểu học Bến Tre; mở rộng c
 Đã viết phần ứng dụng **Giai đoạn 1**: Next.js App Router, Tailwind CSS,
 NextAuth Google/JWT, phân quyền kiểm tra tại server và dashboard `/admin`.
 Dashboard duyệt Teacher, tạo năm học/lớp, phân công GVCN và tạm khóa tài khoản.
-Schema 24 bảng bao quát cả bốn giai đoạn; chưa triển khai tính năng Giai đoạn 2–4.
-Chỉ chuyển sang Giai đoạn 2 khi chủ dự án nói **“Giai đoạn 1 đã xong”**.
+Schema ban đầu bao quát cả bốn giai đoạn. Theo yêu cầu tiếp theo của chủ dự án,
+đã bổ sung tài khoản học sinh đăng nhập bằng số điện thoại, đổi mật khẩu lần đầu
+và xem hồ sơ của mình. Các tính năng bảng tin, sao, cảm xúc và tiện ích lớp học
+chưa được triển khai.
 
 - Tên miền đã được Vercel xác nhận Valid Configuration, gắn Production của project `web`: `https://e-class-vinhlong.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
-- D1 production đã nạp đủ 24 bảng: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; kiểm tra khóa ngoại đạt.
+- D1 production: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; schema gốc có 24 bảng, migration `0002_student_accounts.sql` thêm hai bảng đăng nhập học sinh. Giữ nguyên toàn bộ hồ sơ đã nhập.
 - Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; Secret `D1_GATEWAY_TOKEN` đã được đặt. Health check và truy vấn trường Bến Tre có xác thực trên production đều trả HTTP 200.
-- Google OAuth, các biến Production trên Vercel và đăng nhập tại `e-class-vinhlong.vercel.app` chưa được kiểm tra. Vercel cần dùng cùng token đã đặt trong Worker.
+- Google OAuth Production đã được kiểm tra; tài khoản Super Admin đã đăng nhập thành công. Vercel dùng cùng token gateway đã đặt trong Worker.
+
+## Đăng nhập học sinh
+
+- `/hoc-sinh/dang-nhap`: đăng nhập bằng số điện thoại đã đăng ký.
+- `/hoc-sinh/doi-mat-khau`: bắt buộc đổi mật khẩu ban đầu; đổi xong phải đăng nhập lại.
+- `/hoc-sinh`: chỉ hiển thị học sinh được liên kết với tài khoản đang đăng nhập.
+
+Mật khẩu được băm scrypt với salt riêng. Tài khoản học sinh tách khỏi tài khoản
+Google của giáo viên/quản trị viên. Đăng nhập học sinh không cần cấu hình Google,
+nhưng cần gateway, `NEXTAUTH_SECRET` và `NEXTAUTH_URL` hợp lệ.
+Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Chạy local
 
