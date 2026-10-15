@@ -32,6 +32,7 @@ export default async function AdminPage() {
           <nav className="admin-header-actions" aria-label="Tài khoản quản trị">
             <span className="badge badge-green"><ShieldIcon /> Quản trị viên</span>
             <Link className="nav-link" href="/">Trang chủ</Link>
+            <Link className="button button-outline button-small" href="/teacher">Biên tập nội dung lớp</Link>
             <SignOutButton />
           </nav>
         </div>

@@ -6,13 +6,13 @@ Nền tảng cho lớp Bốn 12, Trường Tiểu học Bến Tre; mở rộng c
 NextAuth Google/JWT, phân quyền kiểm tra tại server và dashboard `/admin`.
 Dashboard duyệt Teacher, tạo năm học/lớp, phân công GVCN và tạm khóa tài khoản.
 Schema ban đầu bao quát cả bốn giai đoạn. Theo yêu cầu tiếp theo của chủ dự án,
-đã bổ sung tài khoản học sinh đăng nhập bằng số điện thoại, đổi mật khẩu lần đầu
-và xem hồ sơ của mình. Các tính năng bảng tin, sao, cảm xúc và tiện ích lớp học
-chưa được triển khai.
+đã bổ sung tài khoản học sinh đăng nhập bằng số điện thoại, đổi mật khẩu lần đầu,
+bảng tin công khai, lịch tuần, góc học sinh và màn hình biên tập của giáo viên.
+Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa được triển khai.
 
 - Tên miền đã được Vercel xác nhận Valid Configuration, gắn Production của project `web`: `https://e-class-vinhlong.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
-- D1 production: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; schema gốc có 24 bảng, migration `0002_student_accounts.sql` thêm hai bảng đăng nhập học sinh. Giữ nguyên toàn bộ hồ sơ đã nhập.
+- D1 production: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; schema gốc có 24 bảng, migration `0002_student_accounts.sql` thêm hai bảng đăng nhập học sinh, `0003_class_content.sql` thêm lịch lớp và checklist. Giữ nguyên toàn bộ hồ sơ đã nhập.
 - Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; Secret `D1_GATEWAY_TOKEN` đã được đặt. Health check và truy vấn trường Bến Tre có xác thực trên production đều trả HTTP 200.
 - Google OAuth Production đã được kiểm tra; tài khoản Super Admin đã đăng nhập thành công. Vercel dùng cùng token gateway đã đặt trong Worker.
 
@@ -26,6 +26,19 @@ Mật khẩu được băm scrypt với salt riêng. Tài khoản học sinh tá
 Google của giáo viên/quản trị viên. Đăng nhập học sinh không cần cấu hình Google,
 nhưng cần gateway, `NEXTAUTH_SECRET` và `NEXTAUTH_URL` hợp lệ.
 Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
+
+## Bảng tin và nội dung lớp
+
+- `/`: bản tin công khai, thông báo, điều tốt trong tuần và góc phụ huynh.
+- `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
+- `/teacher`: giáo viên được phân công và Super Admin tạo/sửa/lưu trữ bài, sự kiện và nhắc việc.
+- `/hoc-sinh`: tin của lớp, lịch tuần, việc hôm nay, chuẩn bị ngày mai, khám phá và hồ sơ riêng.
+
+Checklist lưu trên D1 theo từng học sinh và từng ngày Việt Nam; tải lại trang vẫn
+giữ trạng thái. Lịch cụ thể do thầy cô nhập. Có thể dùng `scripts/seed-class-content.mjs`
+để thêm nội dung khởi đầu cho một lớp một cách chủ động; script giữ nguyên bài/việc
+đã có, không tạo sự kiện hoặc ngày hẹn giả. Không chạy script này tự động khi setup.
+Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh.md).
 
 ## Chạy local
 
