@@ -126,8 +126,8 @@ svg { display: block; }
 .admin-shell { background: radial-gradient(ellipse at 95% 12%, #fff2b84d, transparent 30%), radial-gradient(ellipse at 0 42%, #ffe5f14d, transparent 32%), #f1f9ff; min-height: 100vh; }
 .admin-header { background: linear-gradient(110deg, #0876bb, #087bc1); border-bottom: 1px solid #ffffff30; color: #ffffff; }
 .admin-header .brand-copy > span { color: #e3f5ff; }
-.admin-header-actions > .nav-link, .admin-header-actions > .button-quiet { color: #ffffff; }
-.admin-header-actions > .button-quiet:hover { background: #ffffff22; }
+.admin-header-actions > .nav-link, .admin-header-actions .button-quiet { color: #ffffff; }
+.admin-header-actions .button-quiet:hover { background: #ffffff22; }
 .admin-header-actions > .button-outline { background: #ffcf35; color: #184c86; border-color: #ffcf35; box-shadow: 0 3px 0 #e7ad22; }
 .admin-header-inner { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-block: 20px; }
 .admin-header .brand-symbol { width: 42px; height: 42px; border-radius: 13px; }
