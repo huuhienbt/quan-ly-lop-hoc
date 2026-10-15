@@ -3,7 +3,8 @@
 ## Chọn giao diện
 
 1. Đăng nhập Google bằng tài khoản Super Admin.
-2. Vào **Quản trị trường học → Giao diện**, hoặc `/admin#giao-dien`.
+2. Chọn **Đổi giao diện** ở đầu trang chủ, trang biên tập hoặc trang quản trị;
+   liên kết dẫn tới `/admin#giao-dien`.
 3. Chọn **Giao diện 1 – Lớp học vui nhộn** hoặc **Giao diện 2 – Thế giới khám phá**.
 4. Chọn **Áp dụng giao diện**. Sau khi lưu thành công, trang tải lại để áp dụng.
 
@@ -45,3 +46,7 @@ Mã nguồn riêng:
 
 Đổi giao diện chỉ thay đổi cách trình bày. Hồ sơ học sinh, mật khẩu, bài viết,
 lịch, dấu hoàn thành và phân quyền tiếp tục dùng dữ liệu hiện có.
+
+Đầu trang Giao diện 2 đã được thu gọn để các lối tắt và nội dung lớp xuất hiện
+sớm hơn. Định hướng kết hợp hai phong cách được lưu ở
+[Đề xuất Giao diện 3](giao-dien-3-de-xuat.md); đây chưa phải giao diện được áp dụng.

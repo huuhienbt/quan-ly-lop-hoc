@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Brand } from "@/components/brand";
+import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
@@ -48,7 +49,7 @@ export function DiscoveryHome({ bulletin, unavailable, selected, query, user, st
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
 
   return <div className="discovery-home">
-    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand /><nav aria-label="Điều hướng chính"><a href="#noi-dung" aria-current="page">Trang chủ</a><a href="#kham-pha">Khám phá</a><a href="#bang-tin">Chuyện lớp</a><a href="#lich-tuan">Lịch tuần</a><a href="#dong-hanh">Ba mẹ</a></nav><div className="discovery-header-actions">{user || studentSignedIn ? <SignOutButton /> : <a className="discovery-teacher-link" href="#bat-dau">Thầy cô</a>}<Link className="discovery-button discovery-button-teal" href={studentHref}><StarIcon />{studentSignedIn ? "Góc của em" : "Góc học sinh"}</Link></div></div></header>
+    <header className={`discovery-header${user?.role === "SUPER_ADMIN" ? " has-theme-settings" : ""}`}><div className="discovery-container discovery-header-inner"><Brand /><nav aria-label="Điều hướng chính"><a href="#noi-dung" aria-current="page">Trang chủ</a><a href="#kham-pha">Khám phá</a><a href="#bang-tin">Chuyện lớp</a><a href="#lich-tuan">Lịch tuần</a><a href="#dong-hanh">Ba mẹ</a></nav><div className="discovery-header-actions">{user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}{user || studentSignedIn ? <SignOutButton /> : <a className="discovery-teacher-link" href="#bat-dau">Thầy cô</a>}<Link className="discovery-button discovery-button-teal" href={studentHref}><StarIcon />{studentSignedIn ? "Góc của em" : "Góc học sinh"}</Link></div></div></header>
     <main id="noi-dung">
       <section className="discovery-hero" aria-labelledby="discovery-home-title"><Image className="discovery-hero-image" src="/images/discovery-hero-3d.webp" alt="" fill sizes="100vw" preload /><div className="discovery-hero-shade" /><div className="discovery-hero-copy"><p className="discovery-hero-eyebrow"><span>✦</span> CHÀO MỪNG ĐẾN VỚI LỚP BỐN 12 <span>✦</span></p><h1 id="discovery-home-title">Để trí tò mò<br /><span>dẫn lối cho em.</span></h1><p>Một lớp học. Muôn điều kỳ diệu.<br />Mỗi ngày đến lớp là một hành trình khám phá!</p><a className="discovery-button discovery-button-yellow" href="#kham-pha">Bắt đầu khám phá <ArrowIcon /></a><span className="discovery-hero-school">Trường Tiểu học Bến Tre</span></div><div className="discovery-hero-bottom" /></section>
 

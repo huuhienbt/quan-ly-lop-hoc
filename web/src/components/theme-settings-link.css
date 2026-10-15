@@ -1,0 +1,33 @@
+a.theme-settings-shortcut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 1px solid #b6ded2;
+  border-radius: 24px;
+  background: #f3fff9;
+  color: #176855;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+a.theme-settings-shortcut:hover { background: #ddf6e9; border-color: #5eb59b; }
+a.theme-settings-shortcut:focus-visible { outline: 3px solid #f4c73c; outline-offset: 4px; }
+.theme-settings-shortcut svg { width: 19px; height: 19px; flex-shrink: 0; }
+.admin-header-actions:has(.theme-settings-shortcut) { flex-wrap: wrap; }
+@media (max-width: 1100px) {
+  .bulletin-header:has(.theme-settings-shortcut) { flex-wrap: wrap; gap: 14px; }
+  .bulletin-header .header-actions:has(.theme-settings-shortcut) { flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
+}
+@media (max-width: 650px) {
+  a.theme-settings-shortcut { min-height: 40px; padding: 8px 11px; font-size: 12px; gap: 6px; }
+  .bulletin-header .header-actions:has(.theme-settings-shortcut) { justify-content: flex-start; gap: 9px; }
+  .bulletin-header .header-actions:has(.theme-settings-shortcut) > .nav-link { display: none; }
+  .teacher-header-actions:has(.theme-settings-shortcut) { justify-content: flex-start; }
+  .admin-header-actions:has(.theme-settings-shortcut) { justify-content: flex-start; gap: 9px; }
+}

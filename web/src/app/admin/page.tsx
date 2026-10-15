@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { SignOutButton } from "@/components/auth-buttons";
 import { SiteThemePanel } from "@/components/site-theme-panel";
+import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import { AcademicYearForm, AssignTeacherForm, CreateClassForm, EndAssignmentForm, TeacherReviewForms, UserStatusForm } from "@/components/admin-forms";
 import { ClockIcon, PeopleIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getAdminOverview } from "@/lib/admin";
@@ -33,6 +34,7 @@ export default async function AdminPage() {
           <nav className="admin-header-actions" aria-label="Tài khoản quản trị">
             <span className="badge badge-green"><ShieldIcon /> Quản trị viên</span>
             <Link className="nav-link" href="/">Trang chủ</Link>
+            <ThemeSettingsLink />
             <Link className="button button-outline button-small" href="/teacher">Biên tập nội dung lớp</Link>
             <SignOutButton />
           </nav>

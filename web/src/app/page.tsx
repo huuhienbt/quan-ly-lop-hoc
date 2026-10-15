@@ -12,6 +12,7 @@ import { getSetupState } from "@/lib/config";
 import { getCurrentUser } from "@/lib/rbac";
 import { getCurrentStudentAccount } from "@/lib/student-session";
 import { getSiteTheme } from "@/lib/site-theme";
+import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import "./bulletin.css";
 import "./discovery-home.css";
 
@@ -40,7 +41,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   }
 
   return <div className="site-shell bulletin-home">
-    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><nav className="header-actions" aria-label="Điều hướng chính"><a className="nav-link" href="#bang-tin">Bảng tin</a><a className="nav-link" href="#lich-tuan">Lịch tuần</a><a className="nav-link" href="#dong-hanh">Ba mẹ</a>{user || student ? <SignOutButton /> : <a className="nav-link bulletin-staff-link" href="#bat-dau">Thầy cô</a>}<Link className="button button-primary bulletin-student-link" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}>{student ? "Góc của em" : "Góc học sinh"}<ArrowIcon /></Link></nav></header></div>
+    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><nav className="header-actions" aria-label="Điều hướng chính"><a className="nav-link" href="#bang-tin">Bảng tin</a><a className="nav-link" href="#lich-tuan">Lịch tuần</a><a className="nav-link" href="#dong-hanh">Ba mẹ</a>{user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}{user || student ? <SignOutButton /> : <a className="nav-link bulletin-staff-link" href="#bat-dau">Thầy cô</a>}<Link className="button button-primary bulletin-student-link" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}>{student ? "Góc của em" : "Góc học sinh"}<ArrowIcon /></Link></nav></header></div>
     <main id="noi-dung">
       <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><p className="hero-description">Một lớp học. Muôn điều kỳ diệu! Cùng học những điều hay, vun đắp thói quen tốt và lớn lên trong yêu thương.</p><div className="bulletin-hero-actions"><a className="button button-primary" href="#bang-tin">Khám phá lớp mình <ArrowIcon /></a><Link className="button bulletin-hero-secondary" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}><SunIcon /> Góc học sinh</Link></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 

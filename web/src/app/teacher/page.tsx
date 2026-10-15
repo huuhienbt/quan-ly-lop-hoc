@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { SignOutButton } from "@/components/auth-buttons";
+import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import { ArchiveContentForm, EventEditorForm, PostEditorForm, TaskEditorForm } from "@/components/content-editor-forms";
 import { ClockIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getCurrentUser } from "@/lib/rbac";
@@ -35,7 +36,7 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="teacher-shell">
-      <header className="teacher-header"><div className="teacher-header-inner page-width"><Brand /><nav aria-label="Điều hướng giáo viên" className="teacher-header-actions"><Link href="/" className="teacher-home-link">Trang chủ</Link>{actor.role === "SUPER_ADMIN" && <Link className="button button-outline button-small" href="/admin">Quản trị trường</Link>}<SignOutButton /></nav></div></header>
+      <header className="teacher-header"><div className="teacher-header-inner page-width"><Brand /><nav aria-label="Điều hướng giáo viên" className="teacher-header-actions"><Link href="/" className="teacher-home-link">Trang chủ</Link>{actor.role === "SUPER_ADMIN" && <><ThemeSettingsLink /><Link className="button button-outline button-small" href="/admin">Quản trị trường</Link></>}<SignOutButton /></nav></div></header>
       <main id="noi-dung" className="teacher-main page-width">
         <div className="teacher-title-row"><div><p className="eyebrow">DÀNH CHO THẦY CÔ</p><h1>Chăm chút từng câu chuyện lớp mình.</h1><p>Chia sẻ bảng tin, hẹn những sự kiện vui và nhắc các em chuẩn bị mỗi ngày.</p></div><span className="teacher-title-sun"><SunIcon /></span></div>
         <div className="teacher-account-line"><span className="badge badge-green"><ShieldIcon />{actor.role === "SUPER_ADMIN" ? "Quản trị viên" : "Giáo viên"}</span><span>Xin chào, <strong>{actor.name}</strong></span></div>
