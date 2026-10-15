@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
+import { DiscoveryHome } from "@/components/discovery-home";
 import { PostCard, categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
 import { getPublicBulletin } from "@/lib/class-content";
@@ -10,7 +11,9 @@ import { getVietnamDateWindow, postCategories, type PublicBulletin } from "@/lib
 import { getSetupState } from "@/lib/config";
 import { getCurrentUser } from "@/lib/rbac";
 import { getCurrentStudentAccount } from "@/lib/student-session";
+import { getSiteTheme } from "@/lib/site-theme";
 import "./bulletin.css";
+import "./discovery-home.css";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +34,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
   const parentPosts = bulletin.posts.filter((post) => post.category === "PARENT_GUIDE").slice(0, 2);
   const authError = typeof query.error === "string";
+
+  if (await getSiteTheme() === "discovery") {
+    return <DiscoveryHome bulletin={bulletin} unavailable={unavailable} selected={selected} query={query} user={user} studentSignedIn={Boolean(student)} setupReady={setup.ready} />;
+  }
 
   return <div className="site-shell bulletin-home">
     <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><nav className="header-actions" aria-label="Điều hướng chính"><a className="nav-link" href="#bang-tin">Bảng tin</a><a className="nav-link" href="#lich-tuan">Lịch tuần</a><a className="nav-link" href="#dong-hanh">Ba mẹ</a>{user || student ? <SignOutButton /> : <a className="nav-link bulletin-staff-link" href="#bat-dau">Thầy cô</a>}<Link className="button button-primary bulletin-student-link" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}>{student ? "Góc của em" : "Góc học sinh"}<ArrowIcon /></Link></nav></header></div>

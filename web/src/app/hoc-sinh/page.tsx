@@ -5,6 +5,7 @@ import { SignOutButton } from "@/components/auth-buttons";
 import { ClockIcon, HeartIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { StudentTaskList } from "@/components/student-task-list";
 import { getStudentClassContent } from "@/lib/class-content";
+import { getSiteTheme } from "@/lib/site-theme";
 import type { ClassEvent, ContentPost, StudentClassSpace } from "@/lib/content-schemas";
 import { requireStudentPageAccount } from "./student-access";
 import "./content.css";
@@ -122,6 +123,7 @@ function BagIcon() {
 
 export default async function StudentHomePage() {
   const account = await requireStudentPageAccount();
+  const theme = await getSiteTheme();
   const content = await getStudentClassContent(account.id, account.session_version);
   const firstStudent = account.students[0];
   const greeting = account.students.length === 1 && firstStudent ? `Chào ${firstStudent.display_name || firstStudent.full_name}!` : "Chào mừng đến với góc học sinh!";
@@ -129,7 +131,7 @@ export default async function StudentHomePage() {
   return (
     <main id="noi-dung" className="student-dashboard-main student-content-page page-width">
       <div className="student-page-toolbar"><p className="eyebrow">LỚP HỌC HẠNH PHÚC · GÓC HỌC SINH</p><SignOutButton /></div>
-      <section className="student-dashboard-welcome" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><span className="badge badge-green">Một ngày đến lớp, một ngày vui</span><h1 id="student-dashboard-title">{greeting}</h1><p>Cùng chuẩn bị cho một ngày học nhẹ nhàng và nhiều điều hay.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src="/images/happy-school-3d.webp" alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 280px" /><span className="student-welcome-spark student-welcome-spark-one">✦</span><span className="student-welcome-spark student-welcome-spark-two">✦</span></div></section>
+      <section className="student-dashboard-welcome" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><span className="badge badge-green">Một ngày đến lớp, một ngày vui</span><h1 id="student-dashboard-title">{greeting}</h1><p>Cùng chuẩn bị cho một ngày học nhẹ nhàng và nhiều điều hay.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={theme === "discovery" ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 280px" /><span className="student-welcome-spark student-welcome-spark-one">✦</span><span className="student-welcome-spark student-welcome-spark-two">✦</span></div></section>
       {!content.students.length && <section className="student-content-panel student-empty-profile"><h2>Chưa có không gian lớp học</h2><p>Em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm để kiểm tra thông tin liên kết tài khoản nhé.</p></section>}
       {content.students.map((space) => <StudentLearningSpace key={space.enrollment_id} space={space} today={content.today} tomorrow={content.tomorrow} weekStart={content.weekStart} weekEnd={content.weekEnd} />)}
       <details className="student-profile-disclosure"><summary>Thông tin học sinh và tài khoản</summary><section className="student-profiles-section" aria-labelledby="student-profiles-title">

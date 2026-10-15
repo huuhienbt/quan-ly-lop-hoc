@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { SignOutButton } from "@/components/auth-buttons";
+import { SiteThemePanel } from "@/components/site-theme-panel";
 import { AcademicYearForm, AssignTeacherForm, CreateClassForm, EndAssignmentForm, TeacherReviewForms, UserStatusForm } from "@/components/admin-forms";
 import { ClockIcon, PeopleIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getAdminOverview } from "@/lib/admin";
@@ -42,12 +43,13 @@ export default async function AdminPage() {
           <div><p className="eyebrow">{data.school.name.toLocaleUpperCase("vi")}</p><h1>Không gian quản trị</h1><p className="page-description">Cùng chuẩn bị nền tảng cho những lớp học hạnh phúc.</p></div>
           <div className="admin-welcome">Xin chào,<strong>{user.name}</strong></div>
         </div>
+        <SiteThemePanel />
         <div className="stats-grid">
           <div className="stat-card"><span className="value-icon sage"><SchoolIcon /></span><div><span className="stat-number">{data.classes.length}</span><span className="stat-label">Lớp học đang hoạt động</span></div></div>
           <div className="stat-card"><span className="value-icon peach"><PeopleIcon /></span><div><span className="stat-number">{data.teachers.length}</span><span className="stat-label">Giáo viên đã được duyệt</span></div></div>
           <div className="stat-card"><span className="value-icon butter"><ClockIcon /></span><div><span className="stat-number">{data.requests.length}</span><span className="stat-label">Yêu cầu chờ xét duyệt</span></div></div>
         </div>
-        <nav className="admin-nav" aria-label="Các mục quản trị"><a href="#lop-hoc">Lớp học</a><a href="#duyet-giao-vien">Duyệt giáo viên</a><a href="#nam-hoc">Năm học</a><a href="#phan-cong">Phân công chủ nhiệm</a><a href="#tai-khoan">Tài khoản</a></nav>
+        <nav className="admin-nav" aria-label="Các mục quản trị"><a href="#giao-dien">Giao diện</a><a href="#lop-hoc">Lớp học</a><a href="#duyet-giao-vien">Duyệt giáo viên</a><a href="#nam-hoc">Năm học</a><a href="#phan-cong">Phân công chủ nhiệm</a><a href="#tai-khoan">Tài khoản</a></nav>
 
         <div className="admin-columns">
           <div className="admin-column">

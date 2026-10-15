@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { getSiteTheme } from "@/lib/site-theme";
 import "./globals.css";
+import "./discovery-portals.css";
+
+export const dynamic = "force-dynamic";
 
 const nunito = localFont({
   src: "./fonts/Nunito-Variable.ttf",
@@ -20,9 +24,10 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const theme = await getSiteTheme();
   return (
-    <html lang="vi" className={nunito.variable} data-scroll-behavior="smooth">
+    <html lang="vi" className={nunito.variable} data-scroll-behavior="smooth" data-site-theme={theme}>
       <body>
         <a className="skip-link" href="#noi-dung">Bỏ qua đến nội dung chính</a>
         {children}

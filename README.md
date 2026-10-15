@@ -12,7 +12,7 @@ Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa 
 
 - Tên miền đã được Vercel xác nhận Valid Configuration, gắn Production của project `web`: `https://e-class-vinhlong.vercel.app`.
 - Super Admin đầu tiên: `huuhienbte@gmail.com`, sau đăng nhập Google đã xác minh.
-- D1 production: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; schema gốc có 24 bảng, migration `0002_student_accounts.sql` thêm hai bảng đăng nhập học sinh, `0003_class_content.sql` thêm lịch lớp và checklist. Giữ nguyên toàn bộ hồ sơ đã nhập.
+- D1 production: `quan-ly-lop-hoc`, ID `bed7e67a-c194-4e57-954b-70ce613ff948`; schema gốc có 24 bảng, migration `0002_student_accounts.sql` thêm hai bảng đăng nhập học sinh, `0003_class_content.sql` thêm lịch lớp và checklist, `0004_site_theme.sql` lưu lựa chọn giao diện toàn website. Giữ nguyên toàn bộ hồ sơ đã nhập.
 - Gateway đã triển khai: `https://lophocthongminh-d1.huuhienbte.workers.dev/query`; Secret `D1_GATEWAY_TOKEN` đã được đặt. Health check và truy vấn trường Bến Tre có xác thực trên production đều trả HTTP 200.
 - Google OAuth Production đã được kiểm tra; tài khoản Super Admin đã đăng nhập thành công. Vercel dùng cùng token gateway đã đặt trong Worker.
 
@@ -41,6 +41,11 @@ giữ trạng thái. Lịch cụ thể do thầy cô nhập. Có thể dùng `sc
 Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh.md).
 
 ## Giao diện
+
+Hai giao diện có thể chuyển qua lại tại `/admin#giao-dien`: **Giao diện 1 –
+Lớp học vui nhộn** và **Giao diện 2 – Thế giới khám phá**. Lựa chọn lưu trên D1,
+chỉ Super Admin được đổi và không cần redeploy. Bản nguồn Giao diện 1 còn được
+giữ với tag GitHub `giao-dien-1`. Xem [cách đổi và giữ hai giao diện](docs/giao-dien.md).
 
 Phong cách hoạt hình 3D với xanh dương, vàng và hồng, thẻ pastel bo tròn,
 phông Nunito hỗ trợ tiếng Việt. Ảnh minh họa và phông chữ được lưu cùng mã
