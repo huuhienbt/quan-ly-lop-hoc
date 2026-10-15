@@ -1,0 +1,241 @@
+/* Theme 3 is an opt-in layer. Playful and Discovery retain their original styles. */
+html[data-site-theme="harmony"] {
+  --background: #fffdf6;
+  --foreground: #244e6b;
+  --muted: #54717b;
+  --blue: #398bb9;
+  --blue-deep: #175d9b;
+  --yellow: #ffda53;
+  --pink: #b37ca1;
+  --sky: #e9f7ff;
+  --green: #147e6f;
+  --green-dark: #096758;
+  --line: #d6e9e2;
+}
+
+html[data-site-theme="harmony"] body { background: #fffdf6; color: #244e6b; }
+html[data-site-theme="harmony"] :focus-visible { outline-color: #147e6f; }
+html[data-site-theme="harmony"] a.theme-settings-shortcut { min-height: 44px; font-size: 14px; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button { min-height: 44px; border-radius: 999px; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-primary { background: #ffda53; border-color: #e8bd3e; color: #24475f; box-shadow: 0 3px 0 #ddb43b; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-primary:hover:not(:disabled) { background: #ffe184; border-color: #ddb43b; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-outline { background: #fffef9; border-color: #99c9bd; color: #0d7162; box-shadow: none; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-outline:hover:not(:disabled) { background: #e8faf5; border-color: #147e6f; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-quiet { color: #386675; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button-quiet:hover:not(:disabled) { background: #e8faf5; color: #096758; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell) .badge-green { background: #e0f5eb; color: #1d6c56; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell) .badge-amber { background: #fff2c0; color: #745a16; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell) .badge-neutral { background: #eee9f7; color: #66567e; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .eyebrow { color: #147e6f; }
+html[data-site-theme="harmony"] :is(.student-header, .teacher-header-inner, .admin-header, .bulletin-article-shell) .brand-symbol { background: #e7f6e8; color: #147e6f; border-radius: 15px; box-shadow: none; transform: none; }
+html[data-site-theme="harmony"] :is(.student-header, .teacher-header-inner, .admin-header, .bulletin-article-shell) .brand-symbol svg { transform: none; filter: none; }
+html[data-site-theme="harmony"] :is(.student-header, .teacher-header-inner, .admin-header, .bulletin-article-shell) .brand-copy strong { color: #175d9b; }
+html[data-site-theme="harmony"] :is(.student-header, .teacher-header-inner, .admin-header, .bulletin-article-shell) .brand-copy > span { color: #527971; }
+
+/* Student sign-in and password forms stay quiet and readable. */
+html[data-site-theme="harmony"] .student-shell { background: radial-gradient(ellipse at 2% 35%, #e8faf5 0, transparent 44%), linear-gradient(180deg, #e9f7ff 0, #fffdf6 75%); }
+html[data-site-theme="harmony"] .student-header-bar { position: relative; z-index: 1; background: #fffdf6; color: #175d9b; border-bottom: 1px solid #d6e9e2; box-shadow: 0 5px 20px #3e7d6b06; }
+html[data-site-theme="harmony"] .student-header-link { color: #175d9b; background: #ffda53; box-shadow: 0 3px 0 #e8c04c; }
+html[data-site-theme="harmony"] .student-header-link:hover { color: #175d9b; background: #ffe184; }
+html[data-site-theme="harmony"] .student-welcome-icon { background: #fff0b6; color: #8f6b10; border-radius: 22px; transform: rotate(-3deg); }
+html[data-site-theme="harmony"] .student-welcome h1 { color: #175d9b; }
+html[data-site-theme="harmony"] .student-welcome h1 span { color: #147e6f; }
+html[data-site-theme="harmony"] .student-welcome > p:not(.eyebrow) { color: #54717b; }
+html[data-site-theme="harmony"] .student-login-art { border-color: #fffdf6; border-radius: 32px 52px 32px 48px; box-shadow: 0 8px 0 #cfeae1, 0 14px 26px #547e7510; transform: rotate(-1deg); }
+html[data-site-theme="harmony"] .student-login-art img { height: 230px; object-position: center 56%; }
+html[data-site-theme="harmony"] .student-trust-note { border-color: #cae2da; color: #52746d; }
+html[data-site-theme="harmony"] .student-trust-note svg { color: #147e6f; }
+html[data-site-theme="harmony"] :is(.student-auth-card, .student-password-card) { border: 1px solid #d6e9e2; background: #fffefb; box-shadow: 0 7px 0 #dceee6, 0 18px 36px #527e6810; }
+html[data-site-theme="harmony"] .student-auth-card::before { color: #ffda53; text-shadow: 0 2px 0 #d8b94d; }
+html[data-site-theme="harmony"] :is(.student-auth-card h2, .student-password-card h1) { color: #175d9b; }
+html[data-site-theme="harmony"] :is(.student-card-description, .student-field-help, .student-support-note) { color: #54717b; }
+html[data-site-theme="harmony"] .student-field label { color: #285c65; }
+html[data-site-theme="harmony"] .student-field input { border-color: #bcd8ce; background: #fbfefa; color: #244e6b; }
+html[data-site-theme="harmony"] .student-field input:focus { outline-color: #147e6f; }
+html[data-site-theme="harmony"] .student-field input[aria-invalid=true] { border-color: #b56258; }
+html[data-site-theme="harmony"] .student-support-note { border-color: #dcebe5; }
+html[data-site-theme="harmony"] :is(.student-teacher-link, .student-relogin-link) { color: #0d7162; }
+html[data-site-theme="harmony"] .student-lock-icon { background: #def4eb; color: #147e6f; }
+html[data-site-theme="harmony"] .student-footer { color: #53776f; border-color: #d0e5dc; }
+html[data-site-theme="harmony"] .student-shell .form-message.is-success { background: #e3f5e9; color: #286241; }
+html[data-site-theme="harmony"] .student-shell .form-message.is-error { background: #fff0e9; color: #94473b; }
+
+/* Familiar classroom structure, with a restrained storybook palette. */
+html[data-site-theme="harmony"] .student-content-page {
+  --student-blue: #147e6f;
+  --student-deep-blue: #175d9b;
+  --student-sky: #e9f7ff;
+  --student-pink: #8a68a4;
+  --student-gold: #fff4ce;
+  --student-ink: #244e6b;
+  --student-muted: #54717b;
+}
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome { border: 1px solid #c2e2da; background: linear-gradient(115deg, #e8faf5, #e9f7ff 82%); box-shadow: 0 9px 0 #d8ece4; border-radius: 30px 42px 38px 30px; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome::before { background: #fffdf6; opacity: .6; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome h1 { color: #175d9b; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome p { color: #366576; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome .student-content-intro { color: #326f65; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome .badge { background: #fff4ce; color: #76601f; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-illustration { border-color: #fffdf6; border-radius: 28px 45px 30px 38px; box-shadow: 0 7px 0 #b9dfd3; transform: rotate(2deg); object-position: center; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-spark { color: #ffda53; text-shadow: 0 2px 0 #cfa72e; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-spark-two { color: #f59ab8; text-shadow: 0 2px 0 #cf7194; }
+html[data-site-theme="harmony"] .student-content-page .student-profile-avatar { background: #e5f1e1; color: #36705d; box-shadow: 0 4px 0 #c7dfcb; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a { color: #175d9b; border-color: #c5dfd6; box-shadow: 0 3px 0 #e0eee8; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a:nth-child(2) { background: #fff7d9; color: #79601d; border-color: #eadba7; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a:last-child { background: #fff0f5; color: #8b4061; border-color: #dbd1ed; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a:hover { color: #096758; background: #e8faf5; border-color: #88bdb0; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a:focus-visible,
+html[data-site-theme="harmony"] .student-content-page summary:focus-visible { outline-color: #147e6f; }
+html[data-site-theme="harmony"] .student-content-page .student-content-panel { border-color: #d2e5dc; background: #fffefb; box-shadow: 0 5px 0 #e5efe640; }
+html[data-site-theme="harmony"] .student-content-page .student-content-icon { background: #e0f2eb; color: #147e6f; box-shadow: none; }
+html[data-site-theme="harmony"] .student-content-page .student-content-icon.tone-green { background: #ddf2e5; color: #287750; }
+html[data-site-theme="harmony"] .student-content-page .student-content-icon.tone-gold { background: #fff0b8; color: #81621a; }
+html[data-site-theme="harmony"] .student-content-page .student-content-icon.tone-peach { background: #f0e8f7; color: #775390; }
+html[data-site-theme="harmony"] .student-content-page .student-content-icon.tone-blue { background: #def0f8; color: #32739b; }
+html[data-site-theme="harmony"] .student-content-page .student-content-date { color: #236d62; background: #e7f5ee; }
+html[data-site-theme="harmony"] .student-content-page .student-content-empty { background: #f6fbf7; border-color: #c4dacf; }
+html[data-site-theme="harmony"] .student-content-page .student-week-day { background: #f0f8f5; border-color: #d8e9e0; }
+html[data-site-theme="harmony"] .student-content-page .student-week-day.is-today { background: #fff4c8; border-color: #e9cd70; box-shadow: inset 0 4px 0 #ffda53; }
+html[data-site-theme="harmony"] .student-content-page .student-week-event { border-color: #d5e6dd; background: #fffefb; color: #345c68; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-week-label, .student-week-empty) { color: #59786f; }
+html[data-site-theme="harmony"] .student-content-page .student-task-row { background: #f4faf6; border-color: #d2e7d9; }
+html[data-site-theme="harmony"] .student-content-page .student-task-checkbox { border-color: #add1c2; color: #147e6f; accent-color: #147e6f; }
+html[data-site-theme="harmony"] .student-content-page input.student-task-checkbox:checked { border-color: #147e6f; background-color: #147e6f; box-shadow: 0 3px 0 #096758; }
+html[data-site-theme="harmony"] .student-content-page .student-task-checkbox:focus-visible,
+html[data-site-theme="harmony"] .student-content-page .student-task-checkbox:focus-within { outline-color: #147e6f; }
+html[data-site-theme="harmony"] .student-content-page .student-task-row.is-complete { background: #e4f5e9; border-color: #acd5bb; }
+html[data-site-theme="harmony"] .student-content-page .is-complete :is(.student-task-title, .student-task-status) { color: #216b47; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-news-item, .student-article-card) { background: #fcfefa; border-color: #d3e5da; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-news-item summary:hover, .student-article-card summary:hover) { background: #edf7f0; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-news-more, .student-content-kicker) { color: #34736a; }
+html[data-site-theme="harmony"] .student-content-page .student-content-body { color: #4c6c75; }
+html[data-site-theme="harmony"] .student-content-page .student-discovery-panel { background: #fff0f5; border-color: #efd1dd; }
+html[data-site-theme="harmony"] .student-content-page .student-discovery-panel .student-content-icon { background: #f8dce8; color: #8b4061; }
+html[data-site-theme="harmony"] .student-content-page .student-discovery-panel .student-article-card { background: #fffefb; border-color: #efd1dd; }
+html[data-site-theme="harmony"] .student-content-page .student-discovery-panel .student-article-card summary:hover { background: #fff5f8; }
+html[data-site-theme="harmony"] .student-content-page .student-discovery-panel :is(.student-content-kicker, .student-news-more) { color: #8b4061; }
+html[data-site-theme="harmony"] .student-content-page .student-prepare-panel { background: #fff8df; border-color: #ebdda8; }
+html[data-site-theme="harmony"] .student-content-page .student-preparation-list > li::before { background: #ffdf83; color: #74551d; box-shadow: 0 3px 0 #e9cb74; }
+html[data-site-theme="harmony"] .student-content-page .student-kindness-panel { background: #eaf5e6; border-color: #d0e4c7; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-profile-disclosure, .student-profile-card) { background: #fffefb; border-color: #d2e5dc; }
+html[data-site-theme="harmony"] .student-content-page .student-profile-card { background: #f4faf6; }
+html[data-site-theme="harmony"] .student-content-page .student-profile-top { border-color: #d4e7db; }
+
+/* Teacher and administrator tools share the palette without decorative input backgrounds. */
+html[data-site-theme="harmony"] :is(.teacher-shell, .admin-shell) { color: #244e6b; background: radial-gradient(ellipse at 97% 12%, #e9f7ff 0, transparent 36%), linear-gradient(180deg, #f0f9f2, #fffdf6 750px); }
+html[data-site-theme="harmony"] :is(.teacher-header, .admin-header) { background: #fffdf6; color: #175d9b; border-bottom: 1px solid #d0e5d8; }
+html[data-site-theme="harmony"] .admin-header-actions > .nav-link,
+html[data-site-theme="harmony"] .admin-header-actions .button-quiet { color: #285f68; }
+html[data-site-theme="harmony"] .admin-header-actions .button-quiet:hover { background: #e8faf5; }
+html[data-site-theme="harmony"] .admin-header-actions > .button-outline { color: #175d9b; background: #ffda53; border-color: #e8c04c; box-shadow: 0 3px 0 #e8c04c; }
+html[data-site-theme="harmony"] .teacher-home-link { color: #0d7162; }
+html[data-site-theme="harmony"] .teacher-title-row { color: #175d9b; background: linear-gradient(115deg, #e0f3e8, #e9f7ff); border-color: #c1decf; box-shadow: 0 7px 0 #d9eade; }
+html[data-site-theme="harmony"] .teacher-title-row .eyebrow { color: #147e6f; }
+html[data-site-theme="harmony"] .teacher-title-row h1 { color: #175d9b; }
+html[data-site-theme="harmony"] .teacher-title-row > div > p:not(.eyebrow) { color: #466d75; }
+html[data-site-theme="harmony"] .teacher-title-sun { color: #896719; border-color: #ffe7a3; background: #ffe08a; box-shadow: 0 5px 0 #e6c66e; transform: rotate(3deg); }
+html[data-site-theme="harmony"] :is(.teacher-class-panel, .teacher-panel, .teacher-content-card, .teacher-no-class) { background: #fffefb; border-color: #cfe3d7; box-shadow: 0 5px 0 #e5efe6; }
+html[data-site-theme="harmony"] .teacher-content-card:nth-child(3n+2) { border-color: #ddd5eb; box-shadow: 0 5px 0 #f0ebf6; }
+html[data-site-theme="harmony"] .teacher-content-card:nth-child(3n) { border-color: #e9dfa8; box-shadow: 0 5px 0 #faf4df; }
+html[data-site-theme="harmony"] .teacher-panel-heading { background: #eef8f0; border-color: #d5e7d8; }
+html[data-site-theme="harmony"] :is(.teacher-section-nav a, .admin-nav a) { color: #246b61; border-color: #c6dfd1; background: #fffefb; }
+html[data-site-theme="harmony"] .teacher-section-nav a:hover { background: #e8faf5; border-color: #7db6a4; }
+html[data-site-theme="harmony"] .teacher-section-nav a:nth-child(2) { color: #695183; border-color: #d9ccea; }
+html[data-site-theme="harmony"] .teacher-section-nav a:nth-child(2) span { color: #695183; background: #eee7f7; }
+html[data-site-theme="harmony"] .teacher-section-nav a:nth-child(3) { color: #7b5c08; border-color: #e5d59a; }
+html[data-site-theme="harmony"] .teacher-section-nav a:first-child span { background: #e2f2e8; color: #246b61; }
+html[data-site-theme="harmony"] .admin-nav a:first-child { background: #ffda53; color: #24475f; border-color: #e8c04c; }
+html[data-site-theme="harmony"] .teacher-empty-content { background: #f5faf4; border-color: #c0d9c7; }
+html[data-site-theme="harmony"] :is(.teacher-field label, .teacher-class-switch label, .admin-shell .field label) { color: #315e65; }
+html[data-site-theme="harmony"] :is(.teacher-field input, .teacher-field select, .teacher-field textarea, .teacher-class-switch select, .admin-shell .field input, .admin-shell .field select, .admin-shell .field textarea) { background: #fffefb; color: #244e6b; border-color: #b7d3c7; }
+html[data-site-theme="harmony"] :is(.teacher-field input:focus, .teacher-field select:focus, .teacher-field textarea:focus, .teacher-class-switch select:focus, .admin-shell .field input:focus, .admin-shell .field select:focus, .admin-shell .field textarea:focus) { outline-color: #147e6f; }
+html[data-site-theme="harmony"] :is(.teacher-field input[aria-invalid=true], .teacher-field select[aria-invalid=true], .teacher-field textarea[aria-invalid=true]) { border-color: #b25270; }
+html[data-site-theme="harmony"] .teacher-checkbox input { accent-color: #147e6f; }
+html[data-site-theme="harmony"] .teacher-edit-details { border-color: #d6e7dc; }
+html[data-site-theme="harmony"] .teacher-edit-details > summary { color: #0d7162; }
+html[data-site-theme="harmony"] :is(.teacher-footer, .admin-footer) { color: #59756d; }
+html[data-site-theme="harmony"] .admin-shell :is(.panel, .stat-card) { border-color: #d0e4d7; background: #fffefb; box-shadow: 0 5px 0 #e5efe670; }
+html[data-site-theme="harmony"] .admin-shell .stat-card:nth-child(2) { background: #fff0f5; border-color: #ded5ee; }
+html[data-site-theme="harmony"] .admin-shell .stat-card:nth-child(3) { background: #fff6d5; border-color: #ede0ad; }
+html[data-site-theme="harmony"] .admin-shell .panel-heading { background: #f1f8ef; border-color: #dcebdc; }
+html[data-site-theme="harmony"] .admin-shell .panel-top-note { background: #e9f6ee; border-color: #cde4d3; color: #386b58; }
+html[data-site-theme="harmony"] .admin-shell :is(.small-avatar, .request-note) { background: #e7f3eb; color: #347059; }
+html[data-site-theme="harmony"] .admin-shell .checkbox-field { min-height: 44px; }
+html[data-site-theme="harmony"] .admin-shell .checkbox-field input { min-width: 20px; min-height: 20px; }
+
+/* Public article illustrations use the storybook scenes, never replace uploaded photos. */
+html[data-site-theme="harmony"] .bulletin-article-shell { min-height: 100vh; background: linear-gradient(180deg, #e9f7ff 0, #fffdf6 470px); }
+html[data-site-theme="harmony"] .bulletin-article-shell .site-header { border-color: #d2e7dd; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-main { padding: 32px; width: min(844px, calc(100% - 40px)); background: #fffefb; border: 1px solid #d7e7df; border-radius: 28px; box-shadow: 0 8px 0 #dcebe140; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-back-link { color: #0d7162; min-height: 44px; display: inline-flex; align-items: center; margin-bottom: 15px; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-main h1 { color: #175d9b; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-body { color: #3c616c; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art { background: #d6eef3; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; aspect-ratio: 1; background: url('/images/discovery-stories-3d.webp') 0 0 / 200% 200% no-repeat; transform: translateY(-50%); }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art.art-class_story::before { background-position: 0 0; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art.art-kindness::before { background-position: 100% 0; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art.art-parent_guide::before { background-position: 0 100%; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art.art-discovery::before { background-position: 100% 100%; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-art-icon { background: none; transform: none; filter: none; }
+html[data-site-theme="harmony"] .bulletin-article-shell :is(.bulletin-art-orbit, .bulletin-art-spark, .bulletin-art-dot) { display: none; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-tag { color: #236c5e; background: #e5f3e9; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-end { border-color: #d5e7dc; color: #59756d; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-end a { color: #0d7162; min-height: 44px; }
+html[data-site-theme="harmony"] .bulletin-article-shell .site-footer { border-color: #d5e7dc; }
+
+@media (max-width: 760px) {
+  html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome { border-radius: 26px 34px 30px 26px; }
+  html[data-site-theme="harmony"] .student-content-page .student-week-day.is-today { box-shadow: inset 4px 0 0 #ffda53; }
+  html[data-site-theme="harmony"] .student-login-art { display: block; margin-top: 20px; max-width: 420px; border-width: 4px; border-radius: 22px 36px 24px 34px; }
+  html[data-site-theme="harmony"] .student-login-art img { height: 165px; object-position: center 52%; }
+  html[data-site-theme="harmony"] .student-auth-card { margin-top: 7px; }
+  html[data-site-theme="harmony"] .student-welcome > p:not(.eyebrow) { font-size: 14px; }
+  html[data-site-theme="harmony"] .student-trust-note { font-size: 12px; }
+  html[data-site-theme="harmony"] .student-card-description { font-size: 14px; }
+  html[data-site-theme="harmony"] .student-footer { font-size: 11px; }
+  html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-main { width: calc(100% - 28px); padding: 24px 19px; border-radius: 23px; margin-top: 20px; }
+  html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-main h1 { font-size: clamp(27px, 7.5vw, 35px); }
+  html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-cover { border-radius: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button { transition: none; }
+  html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) .button:hover:not(:disabled) { transform: none; }
+}
+
+/* Daily tools favour readable text and short introductions over decoration. */
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell, .bulletin-article-shell) { font-size: 16px; }
+html[data-site-theme="harmony"] :is(.student-shell, .teacher-shell, .admin-shell) :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) { font-size: 16px; min-height: 44px; }
+html[data-site-theme="harmony"] :is(.teacher-field label, .admin-shell .field label, .student-field label) { font-size: 15px; }
+html[data-site-theme="harmony"] :is(.teacher-content-excerpt, .teacher-panel-heading p, .teacher-no-class p, .student-card-description, .student-welcome > p:not(.eyebrow), .student-support-note) { font-size: 16px; line-height: 1.75; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-content-body, .student-task-details, .student-kindness-body, .student-preparation-list > li, .student-content-panel-copy, .student-today-note, .student-content-empty) { font-size: 16px; line-height: 1.75; }
+html[data-site-theme="harmony"] .student-content-page :is(.student-content-nav a, .student-article-card summary, .student-news-item summary) { min-height: 44px; font-size: 16px; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome { min-height: 0; padding: 26px 30px; border-radius: 24px; box-shadow: 0 4px 0 #d8ece4; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome::before { display: none; }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome h1 { margin-top: 12px; font-size: clamp(28px, 3vw, 36px); }
+html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome .student-content-intro { margin-top: 12px; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-art { flex-basis: 220px; height: 155px; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-illustration { border-radius: 23px; transform: none; box-shadow: 0 4px 0 #c7e6db; }
+html[data-site-theme="harmony"] .student-content-page .student-welcome-spark { display: none; }
+html[data-site-theme="harmony"] .student-content-page .student-content-panel { border-radius: 22px; }
+html[data-site-theme="harmony"] .student-content-page .student-content-nav a:last-child { color: #8b4061; background: #fff0f5; border-color: #efd1dd; }
+html[data-site-theme="harmony"] .student-content-page .student-task-checkbox { flex-shrink: 0; }
+html[data-site-theme="harmony"] .student-content-page .student-task-row { min-height: 64px; }
+html[data-site-theme="harmony"] .student-welcome-icon { width: 58px; height: 58px; border-radius: 18px; transform: none; }
+html[data-site-theme="harmony"] .student-login-art { border-radius: 24px; transform: none; box-shadow: 0 5px 0 #dceee6; }
+html[data-site-theme="harmony"] .student-login-art img { height: 200px; }
+html[data-site-theme="harmony"] :is(.student-auth-card, .student-password-card) { border-radius: 24px; box-shadow: 0 5px 0 #dceee6; }
+html[data-site-theme="harmony"] .student-auth-card::before { display: none; }
+html[data-site-theme="harmony"] .teacher-title-row { padding: 24px 28px; border-radius: 24px; box-shadow: 0 4px 0 #d9eade; }
+html[data-site-theme="harmony"] .teacher-title-row h1 { margin-top: 9px; font-size: clamp(28px, 3vw, 34px); }
+html[data-site-theme="harmony"] .teacher-title-sun { width: 66px; height: 66px; transform: none; box-shadow: none; }
+html[data-site-theme="harmony"] .admin-shell .stat-card:nth-child(2) { background: #fff0f5; border-color: #efd1dd; }
+html[data-site-theme="harmony"] .admin-shell :is(.panel, .stat-card) { border-radius: 22px; }
+html[data-site-theme="harmony"] .bulletin-article-shell .bulletin-article-body { font-size: 16px; line-height: 1.9; }
+@media (max-width: 760px) {
+  html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome { padding: 22px; border-radius: 22px; }
+  html[data-site-theme="harmony"] .student-content-page .student-dashboard-welcome h1 { font-size: 28px; }
+  html[data-site-theme="harmony"] .student-login-art { display: none; }
+  html[data-site-theme="harmony"] .student-auth-card { margin-top: 0; }
+  html[data-site-theme="harmony"] .teacher-title-row { padding: 23px; }
+}

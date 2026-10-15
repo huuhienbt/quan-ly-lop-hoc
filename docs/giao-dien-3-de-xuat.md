@@ -1,7 +1,8 @@
-# Đề xuất Giao diện 3 – Lớp học khám phá hạnh phúc
+# Giao diện 3 – Lớp học khám phá hạnh phúc
 
-Trạng thái: đề xuất thiết kế; chưa thêm lựa chọn Giao diện 3 vào website.
-Giao diện 1 và Giao diện 2 tiếp tục được lưu và đổi trong quản trị.
+Trạng thái: đã triển khai từ đề xuất được chủ website chọn.
+Giao diện 1, 2 và 3 được lưu cùng nhau, có thể đổi trong mục **Đổi giao diện**
+của quản trị. Giao diện 3 dùng mã `harmony`.
 
 ## Kết hợp điểm mạnh
 
@@ -37,4 +38,5 @@ trang biên tập theo quyền hiện có.
 
 Chỉ dùng bài viết, lịch và nhiệm vụ có thật. Các mục dành cho gia đình tiếp tục
 yêu cầu tài khoản liên kết; danh sách và thông tin học sinh không đưa ra công khai.
-Khi triển khai Giao diện 3 sau này, giữ hai mẫu cũ và thêm mẫu thứ ba vào bộ chọn.
+Hai mẫu cũ tiếp tục được giữ nguyên trong bộ chọn; đổi giao diện không đổi hồ sơ,
+tài khoản, bài viết, lịch hoặc dấu hoàn thành của học sinh.

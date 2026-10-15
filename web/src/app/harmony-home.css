@@ -1,0 +1,402 @@
+.harmony-home {
+  --harmony-blue: #175d9b;
+  --harmony-teal: #167c6f;
+  --harmony-ink: #234b61;
+  --harmony-muted: #526e77;
+  background: #fffdf6;
+  color: var(--harmony-ink);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.7;
+  overflow-x: clip;
+}
+.harmony-home .harmony-container { width: min(1180px, calc(100% - 64px)); margin-inline: auto; }
+.harmony-home h1, .harmony-home h2, .harmony-home h3 { color: var(--harmony-blue); }
+.harmony-home a, .harmony-home button { -webkit-tap-highlight-color: transparent; }
+.harmony-home :focus-visible { outline: 3px solid #db6595; outline-offset: 4px; }
+.harmony-home .harmony-header { background: #fffdf6; border-bottom: 1px solid #e1eee6; }
+.harmony-home .harmony-header-inner { min-height: 82px; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 12px; }
+.harmony-home .brand { gap: 9px; color: var(--harmony-blue); }
+.harmony-home .brand-symbol { width: 44px; height: 44px; border-radius: 15px; background: #fff0b0; }
+.harmony-home .brand-symbol svg { width: 38px; height: 38px; }
+.harmony-home .brand-copy strong { font-size: 19px; font-weight: 1000; }
+.harmony-home .brand-copy > span { font-size: 8px; letter-spacing: 1.25px; color: #5a7b7c; }
+.harmony-home .harmony-header nav { display: flex; align-items: center; gap: 24px; margin-left: auto; }
+.harmony-home .harmony-header nav > a, .harmony-home .harmony-staff-link { font-size: 14px; font-weight: 850; min-height: 44px; display: inline-flex; align-items: center; }
+.harmony-home .harmony-header nav > a:hover, .harmony-home .harmony-staff-link:hover { color: var(--harmony-teal); }
+.harmony-home .harmony-header-actions { display: flex; align-items: center; gap: 20px; }
+.harmony-home .harmony-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: 16px; padding: 11px 20px; min-height: 46px; color: var(--harmony-blue); font-size: 15px; font-weight: 1000; line-height: 1.5; text-align: center; transition: transform .18s, background .18s; }
+.harmony-home .harmony-button > svg { width: 20px; height: 20px; flex-shrink: 0; }
+.harmony-home .harmony-button:hover { transform: translateY(-2px); }
+.harmony-home .harmony-button-yellow { background: #ffda53; border-color: #f3cd44; box-shadow: 0 3px 0 #e4b934; }
+.harmony-home .harmony-button-yellow:hover { background: #ffe16d; }
+.harmony-home .harmony-button-teal { background: #167c6f; color: #fff; box-shadow: 0 3px 0 #11675d; }
+.harmony-home .harmony-button-teal:hover { background: #116e62; }
+.harmony-home .harmony-header .button-quiet { min-height: 44px; font-size: 14px; padding-inline: 8px; color: var(--harmony-teal); }
+.harmony-home .harmony-header .button-quiet:hover { background: #e8faf5; }
+.harmony-home .harmony-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11px; line-height: 1.6; letter-spacing: 1.1px; font-weight: 950; color: var(--harmony-teal); }
+.harmony-home .harmony-hero-wrap { background: radial-gradient(ellipse at 1% 0, #effbf6 0, transparent 45%), linear-gradient(110deg, #fffdf6 5%, #edf9ee 100%); border-bottom: 1px solid #e5eee2; }
+.harmony-home .harmony-hero { display: grid; grid-template-columns: 1fr 1.03fr; align-items: center; min-height: 400px; gap: 48px; padding-block: 31px 33px; }
+.harmony-home .harmony-hero-copy { position: relative; z-index: 1; }
+.harmony-home .harmony-hero-copy .harmony-eyebrow { font-size: 10px; letter-spacing: 1px; }
+.harmony-home .harmony-hero-copy .harmony-eyebrow > span { width: 7px; height: 7px; border-radius: 50%; background: #e985ab; flex-shrink: 0; }
+.harmony-home .harmony-hero h1 { font-size: clamp(38px, 3.9vw, 52px); line-height: 1.17; letter-spacing: -1.8px; margin-top: 13px; font-weight: 1000; }
+.harmony-home .harmony-hero h1 > span { color: var(--harmony-teal); }
+.harmony-home .harmony-hero-description { max-width: 480px; font-size: 16px; line-height: 1.8; color: var(--harmony-muted); margin-top: 15px; }
+.harmony-home .harmony-hero-cta { margin-top: 20px; }
+.harmony-home .harmony-hero-note { display: flex; align-items: center; gap: 7px; color: #5b7975; font-size: 12px; margin-top: 15px; }
+.harmony-home .harmony-hero-note > svg { width: 16px; height: 16px; color: #d9799c; }
+.harmony-home .harmony-hero-art { position: relative; width: 100%; }
+.harmony-home .harmony-hero-frame { position: relative; width: 100%; height: 322px; overflow: hidden; border: 7px solid #fffdf6; border-radius: 45px 75px 45px 75px; box-shadow: 0 9px 0 #bde6d568, 0 20px 38px #2c796b12; transform: rotate(-1.5deg); }
+.harmony-home .harmony-hero-frame img { object-fit: cover; object-position: center 66%; transform: rotate(1.5deg) scale(1.04); }
+.harmony-home .harmony-art-note { position: absolute; left: -17px; bottom: 15px; display: flex; align-items: center; gap: 10px; background: #fffdf6; border: 1px solid #e2eee1; border-radius: 16px; padding: 11px 17px; font-size: 11px; line-height: 1.5; color: #617a72; transform: rotate(-5deg); box-shadow: 0 8px 16px #21786412; }
+.harmony-home .harmony-art-note > span:first-child { font-size: 27px; }
+.harmony-home .harmony-art-note strong { color: var(--harmony-teal); font-size: 17px; }
+.harmony-home .harmony-art-spark { position: absolute; z-index: 2; color: #eab73a; line-height: 1; }
+.harmony-home .harmony-spark-one { top: -9px; right: 10px; font-size: 39px; transform: rotate(13deg); }
+.harmony-home .harmony-spark-two { bottom: 2px; right: 6px; font-size: 37px; color: #e994b1; }
+.harmony-home .harmony-today { padding-top: 25px; }
+.harmony-home .harmony-day-line { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 10px; }
+.harmony-home .harmony-day-line > p { display: flex; align-items: center; gap: 7px; color: var(--harmony-teal); font-size: 11px; font-weight: 1000; letter-spacing: 1.2px; }
+.harmony-home .harmony-day-line svg { width: 19px; height: 19px; color: #d7a02a; }
+.harmony-home .harmony-day-line time { color: #657d7c; font-size: 13px; font-weight: 850; }
+.harmony-home .harmony-notices { display: flex; gap: 23px; align-items: center; background: #fff9dc; border: 1px solid #f0e4ad; border-radius: 20px; padding: 16px 21px; }
+.harmony-home .harmony-notice-heading { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.harmony-home .harmony-notice-heading > span { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 12px; background: #ffe990; color: #957014; }
+.harmony-home .harmony-notice-heading svg { width: 21px; height: 21px; }
+.harmony-home .harmony-notice-heading h2 { font-size: 17px; white-space: nowrap; color: #6e5b25; }
+.harmony-home .harmony-notice-items { flex: 1; min-width: 0; display: grid; gap: 9px; }
+.harmony-home .harmony-notice-items > a { display: flex; align-items: center; gap: 11px; padding-block: 4px; min-height: 44px; }
+.harmony-home .harmony-notice-items > a + a { border-top: 1px solid #e9ddb0; padding-top: 10px; }
+.harmony-home .harmony-notice-items > a > span { font-size: 11px; font-weight: 950; color: #926416; border: 1px solid #e9d598; border-radius: 7px; padding: 3px 8px; flex-shrink: 0; }
+.harmony-home .harmony-notice-items strong { font-size: 15px; color: #68572b; line-height: 1.55; }
+.harmony-home .harmony-notice-items > a:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+.harmony-home .harmony-notice-items svg { width: 19px; height: 19px; margin-left: auto; flex-shrink: 0; color: #92742b; }
+.harmony-home .harmony-notice-empty { color: #7b6b41; font-size: 15px; }
+.harmony-home .harmony-shortcuts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-top: 22px; }
+.harmony-home .harmony-shortcut { display: flex; align-items: center; gap: 12px; min-height: 99px; padding: 16px; border: 1px solid transparent; border-radius: 20px; box-shadow: 0 4px 0 #215c7110; transition: transform .18s, box-shadow .18s; }
+.harmony-home .harmony-shortcut:hover { transform: translateY(-3px); box-shadow: 0 7px 0 #215c7110; }
+.harmony-home .harmony-shortcut-sky { background: #e9f6ff; border-color: #d2e9f7; }
+.harmony-home .harmony-shortcut-mint { background: #e7f8ef; border-color: #d0eadb; }
+.harmony-home .harmony-shortcut-butter { background: #fff5cd; border-color: #f0e2a6; }
+.harmony-home .harmony-shortcut-rose { background: #fff0f4; border-color: #f3d9e2; }
+.harmony-home .harmony-shortcut-icon { font-size: 32px; flex-shrink: 0; line-height: 1.4; filter: drop-shadow(0 3px 0 #ffffff99); }
+.harmony-home .harmony-shortcut strong { display: block; color: var(--harmony-blue); font-size: 17px; font-weight: 1000; line-height: 1.4; }
+.harmony-home .harmony-shortcut small { display: block; margin-top: 4px; color: #5b767c; font-size: 11px; line-height: 1.6; }
+.harmony-home .harmony-shortcut > svg { width: 18px; height: 18px; flex-shrink: 0; margin-left: auto; color: var(--harmony-teal); }
+.harmony-home .harmony-class-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 29px; align-items: start; padding-top: 42px; padding-bottom: 46px; }
+.harmony-home .harmony-section-heading h2 { font-size: 29px; line-height: 1.3; letter-spacing: -.6px; margin-top: 7px; font-weight: 1000; }
+.harmony-home .harmony-section-heading h2 > span { display: inline-block; color: #e3ac30; font-size: 23px; vertical-align: middle; margin-left: 5px; }
+.harmony-home .harmony-section-heading > p:last-child:not(.harmony-eyebrow) { color: var(--harmony-muted); font-size: 15px; margin-top: 7px; }
+.harmony-home .harmony-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-block: 18px 21px; }
+.harmony-home .harmony-tabs > a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 12px; border: 1px solid #dbe9e3; border-radius: 13px; background: #fff; color: #526d73; font-size: 14px; font-weight: 900; line-height: 1.5; }
+.harmony-home .harmony-tabs > a[aria-current="page"] { background: #167c6f; color: #fff; border-color: #167c6f; }
+.harmony-home .harmony-tabs > a:hover { border-color: #56a799; }
+.harmony-home .harmony-story-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 21px; }
+.harmony-home .harmony-story-card { min-width: 0; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #dfebe4; border-radius: 22px; background: #fff; box-shadow: 0 5px 0 #e7efe780; }
+.harmony-home .harmony-story-cover { display: block; position: relative; overflow: hidden; aspect-ratio: 1.64; margin: 7px 7px 0; border-radius: 16px; background: #e6f7ef; }
+.harmony-home .harmony-story-cover img { object-fit: cover; }
+.harmony-home .harmony-story-art { position: absolute; display: block; left: 0; top: 50%; width: 100%; aspect-ratio: 1; transform: translateY(-50%); background-image: url('/images/discovery-stories-3d.webp'); background-size: 200% 200%; background-position: 0 0; }
+.harmony-home .harmony-art-kindness { background-position: 100% 0; }
+.harmony-home .harmony-art-parent_guide { background-position: 0 100%; }
+.harmony-home .harmony-art-discovery { background-position: 100% 100%; }
+.harmony-home .harmony-story-body { padding: 17px 20px 15px; display: flex; flex-direction: column; flex: 1; }
+.harmony-home .harmony-story-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; line-height: 1.5; }
+.harmony-home .harmony-story-meta > span { font-size: 10px; font-weight: 950; color: var(--harmony-teal); padding: 4px 7px; border-radius: 7px; background: #e9f8ef; }
+.harmony-home .harmony-story-meta > time { color: #61797a; font-size: 10px; white-space: nowrap; }
+.harmony-home .harmony-story-body h3 { font-size: 20px; line-height: 1.45; letter-spacing: -.3px; margin-top: 10px; overflow-wrap: anywhere; }
+.harmony-home .harmony-story-body h3 a:hover { color: var(--harmony-teal); }
+.harmony-home .harmony-story-body > p { color: var(--harmony-muted); font-size: 14px; line-height: 1.8; margin-top: 8px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; white-space: pre-line; overflow-wrap: anywhere; }
+.harmony-home .harmony-text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; min-height: 44px; color: var(--harmony-teal); font-size: 14px; font-weight: 950; line-height: 1.5; }
+.harmony-home .harmony-text-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+.harmony-home .harmony-text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.harmony-home .harmony-story-body > .harmony-text-link { margin-top: auto; padding-top: 12px; }
+.harmony-home .harmony-empty { border: 1px dashed #bdddcf; border-radius: 20px; text-align: center; padding: 33px 24px; background: #f6fcf7; }
+.harmony-home .harmony-empty > svg { width: 35px; height: 35px; margin-inline: auto; color: #4c9c8b; }
+.harmony-home .harmony-empty h3 { margin-top: 12px; font-size: 20px; }
+.harmony-home .harmony-empty p { color: var(--harmony-muted); margin-top: 8px; font-size: 14px; }
+.harmony-home .harmony-week-column { display: grid; gap: 23px; min-width: 0; }
+.harmony-home .harmony-calendar { background: #e8faf5; border: 1px solid #cce9dd; border-radius: 24px; padding: 24px; box-shadow: 0 5px 0 #cce5d74d; }
+.harmony-home .harmony-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 10px; letter-spacing: .7px; }
+.harmony-home .harmony-calendar-heading h2 { margin-top: 6px; font-size: 25px; line-height: 1.3; letter-spacing: -.5px; }
+.harmony-home .harmony-calendar-heading > span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; background: #cceee2; color: var(--harmony-teal); flex-shrink: 0; }
+.harmony-home .harmony-calendar-heading svg { width: 24px; height: 24px; }
+.harmony-home .harmony-week-range { margin-top: 11px; font-size: 13px; color: #497c70; font-weight: 900; }
+.harmony-home .harmony-events { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 17px; }
+.harmony-home .harmony-events > li { display: flex; gap: 13px; align-items: flex-start; }
+.harmony-home .harmony-events > li + li { border-top: 1px solid #cbe6da; padding-top: 17px; }
+.harmony-home .harmony-events time { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 54px; min-height: 64px; border: 1px solid #d1e4d9; border-radius: 13px; background: #fffdf6; flex-shrink: 0; line-height: 1.3; }
+.harmony-home .harmony-events time strong { font-size: 24px; font-weight: 1000; color: var(--harmony-teal); }
+.harmony-home .harmony-events time span { font-size: 10px; color: #567b70; margin-top: 3px; }
+.harmony-home .harmony-events h3 { font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+.harmony-home .harmony-events li > div > p { color: #557b72; font-size: 12px; margin-top: 4px; }
+.harmony-home .harmony-events li > div > p.harmony-event-body { font-size: 13px; line-height: 1.7; color: #456a62; white-space: pre-line; overflow-wrap: anywhere; }
+.harmony-home .harmony-calendar-empty { display: flex; align-items: center; gap: 15px; padding-block: 27px 23px; }
+.harmony-home .harmony-calendar-empty > span { font-size: 38px; }
+.harmony-home .harmony-calendar-empty > p { color: #527c71; font-size: 14px; }
+.harmony-home .harmony-calendar-note { color: #5a8073; font-size: 11px; border-top: 1px solid #cbe6da; padding-top: 15px; margin-top: 18px; }
+.harmony-home .harmony-daily { padding: 25px; border: 1px solid #eee2af; border-radius: 24px; background: #fff7db; }
+.harmony-home .harmony-daily-icon { display: inline-flex; align-items: center; justify-content: center; width: 50px; height: 50px; background: #ffeaa0; border-radius: 16px; font-size: 30px; margin-bottom: 16px; transform: rotate(-7deg); }
+.harmony-home .harmony-daily .harmony-eyebrow { font-size: 9px; letter-spacing: .8px; color: #99711b; }
+.harmony-home .harmony-daily h2 { font-size: 24px; line-height: 1.4; margin-top: 6px; letter-spacing: -.4px; }
+.harmony-home .harmony-daily p:not(.harmony-eyebrow) { color: #7b704c; font-size: 15px; line-height: 1.8; margin-top: 10px; }
+.harmony-home .harmony-daily .harmony-button { margin-top: 19px; font-size: 14px; width: 100%; padding-inline: 12px; }
+.harmony-home .harmony-community { background: #ecf9f4; border-block: 1px solid #e0eee3; padding-block: 38px; }
+.harmony-home .harmony-community-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.4fr); gap: 32px; align-items: start; }
+.harmony-home .harmony-kindness { padding: 27px 29px; border: 1px solid #efcfdb; border-radius: 25px; background: #fff0f4; position: relative; }
+.harmony-home .harmony-kindness-mark { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.harmony-home .harmony-kindness-mark svg { width: 38px; height: 38px; color: #bf5a82; background: #ffdae7; padding: 8px; border-radius: 12px; }
+.harmony-home .harmony-kindness-mark > span { color: #e5b64e; font-size: 30px; line-height: 1; }
+.harmony-home .harmony-kindness .harmony-eyebrow { color: #a25273; font-size: 10px; }
+.harmony-home .harmony-kindness h2 { font-size: 29px; letter-spacing: -.6px; line-height: 1.4; margin-top: 10px; color: #8f4567; }
+.harmony-home .harmony-kindness > p:not(.harmony-eyebrow) { color: #80576a; font-size: 15px; line-height: 1.9; margin-top: 13px; }
+.harmony-home .harmony-kindness > .harmony-text-link { color: #a34b72; margin-top: 13px; }
+.harmony-home .harmony-parents { min-width: 0; }
+.harmony-home .harmony-parents .harmony-section-heading h2 { font-size: 28px; }
+.harmony-home .harmony-parents .harmony-section-heading .harmony-eyebrow { font-size: 10px; }
+.harmony-home .harmony-parent-stories { display: grid; gap: 16px; margin-top: 20px; }
+.harmony-home .harmony-parent-stories .harmony-story-card { display: grid; grid-template-columns: minmax(140px, .7fr) minmax(0, 1fr); }
+.harmony-home .harmony-parent-stories .harmony-story-cover { aspect-ratio: auto; min-height: 192px; height: calc(100% - 14px); margin: 7px 0 7px 7px; }
+.harmony-home .harmony-parent-stories .harmony-story-body { padding: 15px 18px 13px; }
+.harmony-home .harmony-parent-stories .harmony-story-body h3 { font-size: 19px; margin-top: 8px; }
+.harmony-home .harmony-parent-stories .harmony-story-body > p { font-size: 13px; -webkit-line-clamp: 2; }
+.harmony-home .harmony-parent-stories .harmony-story-meta time { display: none; }
+.harmony-home .harmony-parent-stories .harmony-text-link { font-size: 14px; }
+.harmony-home .harmony-parent-empty { display: flex; align-items: center; gap: 15px; padding: 28px; border: 1px dashed #b9dace; border-radius: 20px; margin-top: 20px; color: #54776b; font-size: 15px; }
+.harmony-home .harmony-parent-empty svg { width: 30px; height: 30px; flex-shrink: 0; }
+.harmony-home .harmony-access { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: 95px; align-items: center; padding-block: 45px 49px; }
+.harmony-home .harmony-access-book { font-size: 41px; display: block; line-height: 1.2; margin-bottom: 17px; }
+.harmony-home .harmony-access-copy h2 { font-size: 33px; line-height: 1.35; letter-spacing: -.8px; margin-top: 10px; }
+.harmony-home .harmony-access-copy h2 > span { color: var(--harmony-teal); }
+.harmony-home .harmony-access-copy > p:not(.harmony-eyebrow) { color: var(--harmony-muted); font-size: 15px; line-height: 1.85; margin-top: 14px; max-width: 460px; }
+.harmony-home .harmony-access-copy > p.harmony-privacy-note { display: flex; align-items: flex-start; gap: 8px; color: #5f7d76; font-size: 12px; margin-top: 19px; }
+.harmony-home .harmony-privacy-note svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+.harmony-home .harmony-account-card { text-align: center; padding: 27px 31px; border: 1px solid #d9e9df; border-radius: 25px; background: #fff; box-shadow: 0 7px 0 #e5efe47d; }
+.harmony-home .harmony-account-icon, .harmony-home .harmony-account-avatar { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto 13px; border-radius: 16px; background: #e5f7ef; color: var(--harmony-teal); font-size: 23px; font-weight: 1000; }
+.harmony-home .harmony-account-icon svg { width: 26px; height: 26px; }
+.harmony-home .harmony-account-card h3 { font-size: 24px; line-height: 1.4; letter-spacing: -.5px; overflow-wrap: anywhere; }
+.harmony-home .harmony-account-card > p { color: var(--harmony-muted); font-size: 14px; line-height: 1.8; margin-top: 10px; }
+.harmony-home .harmony-account-card .harmony-account-email { font-size: 12px; overflow-wrap: anywhere; margin-top: 4px; }
+.harmony-home .harmony-account-card .auth-button-wrap { margin-top: 19px; }
+.harmony-home .harmony-account-card .button-google { border-color: #d3e7db; min-height: 48px; font-size: 15px; border-radius: 14px; color: var(--harmony-blue); }
+.harmony-home .harmony-account-card .button-google:hover:not(:disabled) { background: #f1fbf5; }
+.harmony-home .harmony-account-card > small { display: block; color: #6c8279; font-size: 11px; margin-top: 12px; }
+.harmony-home .harmony-role-badge { display: inline-flex; padding: 4px 10px; border-radius: 8px; background: #e6f6ed; color: #327a62; font-size: 11px; font-weight: 900; margin-top: 12px; }
+.harmony-home .harmony-role-badge.is-pending { background: #fff1bf; color: #8d6a1a; }
+.harmony-home .harmony-account-card > .harmony-button { margin-top: 17px; }
+.harmony-home .harmony-account-card .harmony-admin-link { margin: 12px auto 0; display: flex; justify-content: center; }
+.harmony-home .harmony-setup-note { display: block; color: #8a732f; font-size: 12px; margin-top: 12px; }
+.harmony-home .harmony-student-access { margin-top: 19px; padding-top: 15px; border-top: 1px solid #e3eee6; color: #61796f; font-size: 12px; }
+.harmony-home .harmony-student-access > a { display: inline-flex; align-items: center; min-height: 44px; gap: 5px; color: var(--harmony-teal); font-size: 14px; font-weight: 950; }
+.harmony-home .harmony-student-access svg { width: 15px; height: 15px; }
+.harmony-home .harmony-footer { background: #176f66; color: #e0f4eb; }
+.harmony-home .harmony-footer-inner { display: grid; grid-template-columns: 1.5fr 1fr .8fr; align-items: start; gap: 50px; padding-block: 30px; }
+.harmony-home .harmony-footer .brand { color: #fffbed; }
+.harmony-home .harmony-footer .brand-copy > span { color: #bde1d8; }
+.harmony-home .harmony-footer-inner > div:first-child > p { color: #c5e6da; font-size: 12px; margin-top: 13px; line-height: 1.8; }
+.harmony-home .harmony-footer nav { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; }
+.harmony-home .harmony-footer nav a { font-size: 14px; min-height: 44px; display: flex; align-items: center; color: #e0f2e9; }
+.harmony-home .harmony-footer a:hover { color: #ffdc70; }
+.harmony-home .harmony-footer-school { display: grid; grid-template-columns: 27px 1fr; gap: 3px 9px; align-items: center; border-left: 1px solid #4d9a87; padding-left: 26px; }
+.harmony-home .harmony-footer-school > svg { width: 24px; height: 24px; color: #ffdc70; }
+.harmony-home .harmony-footer-school > strong { font-size: 19px; color: #fff4c7; }
+.harmony-home .harmony-footer-school > span { grid-column: 1 / -1; font-size: 11px; color: #c5e6da; }
+.harmony-home .harmony-footer-school > a { grid-column: 1 / -1; font-size: 12px; min-height: 44px; display: flex; align-items: center; color: #ffe6a4; }
+@media (max-width: 1150px) {
+  .harmony-home .harmony-header-inner { gap: 17px; }
+  .harmony-home .harmony-header nav { gap: 17px; }
+  .harmony-home .harmony-header nav > a:last-child { display: none; }
+  .harmony-home .harmony-header-actions { gap: 14px; }
+  .harmony-home .harmony-header.has-theme-settings nav { display: none; }
+  .harmony-home .harmony-hero { gap: 30px; }
+  .harmony-home .harmony-hero h1 { font-size: 43px; }
+  .harmony-home .harmony-shortcut { gap: 9px; padding: 15px 12px; }
+  .harmony-home .harmony-shortcut-icon { font-size: 29px; }
+  .harmony-home .harmony-shortcut > svg { display: none; }
+  .harmony-home .harmony-shortcut small { font-size: 10px; }
+  .harmony-home .harmony-class-grid { gap: 22px; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
+  .harmony-home .harmony-calendar, .harmony-home .harmony-daily { padding: 22px; }
+  .harmony-home .harmony-calendar-heading h2 { font-size: 23px; }
+  .harmony-home .harmony-calendar-heading > span { width: 35px; height: 35px; }
+  .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 8px; }
+  .harmony-home .harmony-community-grid { gap: 24px; }
+  .harmony-home .harmony-parent-stories .harmony-story-card { grid-template-columns: minmax(125px, .65fr) minmax(0, 1fr); }
+  .harmony-home .harmony-parent-stories .harmony-story-body h3 { font-size: 18px; }
+  .harmony-home .harmony-access { gap: 60px; }
+}
+@media (max-width: 1000px) {
+  .harmony-home .harmony-header nav { display: none; }
+  .harmony-home .harmony-hero { gap: 25px; min-height: 390px; }
+  .harmony-home .harmony-hero h1 { font-size: 39px; letter-spacing: -1.5px; }
+  .harmony-home .harmony-hero-description { font-size: 15px; }
+  .harmony-home .harmony-hero-frame { height: 300px; }
+  .harmony-home .harmony-hero-copy .harmony-eyebrow { font-size: 8px; letter-spacing: .7px; }
+  .harmony-home .harmony-shortcuts { gap: 12px; }
+  .harmony-home .harmony-shortcut { flex-direction: column; align-items: flex-start; gap: 7px; padding: 16px; min-height: 145px; }
+  .harmony-home .harmony-shortcut strong { font-size: 17px; }
+  .harmony-home .harmony-shortcut small { font-size: 10px; }
+  .harmony-home .harmony-class-grid { grid-template-columns: 1fr; gap: 30px; }
+  .harmony-home .harmony-week-column { grid-template-columns: 1.15fr 1fr; gap: 20px; }
+  .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 10px; }
+  .harmony-home .harmony-community-grid { grid-template-columns: 1fr 1.2fr; }
+  .harmony-home .harmony-kindness { padding: 25px; }
+  .harmony-home .harmony-kindness h2 { font-size: 26px; }
+  .harmony-home .harmony-parents .harmony-section-heading h2 { font-size: 25px; }
+  .harmony-home .harmony-parent-stories .harmony-story-card { display: flex; }
+  .harmony-home .harmony-parent-stories .harmony-story-cover { min-height: 0; height: auto; aspect-ratio: 1.9; margin: 7px 7px 0; }
+  .harmony-home .harmony-parent-stories .harmony-story-body { padding: 16px 20px 14px; }
+  .harmony-home .harmony-access { gap: 35px; }
+  .harmony-home .harmony-access-copy h2 { font-size: 29px; }
+  .harmony-home .harmony-account-card { padding: 25px; }
+  .harmony-home .harmony-footer-inner { gap: 30px; grid-template-columns: 1.2fr 1fr; }
+  .harmony-home .harmony-footer-school { display: none; }
+}
+@media (max-width: 760px) {
+  .harmony-home .harmony-container { width: calc(100% - 40px); }
+  .harmony-home .harmony-header-inner { min-height: 75px; }
+  .harmony-home .harmony-header-actions { gap: 10px; }
+  .harmony-home .harmony-staff-link { display: none; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-header-inner { flex-wrap: wrap; gap: 10px; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-header-actions { width: 100%; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+  .harmony-home .harmony-header .harmony-button { font-size: 14px; padding: 10px 14px; }
+  .harmony-home .harmony-header .harmony-button > svg { width: 17px; height: 17px; }
+  .harmony-home .harmony-header .button-quiet { font-size: 14px; padding-inline: 5px; }
+  .harmony-home .harmony-hero { grid-template-columns: 1fr; gap: 23px; padding-block: 27px 31px; }
+  .harmony-home .harmony-hero h1 { font-size: 43px; line-height: 1.16; margin-top: 12px; }
+  .harmony-home .harmony-hero-description { max-width: 520px; }
+  .harmony-home .harmony-hero-art { max-width: 580px; margin-inline: auto; }
+  .harmony-home .harmony-hero-frame { height: 235px; border-width: 5px; border-radius: 30px 48px 30px 48px; transform: none; }
+  .harmony-home .harmony-hero-frame img { transform: none; object-position: center 73%; }
+  .harmony-home .harmony-hero-copy .harmony-eyebrow { font-size: 9px; }
+  .harmony-home .harmony-art-note { left: 8px; bottom: 11px; padding: 8px 13px; }
+  .harmony-home .harmony-spark-one { top: -10px; right: 5px; font-size: 28px; }
+  .harmony-home .harmony-spark-two { display: none; }
+  .harmony-home .harmony-notices { align-items: flex-start; flex-direction: column; gap: 9px; padding: 16px 19px; }
+  .harmony-home .harmony-notice-items { width: 100%; }
+  .harmony-home .harmony-notice-heading h2 { font-size: 17px; }
+  .harmony-home .harmony-notice-heading > span { width: 30px; height: 30px; }
+  .harmony-home .harmony-notice-heading svg { width: 18px; height: 18px; }
+  .harmony-home .harmony-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 19px; }
+  .harmony-home .harmony-shortcut { flex-direction: row; align-items: center; gap: 12px; min-height: 103px; padding: 14px 16px; }
+  .harmony-home .harmony-shortcut-icon { font-size: 30px; }
+  .harmony-home .harmony-shortcut small { font-size: 10px; }
+  .harmony-home .harmony-class-grid { padding-block: 33px 36px; }
+  .harmony-home .harmony-community-grid { grid-template-columns: 1fr; gap: 29px; }
+  .harmony-home .harmony-kindness { padding: 24px 26px; }
+  .harmony-home .harmony-kindness-mark { margin-bottom: 12px; }
+  .harmony-home .harmony-parent-stories .harmony-story-card { display: grid; grid-template-columns: minmax(140px, .7fr) minmax(0, 1fr); }
+  .harmony-home .harmony-parent-stories .harmony-story-cover { aspect-ratio: auto; min-height: 190px; height: calc(100% - 14px); margin: 7px 0 7px 7px; }
+  .harmony-home .harmony-access { gap: 26px; padding-block: 34px 41px; }
+  .harmony-home .harmony-access-copy h2 { font-size: 26px; }
+  .harmony-home .harmony-access-copy .harmony-eyebrow { font-size: 9px; letter-spacing: .7px; }
+  .harmony-home .harmony-access-copy > p:not(.harmony-eyebrow) { font-size: 14px; }
+  .harmony-home .harmony-account-card { padding: 24px 21px; }
+  .harmony-home .harmony-account-card h3 { font-size: 22px; }
+}
+@media (max-width: 600px) {
+  .harmony-home .brand-symbol { width: 35px; height: 35px; border-radius: 12px; }
+  .harmony-home .brand-symbol svg { width: 31px; height: 31px; }
+  .harmony-home .brand { gap: 7px; }
+  .harmony-home .brand-copy strong { font-size: 16px; letter-spacing: -.6px; }
+  .harmony-home .brand-copy > span { font-size: 6px; letter-spacing: .8px; }
+  .harmony-home .harmony-header-inner { gap: 8px; min-height: 70px; padding-block: 12px; }
+  .harmony-home .harmony-header-actions { gap: 7px; }
+  .harmony-home .harmony-header:not(.has-theme-settings) .auth-button-wrap { display: none; }
+  .harmony-home .harmony-header .harmony-button { font-size: 14px; padding-inline: 11px; min-height: 44px; gap: 5px; border-radius: 13px; }
+  .harmony-home .harmony-header .harmony-button > svg { width: 15px; height: 15px; }
+  .harmony-home .harmony-header.has-theme-settings .theme-settings-shortcut { min-height: 44px; font-size: 14px; padding-inline: 10px; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-header-actions { gap: 6px; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-button { padding-inline: 8px; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-button > svg { display: none; }
+  .harmony-home .harmony-hero { gap: 20px; padding-block: 20px; }
+  .harmony-home .harmony-hero h1 { font-size: 36px; letter-spacing: -1.3px; }
+  .harmony-home .harmony-hero-copy .harmony-eyebrow { font-size: 7.5px; letter-spacing: .6px; gap: 6px; }
+  .harmony-home .harmony-hero-description { font-size: 14px; line-height: 1.8; margin-top: 12px; }
+  .harmony-home .harmony-hero-detail, .harmony-home .harmony-hero-note { display: none; }
+  .harmony-home .harmony-hero-cta { margin-top: 16px; font-size: 14px; min-height: 46px; padding: 10px 17px; }
+  .harmony-home .harmony-hero-note { font-size: 10px; margin-top: 12px; gap: 6px; }
+  .harmony-home .harmony-hero-note svg { width: 14px; height: 14px; }
+  .harmony-home .harmony-hero-frame { height: 172px; border-radius: 27px 39px 27px 39px; }
+  .harmony-home .harmony-art-note { font-size: 9px; gap: 7px; border-radius: 12px; padding: 7px 11px; left: 8px; bottom: 6px; }
+  .harmony-home .harmony-art-note > span:first-child { font-size: 23px; }
+  .harmony-home .harmony-art-note strong { font-size: 14px; }
+  .harmony-home .harmony-today { padding-top: 20px; }
+  .harmony-home .harmony-day-line > p { font-size: 9px; letter-spacing: .8px; gap: 5px; }
+  .harmony-home .harmony-day-line svg { width: 17px; height: 17px; }
+  .harmony-home .harmony-day-line time { font-size: 11px; }
+  .harmony-home .harmony-notices { padding: 15px 16px; border-radius: 18px; }
+  .harmony-home .harmony-notice-items > a { align-items: flex-start; flex-wrap: wrap; gap: 7px; }
+  .harmony-home .harmony-notice-items > a > span { font-size: 10px; padding: 3px 7px; }
+  .harmony-home .harmony-notice-items strong { font-size: 14px; flex: 1 0 calc(100% - 32px); }
+  .harmony-home .harmony-notice-items svg { width: 17px; height: 17px; margin-top: 3px; }
+  .harmony-home .harmony-notice-empty { font-size: 14px; }
+  .harmony-home .harmony-shortcut { gap: 10px; padding: 13px 11px; min-height: 98px; border-radius: 18px; }
+  .harmony-home .harmony-shortcut-icon { font-size: 27px; }
+  .harmony-home .harmony-shortcut strong { font-size: 16px; }
+  .harmony-home .harmony-shortcut small { font-size: 9px; line-height: 1.6; margin-top: 3px; }
+  .harmony-home .harmony-section-heading .harmony-eyebrow { font-size: 9px; }
+  .harmony-home .harmony-section-heading h2 { font-size: 28px; }
+  .harmony-home .harmony-section-heading > p:last-child:not(.harmony-eyebrow) { font-size: 14px; }
+  .harmony-home .harmony-tabs { gap: 7px; margin-block: 16px 19px; }
+  .harmony-home .harmony-tabs > a { font-size: 14px; padding-inline: 10px; }
+  .harmony-home .harmony-story-grid { grid-template-columns: 1fr; gap: 19px; }
+  .harmony-home .harmony-story-cover { aspect-ratio: 1.65; }
+  .harmony-home .harmony-story-body { padding: 16px 19px 15px; }
+  .harmony-home .harmony-story-body h3 { font-size: 21px; }
+  .harmony-home .harmony-story-body > p { font-size: 14px; }
+  .harmony-home .harmony-week-column { grid-template-columns: 1fr; gap: 20px; }
+  .harmony-home .harmony-calendar { padding: 23px; }
+  .harmony-home .harmony-calendar-heading h2 { font-size: 26px; }
+  .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 9px; }
+  .harmony-home .harmony-calendar-heading > span { width: 42px; height: 42px; }
+  .harmony-home .harmony-calendar-empty { padding-block: 22px 18px; }
+  .harmony-home .harmony-daily { display: flex; gap: 17px; align-items: flex-start; padding: 23px; }
+  .harmony-home .harmony-daily-icon { width: 42px; height: 47px; font-size: 28px; flex-shrink: 0; margin: 3px 0 0; }
+  .harmony-home .harmony-daily .harmony-eyebrow { font-size: 8px; letter-spacing: .4px; }
+  .harmony-home .harmony-daily h2 { font-size: 23px; }
+  .harmony-home .harmony-daily p:not(.harmony-eyebrow) { font-size: 14px; }
+  .harmony-home .harmony-daily .harmony-button { width: auto; padding-inline: 13px; font-size: 14px; margin-top: 15px; }
+  .harmony-home .harmony-community { padding-block: 28px; }
+  .harmony-home .harmony-kindness { padding: 22px 24px; }
+  .harmony-home .harmony-kindness h2 { font-size: 27px; }
+  .harmony-home .harmony-kindness > p:not(.harmony-eyebrow) { font-size: 14px; }
+  .harmony-home .harmony-parent-stories .harmony-story-card { display: flex; }
+  .harmony-home .harmony-parent-stories .harmony-story-cover { aspect-ratio: 1.65; min-height: 0; height: auto; margin: 7px 7px 0; }
+  .harmony-home .harmony-parent-stories .harmony-story-body h3 { font-size: 21px; }
+  .harmony-home .harmony-parent-stories .harmony-story-body > p { font-size: 14px; }
+  .harmony-home .harmony-parent-stories .harmony-story-body { padding: 16px 19px 15px; }
+  .harmony-home .harmony-access { grid-template-columns: 1fr; gap: 25px; }
+  .harmony-home .harmony-access-copy { padding-inline: 4px; }
+  .harmony-home .harmony-access-book { font-size: 36px; margin-bottom: 13px; }
+  .harmony-home .harmony-access-copy h2 { font-size: 29px; }
+  .harmony-home .harmony-access-copy > p.harmony-privacy-note { font-size: 11px; }
+  .harmony-home .harmony-account-card { padding: 25px 23px; }
+  .harmony-home .harmony-account-card h3 { font-size: 24px; }
+  .harmony-home .harmony-footer-inner { grid-template-columns: 1fr; gap: 19px; padding-block: 27px; }
+  .harmony-home .harmony-footer .brand-copy strong { font-size: 18px; }
+  .harmony-home .harmony-footer .brand-copy > span { font-size: 7px; }
+  .harmony-home .harmony-footer-inner > div:first-child > p { font-size: 12px; margin-top: 10px; }
+  .harmony-home .harmony-footer nav { grid-template-columns: 1fr 1fr; gap: 0 17px; }
+  .harmony-home .harmony-footer nav > a { font-size: 14px; }
+}
+@media (max-width: 380px) {
+  .harmony-home .harmony-container { width: calc(100% - 32px); }
+  .harmony-home .brand-copy strong { font-size: 15px; }
+  .harmony-home .brand-copy > span { font-size: 5.5px; letter-spacing: .7px; }
+  .harmony-home .harmony-header .harmony-button { font-size: 14px; padding-inline: 9px; }
+  .harmony-home .harmony-hero h1 { font-size: 33px; letter-spacing: -1.1px; }
+  .harmony-home .harmony-hero-copy .harmony-eyebrow { font-size: 7px; }
+  .harmony-home .harmony-hero-note { font-size: 9px; }
+  .harmony-home .harmony-shortcut { gap: 8px; padding-inline: 9px; }
+  .harmony-home .harmony-shortcut strong { font-size: 15px; }
+  .harmony-home .harmony-shortcut-icon { font-size: 25px; }
+  .harmony-home .harmony-shortcut small { font-size: 8.5px; }
+  .harmony-home .harmony-daily { padding-inline: 19px; gap: 12px; }
+  .harmony-home .harmony-header.has-theme-settings .harmony-header-actions { gap: 4px; }
+  .harmony-home .harmony-header.has-theme-settings .theme-settings-shortcut { font-size: 14px; padding-inline: 6px; }
+  .harmony-home .harmony-header.has-theme-settings .button-quiet { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .harmony-home *, .harmony-home *::before, .harmony-home *::after { scroll-behavior: auto; transition: none !important; }
+}

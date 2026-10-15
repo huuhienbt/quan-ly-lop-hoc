@@ -4,7 +4,7 @@ import { afterEach, beforeEach, test } from "node:test";
 import {
   getSiteTheme, getSiteThemeSettings, SiteThemeActionError, updateSiteTheme,
 } from "../src/lib/site-theme.ts";
-import { siteThemeFormSchema, siteThemeUpdateSchema } from "../src/lib/theme-schemas.ts";
+import { siteThemeFormSchema, siteThemeSchema, siteThemes, siteThemeUpdateSchema } from "../src/lib/theme-schemas.ts";
 import { hashPassword } from "../src/lib/password.ts";
 import { createD1Fixture, insertUser } from "./d1-fixture.mjs";
 
@@ -79,7 +79,7 @@ test("migration retains Theme 1 until a verified administrator explicitly change
   assert.equal(audits().length, 0);
 });
 
-test("Theme 1 can be restored after Theme 2 without rewriting existing classroom data", async () => {
+test("all three themes can be selected and restored without rewriting existing classroom data", async () => {
   fixture.database.exec(`
     INSERT INTO academic_years (id, school_id, name, starts_on, ends_on)
       VALUES ('theme-year', 'school-ben-tre', 'Theme fixture year', '2026-09-01', '2027-05-31');
@@ -104,20 +104,43 @@ test("Theme 1 can be restored after Theme 2 without rewriting existing classroom
   assert.equal(discovery.theme, "discovery");
   assert.equal(discovery.revision, 2);
   assert.equal(await getSiteTheme(), "discovery");
-  const restored = await updateSiteTheme(administrator.id, { theme: "playful", revision: 2 });
+  const harmony = await updateSiteTheme(administrator.id, { theme: "harmony", revision: 2 });
+  assert.equal(harmony.theme, "harmony");
+  assert.equal(harmony.revision, 3);
+  assert.equal(await getSiteTheme(), "harmony");
+  const restored = await updateSiteTheme(administrator.id, { theme: "playful", revision: 3 });
   assert.equal(restored.theme, "playful");
-  assert.equal(restored.revision, 3);
+  assert.equal(restored.revision, 4);
   assert.equal(restored.updated_by, administrator.id);
   assert.equal(await getSiteTheme(), "playful");
+  const rediscovered = await updateSiteTheme(administrator.id, { theme: "discovery", revision: 4 });
+  assert.equal(rediscovered.theme, "discovery");
+  assert.equal(rediscovered.revision, 5);
+  assert.equal(await getSiteTheme(), "discovery");
   assert.deepEqual(otherDataSnapshot(), before);
   assert.equal(fixture.database.prepare("SELECT count(*) AS n FROM site_settings").get().n, 1);
   assert.deepEqual(audits().map(({ actor_user_id, entity_type, entity_id, details_json }) => ({
     actor_user_id, entity_type, entity_id, details: JSON.parse(details_json),
   })), [
     { actor_user_id: administrator.id, entity_type: "site_settings", entity_id: "site", details: { theme: "discovery", revision: 2 } },
-    { actor_user_id: administrator.id, entity_type: "site_settings", entity_id: "site", details: { theme: "playful", revision: 3 } },
+    { actor_user_id: administrator.id, entity_type: "site_settings", entity_id: "site", details: { theme: "harmony", revision: 3 } },
+    { actor_user_id: administrator.id, entity_type: "site_settings", entity_id: "site", details: { theme: "playful", revision: 4 } },
+    { actor_user_id: administrator.id, entity_type: "site_settings", entity_id: "site", details: { theme: "discovery", revision: 5 } },
   ]);
   assert.deepEqual(fixture.database.prepare("PRAGMA foreign_key_check").all(), []);
+});
+
+test("all persisted theme IDs have editor metadata and strictly parsed form values", () => {
+  assert.deepEqual(siteThemeSchema.options, ["playful", "discovery", "harmony"]);
+  assert.deepEqual(siteThemes.map(({ id }) => id), siteThemeSchema.options);
+  for (const theme of siteThemeSchema.options) {
+    assert.deepEqual(siteThemeFormSchema.parse({ theme, revision: "37" }), { theme, revision: 37 });
+    assert.deepEqual(siteThemeUpdateSchema.parse({ theme, revision: 37 }), { theme, revision: 37 });
+  }
+  const harmony = siteThemes.find(({ id }) => id === "harmony");
+  assert.equal(harmony.label, "Giao diện 3");
+  assert.equal(harmony.name, "Lớp học khám phá hạnh phúc");
+  assert.equal(harmony.preview, "/images/discovery-hero-3d.webp");
 });
 
 test("mutation checks current verified active Super Admin role in SQL", async () => {
@@ -129,12 +152,12 @@ test("mutation checks current verified active Super Admin role in SQL", async ()
   const initial = setting();
   for (const options of cases) {
     const user = seedUser(options);
-    await assert.rejects(updateSiteTheme(user.id, { theme: "discovery", revision: 1 }),
+    await assert.rejects(updateSiteTheme(user.id, { theme: "harmony", revision: 1 }),
       (error) => error instanceof SiteThemeActionError && error.kind === "forbidden");
     assert.deepEqual(setting(), initial);
   }
   for (const actorId of ["missing-user", "", null, 123, "' OR 1=1 --"]) {
-    await assert.rejects(updateSiteTheme(actorId, { theme: "discovery", revision: 1 }),
+    await assert.rejects(updateSiteTheme(actorId, { theme: "harmony", revision: 1 }),
       (error) => error instanceof SiteThemeActionError && error.kind === "forbidden");
   }
   assert.equal(audits().length, 0);
@@ -174,6 +197,8 @@ test("audit failure rolls back the theme and revision together", async () => {
 test("invalid theme, revision and extra fields are rejected before a mutation request", async () => {
   const badInputs = [
     { theme: "unknown", revision: 1 }, { theme: "DISCOVERY", revision: 1 },
+    { theme: "HARMONY", revision: 1 }, { theme: " harmony", revision: 1 },
+    { theme: "harmony", revision: Number.MAX_SAFE_INTEGER },
     { theme: "discovery", revision: "1" }, { theme: "discovery", revision: 0 },
     { theme: "discovery", revision: -1 }, { theme: "discovery", revision: 1.1 },
     { theme: "discovery", revision: true }, { theme: "discovery", revision: NaN },
@@ -259,6 +284,26 @@ test("the real action saves a verified Super Admin choice and revalidates all la
   assert.equal(stale.success, false);
   assert.match(stale.message, /tải lại/);
   assert.equal(setting().site_theme, "discovery");
+  assert.equal(audits().length, 1);
+  assert.deepEqual(revalidations, [["/", "layout"]]);
+});
+
+test("the real action applies Theme 3 and rejects stale requests for older themes", async () => {
+  requestSession = { user: { id: administrator.id } };
+  const result = await applySiteTheme({ success: false, message: "" }, themeForm({ theme: "harmony" }));
+  assert.equal(result.success, true);
+  assert.match(result.message, /Giao diện 3/);
+  assert.equal(setting().site_theme, "harmony");
+  assert.equal(setting().revision, 2);
+  assert.deepEqual(revalidations, [["/", "layout"]]);
+  assert.deepEqual(JSON.parse(audits()[0].details_json), { theme: "harmony", revision: 2 });
+  for (const theme of ["playful", "discovery"]) {
+    const stale = await applySiteTheme({ success: false, message: "" }, themeForm({ theme }));
+    assert.equal(stale.success, false);
+    assert.match(stale.message, /tải lại/);
+  }
+  assert.equal(setting().site_theme, "harmony");
+  assert.equal(setting().revision, 2);
   assert.equal(audits().length, 1);
   assert.deepEqual(revalidations, [["/", "layout"]]);
 });

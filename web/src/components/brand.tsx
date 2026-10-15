@@ -2,11 +2,12 @@ import Link from "next/link";
 import { getSiteTheme } from "@/lib/site-theme";
 
 export async function Brand({ compact = false }: { compact?: boolean }) {
-  const discovery = await getSiteTheme() === "discovery";
+  const theme = await getSiteTheme();
+  const storybook = theme === "discovery" || theme === "harmony";
   return (
     <Link href="/" className="brand" aria-label="Lớp học hạnh phúc — Trang chủ">
       <span className="brand-symbol" aria-hidden="true">
-        {discovery ? <svg viewBox="0 0 64 64" fill="none">
+        {storybook ? <svg viewBox="0 0 64 64" fill="none">
           <path d="M7 20c9-3 18-2 25 3 7-5 16-6 25-3v31c-9-3-18-2-25 3-7-5-16-6-25-3V20Z" fill="#FFFDF5" stroke="#18558B" strokeWidth="2.7" strokeLinejoin="round" />
           <path d="M12 24c6-1 11 0 16 3v20c-5-2-10-3-16-2V24Z" fill="#A6E2DE" /><path d="M52 24c-6-1-11 0-16 3v20c5-2 10-3 16-2V24Z" fill="#FFDE83" />
           <path d="M32 23v31M16 31l8 2M16 37l8 2M40 33l8-2M40 39l8-2" stroke="#18558B" strokeWidth="2" strokeLinecap="round" />

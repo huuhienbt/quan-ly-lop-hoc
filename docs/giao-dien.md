@@ -1,11 +1,12 @@
-# Hai giao diện của Lớp học hạnh phúc
+# Ba giao diện của Lớp học hạnh phúc
 
 ## Chọn giao diện
 
 1. Đăng nhập Google bằng tài khoản Super Admin.
 2. Chọn **Đổi giao diện** ở đầu trang chủ, trang biên tập hoặc trang quản trị;
    liên kết dẫn tới `/admin#giao-dien`.
-3. Chọn **Giao diện 1 – Lớp học vui nhộn** hoặc **Giao diện 2 – Thế giới khám phá**.
+3. Chọn **Giao diện 1 – Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá**
+   hoặc **Giao diện 3 – Lớp học khám phá hạnh phúc**.
 4. Chọn **Áp dụng giao diện**. Sau khi lưu thành công, trang tải lại để áp dụng.
 
 Lựa chọn được lưu trên D1 cho toàn website, dùng tiếp trên các thiết bị và lần
@@ -48,5 +49,18 @@ Mã nguồn riêng:
 lịch, dấu hoàn thành và phân quyền tiếp tục dùng dữ liệu hiện có.
 
 Đầu trang Giao diện 2 đã được thu gọn để các lối tắt và nội dung lớp xuất hiện
-sớm hơn. Định hướng kết hợp hai phong cách được lưu ở
-[Đề xuất Giao diện 3](giao-dien-3-de-xuat.md); đây chưa phải giao diện được áp dụng.
+sớm hơn.
+
+## Giao diện 3 – Lớp học khám phá hạnh phúc
+
+Kết hợp bố cục gọn, nút vàng và điểm nhấn hồng của Giao diện 1 với nền kem,
+xanh ngọc và minh họa cổ tích của Giao diện 2. Lời chào và tranh đứng cạnh nhau
+trên máy tính; thông báo mới, bốn lối tắt, bản tin và lịch được đưa lên trước.
+Trang học sinh, giáo viên và quản trị dùng cùng bảng màu, ưu tiên nội dung rõ ràng.
+
+Giao diện dùng mã `harmony`, có lớp CSS và thành phần trang chủ riêng để hai mẫu
+cũ tiếp tục hoạt động độc lập. Migration `0005_harmony_theme.sql` mở rộng danh
+sách giao diện, giữ nguyên lựa chọn hiện tại và lịch sử thay đổi. Chỉ khi quản trị
+áp dụng mẫu mới thì giao diện chung của website mới thay đổi.
+
+Chi tiết thiết kế: [Giao diện 3](giao-dien-3-de-xuat.md).

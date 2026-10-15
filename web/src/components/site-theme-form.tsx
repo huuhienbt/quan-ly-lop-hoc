@@ -33,7 +33,7 @@ export function SiteThemeForm({ settings }: { settings: SiteThemeSettings }) {
               <input type="radio" name="theme" value={theme.id} checked={selected === theme.id}
                 onChange={() => setSelected(theme.id)} aria-describedby={`theme-${theme.id}-description`} />
               <span className={`site-theme-preview theme-preview-${theme.id}`}>
-                <Image src={theme.preview} alt="" width={800} height={450} sizes="(max-width: 700px) 90vw, 45vw" />
+                <Image src={theme.preview} alt="" width={800} height={450} sizes="(max-width: 900px) 90vw, 30vw" />
                 <span className="site-theme-option-label">{theme.label}</span>
                 {settings.theme === theme.id && <span className="site-theme-current">Đang sử dụng</span>}
               </span>
@@ -47,7 +47,7 @@ export function SiteThemeForm({ settings }: { settings: SiteThemeSettings }) {
         </div>
       </fieldset>
       <div className="site-theme-form-bottom">
-        <p className="field-help">Áp dụng cho toàn bộ website. Bạn có thể chọn lại Giao diện 1 bất cứ lúc nào; dữ liệu và tài khoản được giữ nguyên.</p>
+        <p className="field-help">Áp dụng cho toàn bộ website. Cả ba giao diện luôn được lưu để đổi lại; dữ liệu và tài khoản được giữ nguyên.</p>
         <button className="button button-primary" type="submit" disabled={pending || state.success}>{pending ? "Đang áp dụng…" : state.success ? "Đã lưu giao diện" : "Áp dụng giao diện"}</button>
       </div>
       {state.message && <p className={`form-message ${state.success ? "is-success" : "is-error"}`} role={state.success ? "status" : "alert"}>{state.message}</p>}

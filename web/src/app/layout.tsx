@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { getSiteTheme } from "@/lib/site-theme";
 import "./globals.css";
 import "./discovery-portals.css";
+import "./harmony-portals.css";
 
 export const dynamic = "force-dynamic";
 

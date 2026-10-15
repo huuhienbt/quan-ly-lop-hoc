@@ -4,6 +4,7 @@ import { Brand } from "@/components/brand";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
+import { HarmonyHome } from "@/components/harmony-home";
 import { PostCard, categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
 import { getPublicBulletin } from "@/lib/class-content";
@@ -15,6 +16,7 @@ import { getSiteTheme } from "@/lib/site-theme";
 import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import "./bulletin.css";
 import "./discovery-home.css";
+import "./harmony-home.css";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +38,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   const parentPosts = bulletin.posts.filter((post) => post.category === "PARENT_GUIDE").slice(0, 2);
   const authError = typeof query.error === "string";
 
-  if (await getSiteTheme() === "discovery") {
+  const theme = await getSiteTheme();
+  if (theme === "harmony") {
+    return <HarmonyHome bulletin={bulletin} unavailable={unavailable} selected={selected} query={query} user={user} studentSignedIn={Boolean(student)} setupReady={setup.ready} />;
+  }
+  if (theme === "discovery") {
     return <DiscoveryHome bulletin={bulletin} unavailable={unavailable} selected={selected} query={query} user={user} studentSignedIn={Boolean(student)} setupReady={setup.ready} />;
   }
 

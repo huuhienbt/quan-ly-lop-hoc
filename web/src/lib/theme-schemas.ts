@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const siteThemeSchema = z.enum(["playful", "discovery"]);
+export const siteThemeSchema = z.enum(["playful", "discovery", "harmony"]);
 export type SiteTheme = z.output<typeof siteThemeSchema>;
 
 // A successful compare-and-swap increments this number once.
@@ -54,5 +54,13 @@ export const siteThemes: ReadonlyArray<{
     description: "Xanh trời, xanh ngọc và những cuộc phiêu lưu trong thế giới cổ tích.",
     preview: "/images/discovery-hero-3d.webp",
     colors: ["#a6def5", "#30aa91", "#ffd34f"],
+  },
+  {
+    id: "harmony",
+    label: "Giao diện 3",
+    name: "Lớp học khám phá hạnh phúc",
+    description: "Đầu trang gọn, tin lớp dễ tìm; kết hợp sắc màu vui tươi và thế giới khám phá.",
+    preview: "/images/discovery-hero-3d.webp",
+    colors: ["#219b8a", "#175d9b", "#ffda53"],
   },
 ];

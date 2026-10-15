@@ -42,10 +42,12 @@ Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh
 
 ## Giao diện
 
-Hai giao diện có thể chuyển qua lại tại `/admin#giao-dien`: **Giao diện 1 –
-Lớp học vui nhộn** và **Giao diện 2 – Thế giới khám phá**. Lựa chọn lưu trên D1,
+Ba giao diện có thể chuyển qua lại tại `/admin#giao-dien`: **Giao diện 1 –
+Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá** và **Giao diện 3 –
+Lớp học khám phá hạnh phúc**. Lựa chọn lưu trên D1,
 chỉ Super Admin được đổi và không cần redeploy. Bản nguồn Giao diện 1 còn được
-giữ với tag GitHub `giao-dien-1`. Xem [cách đổi và giữ hai giao diện](docs/giao-dien.md).
+giữ với tag GitHub `giao-dien-1`. Migration `0005_harmony_theme.sql` thêm lựa chọn
+thứ ba và giữ nguyên cấu hình hiện có. Xem [cách đổi và giữ ba giao diện](docs/giao-dien.md).
 
 Phong cách hoạt hình 3D với xanh dương, vàng và hồng, thẻ pastel bo tròn,
 phông Nunito hỗ trợ tiếng Việt. Ảnh minh họa và phông chữ được lưu cùng mã

@@ -1,7 +1,7 @@
 .site-theme-panel { margin: 0 0 30px; scroll-margin-top: 110px; }
 .site-theme-panel .panel-body { padding: 24px; }
 .site-theme-form fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
-.site-theme-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.site-theme-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
 .site-theme-option { position: relative; display: block; overflow: hidden; border: 2px solid #d4e9eb; border-radius: 23px; background: #fff; cursor: pointer; transition: border-color .18s, box-shadow .18s, transform .18s; }
 .site-theme-option:hover { border-color: #39a894; transform: translateY(-2px); }
 .site-theme-option.is-selected { border-color: #128d79; box-shadow: 0 0 0 3px #bfeee2; }
@@ -9,11 +9,14 @@
 .site-theme-option:has(input:focus-visible) { outline: 3px solid #135ca0; outline-offset: 5px; }
 .site-theme-preview { position: relative; display: block; aspect-ratio: 2.55; overflow: hidden; background: #d1edfa; }
 .site-theme-preview.theme-preview-discovery { background: #c9f5ed; }
+.site-theme-preview.theme-preview-harmony::before { content: "Vui học hôm nay.\A Khám phá ngày mai."; position: absolute; left: 12px; top: 47%; width: 44%; white-space: pre-line; color: #175d9b; font-size: 13px; font-weight: 950; line-height: 1.5; }
+.site-theme-preview.theme-preview-harmony > img { width: 50%; margin-left: auto; object-position: center 73%; border-radius: 0 0 0 35%; }
+.site-theme-preview.theme-preview-harmony { background: #e8faf5; }
 .site-theme-preview > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 46%; }
 .site-theme-option-label { position: absolute; top: 14px; left: 14px; padding: 5px 12px; border-radius: 30px; color: #155884; background: #fff8e8; font-size: .8rem; font-weight: 800; box-shadow: 0 3px 10px #113c5b15; }
 .site-theme-current { position: absolute; bottom: 12px; left: 14px; padding: 4px 11px; border-radius: 20px; color: #fff; background: #127a69; font-size: .72rem; font-weight: 800; }
 .site-theme-option-body { display: block; padding: 19px 20px 18px; }
-.site-theme-option-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #155884; font-size: 1.08rem; }
+.site-theme-option-heading { display: flex; min-height: 52px; align-items: center; justify-content: space-between; gap: 12px; color: #155884; font-size: 1.08rem; }
 .site-theme-check { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: 0 0 24px; border-radius: 50%; color: transparent; background: #edf4f6; font-size: 15px; }
 .site-theme-option.is-selected .site-theme-check { color: #fff; background: #128d79; }
 .site-theme-description { display: block; margin-top: 8px; color: #536b7b; font-size: .88rem; line-height: 1.6; }
@@ -23,6 +26,11 @@
 .site-theme-form-bottom > p { max-width: 650px; margin: 0; }
 .site-theme-form-bottom > button { flex-shrink: 0; }
 .site-theme-form fieldset:disabled .site-theme-option { cursor: wait; transform: none; opacity: .8; }
+@media (max-width: 900px) {
+  .site-theme-options { grid-template-columns: 1fr; }
+  .site-theme-option-heading { min-height: 0; }
+  .site-theme-preview { aspect-ratio: 3; }
+}
 @media (max-width: 700px) {
   .site-theme-panel .panel-body { padding: 18px; }
   .site-theme-options { grid-template-columns: 1fr; gap: 18px; }
