@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const nunito = localFont({
+  src: "./fonts/Nunito-Variable.ttf",
+  variable: "--font-nunito",
+  weight: "200 1000",
+  display: "swap",
+  fallback: ["Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://e-class-vinhlong.vercel.app"),
@@ -13,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="vi" data-scroll-behavior="smooth">
+    <html lang="vi" className={nunito.variable} data-scroll-behavior="smooth">
       <body>
         <a className="skip-link" href="#noi-dung">Bỏ qua đến nội dung chính</a>
         {children}

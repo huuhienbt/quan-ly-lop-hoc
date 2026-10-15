@@ -19,7 +19,7 @@ export function PostArtwork({ category }: { category: PostCategory }) {
 }
 
 export function PostCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
-  return <article className={`bulletin-card${compact ? " is-compact" : ""}`}>
+  return <article className={`bulletin-card card-${post.category.toLowerCase()}${compact ? " is-compact" : ""}`}>
     <Link href={`/ban-tin/${post.id}`} className="bulletin-cover-link" tabIndex={-1} aria-hidden="true">
       {post.cover_url ? <Image className="bulletin-cover" src={post.cover_url} alt="" width={720} height={400} unoptimized /> : <PostArtwork category={post.category} />}
     </Link>

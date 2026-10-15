@@ -40,6 +40,13 @@ giữ trạng thái. Lịch cụ thể do thầy cô nhập. Có thể dùng `sc
 đã có, không tạo sự kiện hoặc ngày hẹn giả. Không chạy script này tự động khi setup.
 Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh.md).
 
+## Giao diện
+
+Phong cách hoạt hình 3D với xanh dương, vàng và hồng, thẻ pastel bo tròn,
+phông Nunito hỗ trợ tiếng Việt. Ảnh minh họa và phông chữ được lưu cùng mã
+nguồn; không cần thêm dịch vụ ảnh hoặc Google Fonts khi chạy ứng dụng.
+Xem [cấu trúc giao diện và tài nguyên](docs/giao-dien-hoat-hinh.md).
+
 ## Chạy local
 
 Dùng Node.js 24. Từ checkout hiện có, không tạo repository/worktree mới:
