@@ -36,6 +36,7 @@ export const siteThemes: ReadonlyArray<{
   label: string;
   name: string;
   description: string;
+  updateNote?: string;
   preview: string;
   colors: readonly [string, string, string];
 }> = [
@@ -51,7 +52,8 @@ export const siteThemes: ReadonlyArray<{
     id: "discovery",
     label: "Giao diện 2",
     name: "Thế giới khám phá",
-    description: "Xanh trời, xanh ngọc và những cuộc phiêu lưu trong thế giới cổ tích.",
+    description: "Xanh trời, xanh ngọc và thế giới cổ tích; đầu trang gọn để xem nội dung lớp sớm hơn.",
+    updateNote: "Tranh đầu trang đã thu gọn",
     preview: "/images/discovery-hero-3d.webp",
     colors: ["#a6def5", "#30aa91", "#ffd34f"],
   },

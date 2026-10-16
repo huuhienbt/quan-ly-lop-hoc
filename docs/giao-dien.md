@@ -50,6 +50,9 @@ lịch, dấu hoàn thành và phân quyền tiếp tục dùng dữ liệu hi�
 
 Đầu trang Giao diện 2 đã được thu gọn để các lối tắt và nội dung lớp xuất hiện
 sớm hơn.
+Trong **Không gian quản trị → Giao diện website**, thẻ **Giao diện 2** có nhãn
+**Tranh đầu trang đã thu gọn** và ảnh xem trước khớp cách cắt tranh của bản này.
+Chọn thẻ rồi bấm **Áp dụng giao diện** để lưu lựa chọn cho toàn website.
 
 ### Backup Giao diện 2 đã thu nhỏ tranh
 

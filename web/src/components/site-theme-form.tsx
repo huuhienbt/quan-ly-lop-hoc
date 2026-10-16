@@ -31,7 +31,7 @@ export function SiteThemeForm({ settings }: { settings: SiteThemeSettings }) {
           {siteThemes.map((theme) => (
             <label className={`site-theme-option ${selected === theme.id ? "is-selected" : ""}`} key={theme.id}>
               <input type="radio" name="theme" value={theme.id} checked={selected === theme.id}
-                onChange={() => setSelected(theme.id)} aria-describedby={`theme-${theme.id}-description`} />
+                onChange={() => setSelected(theme.id)} aria-describedby={`theme-${theme.id}-description${theme.updateNote ? ` theme-${theme.id}-update` : ""}`} />
               <span className={`site-theme-preview theme-preview-${theme.id}`}>
                 <Image src={theme.preview} alt="" width={800} height={450} sizes="(max-width: 900px) 90vw, 30vw" />
                 <span className="site-theme-option-label">{theme.label}</span>
@@ -40,6 +40,7 @@ export function SiteThemeForm({ settings }: { settings: SiteThemeSettings }) {
               <span className="site-theme-option-body">
                 <span className="site-theme-option-heading"><strong>{theme.name}</strong><span className="site-theme-check" aria-hidden="true">✓</span></span>
                 <span className="site-theme-description" id={`theme-${theme.id}-description`}>{theme.description}</span>
+                {theme.updateNote && <span className="site-theme-update-note" id={`theme-${theme.id}-update`}>{theme.updateNote}</span>}
                 <span className="site-theme-colors" aria-hidden="true">{theme.colors.map((color) => <span style={{ background: color }} key={color} />)}</span>
               </span>
             </label>
