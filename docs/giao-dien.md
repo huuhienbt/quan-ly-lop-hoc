@@ -51,6 +51,22 @@ lịch, dấu hoàn thành và phân quyền tiếp tục dùng dữ liệu hi�
 Đầu trang Giao diện 2 đã được thu gọn để các lối tắt và nội dung lớp xuất hiện
 sớm hơn.
 
+### Backup Giao diện 2 đã thu nhỏ tranh
+
+Bản đã thu gọn được lưu riêng trên GitHub với tag
+[`giao-dien-2-thu-nho`](https://github.com/huuhienbt/quan-ly-lop-hoc/tree/giao-dien-2-thu-nho).
+[Tải bản sao mã nguồn ZIP](https://github.com/huuhienbt/quan-ly-lop-hoc/archive/refs/tags/giao-dien-2-thu-nho.zip).
+Tranh đầu trang cao 480–560 px trên máy tính, 525 px trên máy tính bảng và
+490 px trên điện thoại. Các ảnh minh họa gốc vẫn được giữ cùng mã nguồn.
+
+Tag `giao-dien-2` cũ được giữ nguyên để lưu phiên bản trước khi thu gọn.
+Bản backup mới chứa toàn bộ mã nguồn ở thời điểm lưu, gồm cả ba giao diện,
+trò chơi và chức năng chọn ảnh từ thiết bị. Dữ liệu D1 và cấu hình bí mật
+không nằm trong bản sao mã nguồn này.
+
+Để sử dụng lại thiết kế đã thu nhỏ, chọn **Giao diện 2 – Thế giới khám phá**
+trong `/admin#giao-dien`; lựa chọn này không cần khôi phục mã nguồn cũ.
+
 ## Giao diện 3 – Lớp học khám phá hạnh phúc
 
 Kết hợp bố cục gọn, nút vàng và điểm nhấn hồng của Giao diện 1 với nền kem,
