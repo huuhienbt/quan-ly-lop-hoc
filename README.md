@@ -40,6 +40,11 @@ giữ trạng thái. Lịch cụ thể do thầy cô nhập. Có thể dùng `sc
 đã có, không tạo sự kiện hoặc ngày hẹn giả. Không chạy script này tự động khi setup.
 Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh.md).
 
+Biểu mẫu bài viết có **Chọn ảnh từ thiết bị**, xem trước, thay/bỏ ảnh và tùy
+chọn dán liên kết HTTPS. Migration `0006_post_images.sql` lưu ảnh WebP đã tối
+ưu cùng bài trong D1; ảnh riêng được kiểm tra quyền trước mỗi lượt tải. Nhận
+JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịch vụ lưu ảnh.
+
 ## Giao diện
 
 Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)

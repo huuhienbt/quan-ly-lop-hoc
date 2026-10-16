@@ -1,10 +1,12 @@
 import "server-only";
 
 import { batch, query, type D1Statement } from "@/lib/d1";
+import { normalizePostImage, postImageUrl } from "@/lib/post-images";
 import {
   archiveContentSchema,
   eventSchema,
   getVietnamDateWindow,
+  managedPostImagePattern,
   postSchema,
   taskSchema,
   toggleTaskSchema,
@@ -179,34 +181,61 @@ function staffAudit(
   };
 }
 
-export async function savePost(actorId: string, input: PostInput): Promise<string> {
+export async function savePost(actorId: string, input: PostInput, upload?: File): Promise<string> {
   const parsed = postSchema.safeParse(input);
   if (!parsed.success) throw new ContentActionError("Nội dung bài viết không hợp lệ.");
   input = parsed.data;
   const id = input.id ?? crypto.randomUUID();
   const now = new Date().toISOString();
+  // Avoid decoding files for an unassigned or revoked account. The batch below
+  // repeats the authorization check to handle permissions changing meanwhile.
+  if (upload && !(await query<{ id: string }>(`SELECT c.id FROM classes c
+      JOIN schools school ON school.id = c.school_id
+      WHERE c.id = ? AND ${activeClass} AND ${staffAccess}`, [input.class_id, actorId])).length) {
+    throw new ContentActionError("Bạn không có quyền biên tập lớp này.");
+  }
+  const image = upload ? await normalizePostImage(upload) : null;
+  const imageId = image ? crypto.randomUUID() : null;
+  const coverUrl = imageId ? postImageUrl(imageId) : input.cover_url || null;
+  // A pasted managed URL may only reuse an image belonging to this class.
+  const existingImage = !image && !!coverUrl && managedPostImagePattern.test(coverUrl);
+  const imageGuard = existingImage
+    ? "AND EXISTS (SELECT 1 FROM post_images image WHERE image.id = ? AND image.class_id = c.id)" : "";
+  const imageGuardParams = existingImage ? [coverUrl!.split("/").at(-1)!] : [];
   const statement: D1Statement = input.id ? {
     sql: `UPDATE posts SET title = ?, body = ?, kind = ?, category = ?, cover_url = ?,
         status = ?, visibility = ?, is_pinned = ?,
         published_at = CASE WHEN ? = 'PUBLISHED' THEN COALESCE(published_at, ?) ELSE NULL END, updated_at = ?
       WHERE id = ? AND class_id = ? AND status <> 'ARCHIVED'
         AND EXISTS (SELECT 1 FROM classes c JOIN schools school ON school.id = c.school_id
-          WHERE c.id = posts.class_id AND ${activeClass} AND ${staffAccess})`,
-    params: [input.title, input.body, input.kind, input.category, input.cover_url || null,
-      input.status, input.visibility, Number(input.is_pinned), input.status, now, now, id, input.class_id, actorId],
+          WHERE c.id = posts.class_id AND ${activeClass} AND ${staffAccess} ${imageGuard})`,
+    params: [input.title, input.body, input.kind, input.category, coverUrl,
+      input.status, input.visibility, Number(input.is_pinned), input.status, now, now, id, input.class_id, actorId, ...imageGuardParams],
   } : {
     sql: `INSERT INTO posts
         (id, class_id, author_id, title, body, kind, category, cover_url, status, visibility, is_pinned, published_at, created_at, updated_at)
       SELECT ?, c.id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM classes c
       JOIN schools school ON school.id = c.school_id
-      WHERE c.id = ? AND ${activeClass} AND ${staffAccess}`,
-    params: [id, actorId, input.title, input.body, input.kind, input.category, input.cover_url || null,
+      WHERE c.id = ? AND ${activeClass} AND ${staffAccess} ${imageGuard}`,
+    params: [id, actorId, input.title, input.body, input.kind, input.category, coverUrl,
       input.status, input.visibility, Number(input.is_pinned), input.status === "PUBLISHED" ? now : null, now, now,
-      input.class_id, actorId],
+      input.class_id, actorId, ...imageGuardParams],
   };
-  const results = await batch([statement, staffAudit(actorId, input.class_id,
+  const statements: D1Statement[] = [statement];
+  if (image && imageId) statements.push({
+    // changes() refers to the preceding post write. Failed edits create no
+    // orphan image, and any constraint error rolls back the entire D1 batch.
+    sql: `INSERT INTO post_images
+        (id, class_id, uploaded_by, content_type, byte_size, width, height, data_base64, created_at)
+      SELECT ?, class_id, ?, ?, ?, ?, ?, ?, ? FROM posts
+      WHERE changes() > 0 AND id = ? AND class_id = ? AND cover_url = ?`,
+    params: [imageId, actorId, image.contentType, image.byteSize, image.width, image.height,
+      image.dataBase64, now, id, input.class_id, coverUrl],
+  });
+  statements.push(staffAudit(actorId, input.class_id,
     input.id ? "POST_UPDATED" : "POST_CREATED", "post", id,
-    { category: input.category, status: input.status, visibility: input.visibility })]);
+    { category: input.category, status: input.status, visibility: input.visibility, image_uploaded: !!image }));
+  const results = await batch(statements);
   if (!results[0]?.meta.changes) throw new ContentActionError("Bài viết/lớp không còn khả dụng hoặc bạn không có quyền biên tập lớp này.");
   return id;
 }

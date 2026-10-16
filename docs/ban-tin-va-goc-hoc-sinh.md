@@ -12,17 +12,41 @@ hòm thư, album hay tiện ích của các giai đoạn sau.
    tài khoản để quản lý trường và biên tập lớp Bốn 12.
 3. Chọn đúng lớp trước khi tạo bài, lịch hoặc việc cần làm.
 
-Bài viết có tiêu đề, nội dung, loại bài, chủ đề, ảnh bìa HTTPS tùy chọn và trạng
+Bài viết có tiêu đề, nội dung, loại bài, chủ đề, ảnh bìa tùy chọn và trạng
 thái. Bản nháp chỉ dành cho người biên tập. Chọn **Công khai** và **Xuất bản**
 để xuất hiện trên trang chủ; chọn **Trong lớp** để chỉ học sinh đã liên kết xem.
 Việc công khai một bài chỉ áp dụng cho bài đó; hồ sơ, số điện thoại và checklist
 của học sinh vẫn nằm trong khu vực đăng nhập.
 
 Thầy cô có thể ghim thông báo, chỉnh sửa bài và lưu trữ nội dung không còn dùng.
-Lưu trữ ẩn nội dung khỏi người đọc nhưng giữ lịch sử trong cơ sở dữ liệu. Ảnh bìa
-dùng liên kết ảnh có sẵn; tính năng tải ảnh lên và quản lý album thuộc phần sau.
+Lưu trữ ẩn nội dung khỏi người đọc nhưng giữ lịch sử trong cơ sở dữ liệu.
 Góc điều tử tế ưu tiên bài đăng trong tuần; nếu chưa có bài mới, lời nhắn gần
 nhất tiếp tục hiển thị cho đến khi thầy cô thay thế hoặc lưu trữ.
+
+## Chọn ảnh từ thiết bị
+
+Trong biểu mẫu tạo hoặc chỉnh sửa bài viết, chọn **Chọn ảnh từ thiết bị**,
+chọn ảnh rồi kiểm tra phần xem trước. Bấm **Lưu bài viết** hoặc **Lưu thay đổi
+bài viết** để lưu cả nội dung và ảnh. Có thể chọn ảnh khác, **Bỏ ảnh**, hoặc
+tiếp tục dùng mục **Hoặc dán liên kết ảnh** với đường dẫn HTTPS.
+
+Nhận JPG, PNG hoặc WebP tối đa 20 MB; ảnh HEIC cần đổi sang JPG trước.
+Trình duyệt thu gọn ảnh trước khi gửi. Nếu tệp mới lỗi, lựa chọn ảnh trước đó
+được giữ lại. Ảnh chưa được lưu cho đến khi bài viết lưu thành công.
+
+Ảnh đã tải lên có cùng phạm vi xem với bài viết: bài công khai đã xuất bản cho
+mọi người xem, bài trong lớp chỉ cho học sinh liên kết và thầy cô có quyền.
+Ảnh cũng xuất hiện khi mở nội dung trong góc học sinh. Chuyển bài về riêng tư,
+bản nháp hoặc lưu trữ sẽ chặn lượt tải ảnh công khai tiếp theo.
+
+Triển khai dùng migration `0006_post_images.sql`, không cần khóa hay dịch vụ
+lưu ảnh mới. Server kiểm tra lại dữ liệu ảnh, loại EXIF/GPS và lưu WebP tối đa
+256 KiB, cạnh tối đa 1600 px trong D1. Bài viết, ảnh và nhật ký được ghi trong
+cùng giao dịch; lỗi ghi không để lại ảnh mồ côi. API `/api/post-images/[id]`
+kiểm tra quyền hiện hành và trả `private, no-store`; các thẻ `Image` dùng
+`unoptimized` để gửi cookie trực tiếp tới API. Không đặt ảnh riêng qua bộ tối ưu
+ảnh công khai. Ảnh cũ đã thay được giữ trong D1 nhưng không còn công khai khi
+không có bài công khai nào tham chiếu; chưa có album hoặc công cụ dọn ảnh cũ.
 
 ## Lịch và nhắc việc
 

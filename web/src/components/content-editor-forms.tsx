@@ -3,6 +3,7 @@
 import { useActionState, useId, useState } from "react";
 import { archiveContentAction, saveEventAction, savePostAction, saveTaskAction, type ContentActionState } from "@/app/teacher/actions";
 import type { ClassEvent, ClassTask, ContentPost } from "@/lib/content-schemas";
+import { PostImagePicker } from "@/components/post-image-picker";
 
 const emptyState: ContentActionState = { success: false, message: "" };
 type EditorAction = (state: ContentActionState, formData: FormData) => Promise<ContentActionState>;
@@ -45,18 +46,29 @@ interface PostValues { title: string; body: string; kind: string; category: stri
 
 export function PostEditorForm({ classId, post }: { classId: string; post?: ContentPost }) {
   const prefix = useId();
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [processingImage, setProcessingImage] = useState(false);
+  const [imageReset, setImageReset] = useState(0);
   const initial: PostValues = { title: post?.title ?? "", body: post?.body ?? "", kind: post?.kind ?? "NEWS", category: post?.category ?? "GENERAL", cover_url: post?.cover_url ?? "", status: post?.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT", isPublic: post?.visibility === "PUBLIC", is_pinned: post?.is_pinned === 1 };
-  const { values, setField, state, formAction, pending } = useEditorState(savePostAction, initial, !post);
-  return <form className="teacher-editor-form" action={formAction} data-content-form="post" data-mode={post ? "edit" : "create"} aria-busy={pending}>
+  const { values, setField, state, formAction, pending } = useEditorState(async (previous, formData) => {
+    if (selectedImage) formData.set("cover_image", selectedImage);
+    const result = await savePostAction(previous, formData);
+    if (result.success) {
+      setSelectedImage(null);
+      setImageReset((value) => value + 1);
+    }
+    return result;
+  }, initial, !post);
+  return <form className="teacher-editor-form" action={formAction} onSubmit={(event) => { if (processingImage) event.preventDefault(); }} data-content-form="post" data-mode={post ? "edit" : "create"} aria-busy={pending || processingImage}>
     <input type="hidden" name="class_id" value={classId} />{post && <input type="hidden" name="id" value={post.id} />}
     <fieldset disabled={pending}><legend className="sr-only">{post ? "Chỉnh sửa bài viết" : "Tạo bài viết mới"}</legend>
       <div className="teacher-field"><label htmlFor={`${prefix}-title`}>Tiêu đề bài viết</label><input id={`${prefix}-title`} name="title" required maxLength={200} value={values.title} onChange={(event) => setField("title", event.target.value)} placeholder="Một câu chuyện nhỏ, một niềm vui lớn…" {...inputErrors(state, "title", prefix)} /><FieldError state={state} name="title" prefix={prefix} /></div>
       <div className="teacher-form-row"><div className="teacher-field"><label htmlFor={`${prefix}-kind`}>Loại bài viết</label><select id={`${prefix}-kind`} name="kind" value={values.kind} onChange={(event) => setField("kind", event.target.value)} {...inputErrors(state, "kind", prefix)}><option value="NEWS">Bảng tin</option><option value="ANNOUNCEMENT">Thông báo</option><option value="ACTIVITY">Hoạt động</option></select><FieldError state={state} name="kind" prefix={prefix} /></div><div className="teacher-field"><label htmlFor={`${prefix}-category`}>Chuyên mục</label><select id={`${prefix}-category`} name="category" value={values.category} onChange={(event) => setField("category", event.target.value)} {...inputErrors(state, "category", prefix)}><option value="GENERAL">Tin chung</option><option value="CLASS_STORY">Chuyện lớp mình</option><option value="KINDNESS">Điều tử tế</option><option value="PARENT_GUIDE">Đồng hành cùng con</option><option value="DISCOVERY">Góc khám phá</option></select><FieldError state={state} name="category" prefix={prefix} /></div></div>
       <div className="teacher-field"><label htmlFor={`${prefix}-body`}>Nội dung bài viết</label><textarea id={`${prefix}-body`} name="body" required maxLength={20000} rows={7} value={values.body} onChange={(event) => setField("body", event.target.value)} placeholder="Thầy cô chia sẻ câu chuyện, thông báo hoặc hoạt động của lớp tại đây." {...inputErrors(state, "body", prefix)} /><FieldError state={state} name="body" prefix={prefix} /></div>
-      <div className="teacher-field"><label htmlFor={`${prefix}-cover`}>Liên kết ảnh bìa <span>(không bắt buộc)</span></label><input id={`${prefix}-cover`} name="cover_url" type="url" pattern="https://.*" maxLength={2048} value={values.cover_url} onChange={(event) => setField("cover_url", event.target.value)} placeholder="https://…" {...inputErrors(state, "cover_url", prefix)} /><p className="teacher-field-help">Dùng liên kết ảnh bắt đầu bằng https://. Bỏ trống nếu bài viết chưa cần ảnh.</p><FieldError state={state} name="cover_url" prefix={prefix} /></div>
+      <PostImagePicker prefix={prefix} coverUrl={values.cover_url} onCoverUrlChange={(value) => setField("cover_url", value)} onFileChange={setSelectedImage} onProcessingChange={setProcessingImage} disabled={pending} error={state.fieldErrors?.cover_url?.join(" ")} resetKey={imageReset} />
       <PublicationFields prefix={prefix} state={state} status={values.status} isPublic={values.isPublic} onStatus={(value) => setField("status", value)} onVisibility={(value) => setField("isPublic", value)} noun="bài viết" />
       <label className="teacher-checkbox"><input type="checkbox" name="is_pinned" checked={values.is_pinned} onChange={(event) => setField("is_pinned", event.target.checked)} /> Ghim bài viết lên đầu bảng tin</label><FieldError state={state} name="is_pinned" prefix={prefix} />
-      <Feedback state={state} /><button className="button button-primary full-width teacher-submit" type="submit">{pending ? "Đang lưu bài viết…" : post ? "Lưu thay đổi bài viết" : "Lưu bài viết"}</button>
+      <Feedback state={state} /><button className="button button-primary full-width teacher-submit" type="submit" disabled={processingImage}>{processingImage ? "Đang chuẩn bị ảnh…" : pending ? "Đang lưu bài viết…" : post ? "Lưu thay đổi bài viết" : "Lưu bài viết"}</button>
     </fieldset>
   </form>;
 }

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/rbac";
 import { archiveContent, ContentActionError, saveEvent, savePost, saveTask } from "@/lib/class-content";
 import { archiveContentSchema, eventSchema, postSchema, taskSchema } from "@/lib/content-schemas";
+import { PostImageValidationError } from "@/lib/post-images";
 
 export interface ContentActionState {
   success: boolean;
@@ -15,8 +16,9 @@ export interface ContentActionState {
 async function runContentAction<T extends z.ZodType>(
   formData: FormData,
   schema: T,
-  mutate: (actorId: string, input: z.output<T>) => Promise<unknown>,
+  mutate: (actorId: string, input: z.output<T>, image?: File) => Promise<unknown>,
   message: string,
+  acceptsImage = false,
 ): Promise<ContentActionState> {
   let actor;
   try { actor = await getCurrentUser(); }
@@ -28,7 +30,11 @@ async function runContentAction<T extends z.ZodType>(
   if (new Set(entries.map(([key]) => key)).size !== entries.length) {
     return { success: false, message: "Biểu mẫu chứa thông tin bị lặp. Thầy cô hãy tải lại trang và thử lại." };
   }
-  const parsed = schema.safeParse(Object.fromEntries(entries));
+  const image = acceptsImage ? formData.get("cover_image") : null;
+  if (image !== null && (!(image instanceof File) || image.size === 0)) {
+    return { success: false, message: "Thầy cô hãy chọn lại ảnh từ thiết bị.", fieldErrors: { cover_url: ["Tệp ảnh không hợp lệ."] } };
+  }
+  const parsed = schema.safeParse(Object.fromEntries(entries.filter(([key]) => !(acceptsImage && key === "cover_image"))));
   if (!parsed.success) {
     const fieldErrors: Record<string, string[]> = {};
     for (const issue of parsed.error.issues) {
@@ -36,8 +42,9 @@ async function runContentAction<T extends z.ZodType>(
     }
     return { success: false, message: "Thầy cô hãy kiểm tra lại các thông tin đã nhập.", fieldErrors };
   }
-  try { await mutate(actor.id, parsed.data); }
+  try { await mutate(actor.id, parsed.data, image instanceof File ? image : undefined); }
   catch (error) {
+    if (error instanceof PostImageValidationError) return { success: false, message: error.message, fieldErrors: { cover_url: [error.message] } };
     return { success: false, message: error instanceof ContentActionError ? error.message : "Chưa thể lưu nội dung. Thầy cô hãy thử lại sau." };
   }
   revalidatePath("/");
@@ -48,7 +55,7 @@ async function runContentAction<T extends z.ZodType>(
 }
 
 export async function savePostAction(_previous: ContentActionState, formData: FormData): Promise<ContentActionState> {
-  return runContentAction(formData, postSchema, savePost, "Đã lưu bài viết.");
+  return runContentAction(formData, postSchema, savePost, "Đã lưu bài viết.", true);
 }
 
 export async function saveEventAction(_previous: ContentActionState, formData: FormData): Promise<ContentActionState> {

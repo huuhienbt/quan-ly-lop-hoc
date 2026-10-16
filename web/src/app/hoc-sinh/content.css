@@ -252,3 +252,5 @@
   .student-content-page *::before,
   .student-content-page *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+.student-post-cover { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; border-radius: 16px; margin: 18px 0; background: #f1f8f7; }

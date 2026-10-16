@@ -14,6 +14,8 @@ export type PostCategory = typeof postCategories[number];
 export type ContentVisibility = "PUBLIC" | "PRIVATE";
 export type PublicationStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
+export const managedPostImagePattern = /^\/api\/post-images\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
 export const postSchema = z.object({
   id: id.optional(),
   class_id: id,
@@ -23,6 +25,7 @@ export const postSchema = z.object({
   category: z.enum(postCategories),
   cover_url: z.union([
     z.literal(""),
+    z.string().regex(managedPostImagePattern, "Ảnh đã tải lên không hợp lệ."),
     z.string().trim().max(2048, "Đường dẫn ảnh quá dài.").url("Đường dẫn ảnh không hợp lệ.")
       .refine((value) => {
         try {
