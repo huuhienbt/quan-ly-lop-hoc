@@ -64,6 +64,12 @@ tay bên dưới được giữ riêng, không bị ghi đè khi đổi lịch.
   thành riêng theo ngày thực hiện, kể cả việc chuẩn bị cho ngày mai. Sang ngày
   mới, công việc lặp lại bắt đầu với trạng thái chưa đánh dấu; lịch sử được giữ.
 
+## Trò chuyện
+
+Góc học sinh còn có **Trò chuyện**: phòng chung với lớp và kênh riêng với thầy
+cô. Giáo viên trả lời tại `/teacher#tro-chuyen`. Xem
+[hướng dẫn trò chuyện trong lớp](tro-chuyen-lop.md).
+
 ## Nội dung khởi đầu
 
 `scripts/seed-class-content.mjs` chứa năm bài công khai về lời chào, niềm vui

@@ -11,6 +11,7 @@ import { getTeacherContentOverview } from "@/lib/class-content";
 import type { PostCategory } from "@/lib/content-schemas";
 import { getTeacherTimetable } from "@/lib/class-timetable";
 import { TimetableEditor } from "@/components/timetable-editor";
+import { ClassChat } from "@/components/class-chat";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Biên tập nội dung lớp học" };
@@ -46,7 +47,9 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
         {selectedClass ? <>
           <section className="teacher-class-panel" aria-labelledby="teacher-class-title"><div className="teacher-class-copy"><span className="teacher-class-icon"><SchoolIcon /></span><div><h2 id="teacher-class-title">{selectedClass.name}</h2><p>{selectedClass.school_name}</p></div></div><form action="/teacher" method="get" className="teacher-class-switch"><label htmlFor="teacher-class-select">Lớp đang biên tập</label><div><select id="teacher-class-select" name="class" defaultValue={selectedClass.id}>{overview.classes.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.school_name}</option>)}</select><button type="submit" className="button button-outline button-small">Mở lớp</button></div></form></section>
           {invalidClass && <p className="teacher-feedback is-error" role="alert">Lớp được chọn không thuộc danh sách thầy cô có quyền biên tập. Trang đang hiển thị một lớp trong danh sách được phân công.</p>}
-          <nav className="teacher-section-nav" aria-label="Các loại nội dung"><a href="#thoi-khoa-bieu">Thời khóa biểu</a><a href="#bai-viet">Bảng tin <span>{posts.length}</span></a><a href="#su-kien">Sự kiện <span>{events.length}</span></a><a href="#viec-can-lam">Việc cần làm <span>{tasks.length}</span></a></nav>
+          <nav className="teacher-section-nav" aria-label="Các loại nội dung"><a href="#tro-chuyen">Trò chuyện</a><a href="#thoi-khoa-bieu">Thời khóa biểu</a><a href="#bai-viet">Bảng tin <span>{posts.length}</span></a><a href="#su-kien">Sự kiện <span>{events.length}</span></a><a href="#viec-can-lam">Việc cần làm <span>{tasks.length}</span></a></nav>
+
+          <section className="teacher-content-section" id="tro-chuyen" aria-labelledby="teacher-chat-title"><div className="teacher-section-heading"><div><p className="eyebrow">LẮNG NGHE VÀ ĐỒNG HÀNH</p><h2 id="teacher-chat-title">Trò chuyện với lớp</h2><p>Cùng trao đổi trong phòng chung hoặc trả lời riêng từng học sinh.</p></div></div><div className="teacher-panel"><div className="teacher-panel-body"><ClassChat key={selectedClass.id} mode="teacher" classId={selectedClass.id} /></div></div></section>
 
           {timetable && <section className="teacher-content-section" id="thoi-khoa-bieu" aria-labelledby="teacher-timetable-title"><div className="teacher-section-heading"><div><p className="eyebrow">MỖI NGÀY ĐẾN LỚP, MỘT NGÀY VUI</p><h2 id="teacher-timetable-title">Thời khóa biểu của lớp</h2><p>Việc ôn bài hôm nay và đồ dùng cho buổi học tới được lấy từ lịch này.</p></div></div><div className="teacher-panel"><div className="teacher-panel-body"><TimetableEditor key={`${selectedClass.id}-${timetable.revision}`} classId={selectedClass.id} timetable={timetable} /></div></div></section>}
 

@@ -36,6 +36,7 @@ export default async function AdminPage() {
             <Link className="nav-link" href="/">Trang chủ</Link>
             <ThemeSettingsLink />
             <Link className="button button-outline button-small" href="/teacher">Biên tập nội dung lớp</Link>
+            <Link className="button button-outline button-small" href="/teacher#tro-chuyen">Trò chuyện với lớp</Link>
             <SignOutButton />
           </nav>
         </div>

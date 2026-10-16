@@ -6,6 +6,7 @@ import { ClockIcon, HeartIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/compone
 import { StudentTaskList } from "@/components/student-task-list";
 import { LearningGameCard } from "@/components/learning-game-card";
 import { TimetableToday, TimetablePreparation } from "@/components/timetable-day";
+import { ClassChat } from "@/components/class-chat";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
 import type { ClassEvent, ContentPost, StudentClassSpace } from "@/lib/content-schemas";
@@ -85,7 +86,7 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
 
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
     <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
-    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>{preparesLater ? "Chuẩn bị buổi tới" : "Chuẩn bị ngày mai"}</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-discovery`}>Khám phá</a><Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi</Link></nav>
+    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>{preparesLater ? "Chuẩn bị buổi tới" : "Chuẩn bị ngày mai"}</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-chat`}>Trò chuyện</a><a href={`#${prefix}-discovery`}>Khám phá</a><Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi</Link></nav>
 
     <section className="student-content-panel student-week-panel" id={`${prefix}-week`} aria-labelledby={`${prefix}-week-title`}>
       <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><ClockIcon /></span><div><h3 id={`${prefix}-week-title`}>Tuần của lớp em</h3><p className="student-content-panel-copy">Những hoạt động thầy cô đã hẹn cùng lớp.</p></div></div><span className="student-content-date">{shortDate(weekStart)} — {shortDate(weekEnd)}</span></div>
@@ -121,7 +122,15 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
         {kindness.length ? kindness.map((post) => <article className="student-kindness-body" key={post.id}><h4>{post.title}</h4><PostCover post={post} /><p className="student-content-body">{post.body}</p></article>) : <p className="student-content-empty">Lời nhắn tử tế của tuần sẽ được thầy cô gửi tới em tại đây.</p>}
       </section>
     </aside></div>
+    <section className="student-content-panel student-chat-panel" id={`${prefix}-chat`} aria-labelledby={`${prefix}-chat-title`}>
+      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-green"><ChatIcon /></span><div><h3 id={`${prefix}-chat-title`}>Trò chuyện cùng thầy cô và các bạn</h3><p className="student-content-panel-copy">Chia sẻ điều hay với lớp, hoặc gửi lời nhắn riêng cho thầy cô.</p></div></div></div>
+      <ClassChat mode="student" classId={space.class_id} enrollmentId={space.enrollment_id} />
+    </section>
   </section>;
+}
+
+function ChatIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 18.5 3 21v-5.5A7 7 0 0 1 2 12C2 7.6 6.5 4 12 4s10 3.6 10 8-4.5 8-10 8c-2.6 0-5-.6-7-1.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /><path d="M7.5 12h.01M12 12h.01M16.5 12h.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" /></svg>;
 }
 
 function DiscoveryIcon() {

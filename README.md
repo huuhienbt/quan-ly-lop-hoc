@@ -50,6 +50,11 @@ tiếp theo; gom môn trùng tiết và lưu dấu hoàn thành riêng từng h�
 viên chỉnh ngày áp dụng, khung học và lời nhắc tại `/teacher#thoi-khoa-bieu`.
 Xem [thời khóa biểu và lời nhắc](docs/thoi-khoa-bieu.md).
 
+Mục **Trò chuyện** trong Góc học sinh có phòng chung của lớp và kênh nhắn
+riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin nhắn tại
+`/teacher#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
+Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
+
 ## Giao diện
 
 Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)
