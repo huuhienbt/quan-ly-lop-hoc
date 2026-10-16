@@ -1,0 +1,57 @@
+.learning-game-card {
+  display: grid;
+  grid-template-columns: 106px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  min-width: 0;
+  margin-top: 24px;
+  padding: 25px 28px;
+  border: 1px solid #d3e9d9;
+  border-radius: 24px;
+  background: linear-gradient(110deg, #eef9ec, #fffdf3 75%);
+  box-shadow: 0 5px 0 #dcebdd66;
+  color: #234b61;
+  text-align: left;
+}
+.learning-game-card .learning-game-card-art { width: 106px; height: 106px; flex-shrink: 0; }
+.learning-game-card .learning-game-card-art svg { width: 100%; height: 100%; }
+.learning-game-card .learning-game-card-copy { min-width: 0; }
+.learning-game-card .learning-game-card-label { display: flex; align-items: center; gap: 7px; margin: 0 0 6px; color: #22775f; font-size: 12px; font-weight: 950; line-height: 1.6; letter-spacing: .6px; }
+.learning-game-card .learning-game-card-label > span { color: #ba5790; font-size: 17px; line-height: 1; }
+.learning-game-card .learning-game-card-title { margin: 0; color: #175d77; font-size: clamp(21px, 2vw, 26px); font-weight: 1000; line-height: 1.35; letter-spacing: -.4px; overflow-wrap: anywhere; }
+.learning-game-card .learning-game-card-description { margin: 8px 0 0; max-width: 650px; color: #506f70; font-size: 15px; font-weight: 650; line-height: 1.7; }
+.learning-game-card .learning-game-card-topics { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.learning-game-card .learning-game-card-topics > span { padding: 3px 9px; border: 1px solid #dce8d9; border-radius: 8px; background: #fffef9; color: #527164; font-size: 12px; font-weight: 800; line-height: 1.6; }
+.learning-game-card .learning-game-card-topics > span:last-child { border-color: #f0d4df; background: #fff2f6; color: #96516f; }
+.learning-game-card .learning-game-card-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 11px 19px; border: 1px solid #ebc642; border-radius: 15px; background: #ffda53; box-shadow: 0 3px 0 #e2bd3a; color: #254e5d; font-size: 16px; font-weight: 1000; line-height: 1.5; text-align: center; white-space: nowrap; transition: background .18s, transform .18s; }
+.learning-game-card .learning-game-card-button svg { width: 20px; height: 20px; flex-shrink: 0; }
+.learning-game-card .learning-game-card-button:hover { background: #ffe47d; transform: translateY(-2px); }
+.learning-game-card .learning-game-card-button:focus-visible { outline: 3px solid #b5477e; outline-offset: 5px; }
+.learning-game-card.learning-game-card-compact { grid-template-columns: 66px minmax(0, 1fr); gap: 15px; margin-top: 0; padding: 23px; }
+.student-content-page .student-learning-games { margin-top: 28px; }
+.learning-game-card-compact .learning-game-card-art { width: 66px; height: 66px; align-self: start; }
+.learning-game-card-compact .learning-game-card-title { font-size: 22px; }
+.learning-game-card-compact .learning-game-card-description { font-size: 15px; }
+.learning-game-card-compact .learning-game-card-button { grid-column: 1 / -1; }
+
+@media (max-width: 900px) {
+  .learning-game-card { grid-template-columns: 88px minmax(0, 1fr); gap: 18px; }
+  .learning-game-card .learning-game-card-art { width: 88px; height: 88px; }
+  .learning-game-card .learning-game-card-button { grid-column: 2; justify-self: start; }
+  .learning-game-card-compact .learning-game-card-art { width: 66px; height: 66px; }
+  .learning-game-card-compact .learning-game-card-button { grid-column: 1 / -1; justify-self: stretch; }
+}
+@media (max-width: 550px) {
+  .learning-game-card,
+  .learning-game-card.learning-game-card-compact { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 21px; border-radius: 21px; }
+  .learning-game-card .learning-game-card-art { width: 76px; height: 76px; }
+  .learning-game-card .learning-game-card-label { font-size: 12px; }
+  .learning-game-card .learning-game-card-title { font-size: 23px; }
+  .learning-game-card .learning-game-card-description { font-size: 15px; }
+  .learning-game-card .learning-game-card-button { grid-column: 1; width: 100%; justify-self: stretch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .learning-game-card .learning-game-card-button { transition: none; }
+  .learning-game-card .learning-game-card-button:hover { transform: none; }
+}

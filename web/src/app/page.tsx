@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
+import { LearningGameCard } from "@/components/learning-game-card";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
@@ -52,6 +53,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
       <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><p className="hero-description">Một lớp học. Muôn điều kỳ diệu! Cùng học những điều hay, vun đắp thói quen tốt và lớn lên trong yêu thương.</p><div className="bulletin-hero-actions"><a className="button button-primary" href="#bang-tin">Khám phá lớp mình <ArrowIcon /></a><Link className="button bulletin-hero-secondary" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}><SunIcon /> Góc học sinh</Link></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 
       <nav className="page-width bulletin-features" aria-label="Cùng khám phá lớp học"><a href="#bang-tin"><span className="feature-icon feature-yellow"><SchoolIcon /></span><span><strong>Tin lớp mỗi ngày</strong><small>Chuyện nhỏ, niềm vui to</small></span></a><a href="#dieu-hay"><span className="feature-icon feature-pink"><HeartIcon /></span><span><strong>Gieo điều tử tế</strong><small>Thói quen tốt cùng em</small></span></a><a href="#dong-hanh"><span className="feature-icon feature-blue"><PeopleIcon /></span><span><strong>Ba mẹ đồng hành</strong><small>Cùng con vui lớn lên</small></span></a><Link href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}><span className="feature-icon feature-green"><ShieldIcon /></span><span><strong>Góc riêng của em</strong><small>Lời nhắn từ thầy cô</small></span></Link></nav>
+
+      <div className="page-width"><LearningGameCard /></div>
 
       <div className="page-width bulletin-date-line"><span><span className="status-dot" /> KẾT NỐI YÊU THƯƠNG MỖI NGÀY</span><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div>
       <section className="page-width bulletin-notices" aria-labelledby="notices-title"><h2 id="notices-title"><span className="bulletin-notice-icon"><ClockIcon /></span>Thông báo mới</h2>{unavailable ? <p role="status">Tạm thời chưa tải được bản tin. Bạn vui lòng quay lại sau ít phút.</p> : announcements.length ? <div className="bulletin-notice-list">{announcements.map((post) => <Link key={post.id} href={`/ban-tin/${post.id}`} className="bulletin-notice"><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div> : <p>Thông báo mới sẽ xuất hiện tại đây khi thầy cô đăng bài.</p>}</section>

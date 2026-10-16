@@ -42,6 +42,11 @@ Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh
 
 ## Giao diện
 
+Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)
+tại `/tro-choi/ca-dao-tuc-ngu`: 30 câu hỏi, 5 câu mỗi lượt, có đáp án và lời giải.
+Trò chơi xuất hiện trên trang chủ và trong góc học sinh; kết quả luyện tập không
+ghi vào điểm hay sao của tài khoản.
+
 Ba giao diện có thể chuyển qua lại tại `/admin#giao-dien`: **Giao diện 1 –
 Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá** và **Giao diện 3 –
 Lớp học khám phá hạnh phúc**. Lựa chọn lưu trên D1,

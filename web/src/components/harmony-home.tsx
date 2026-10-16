@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
+import { LearningGameCard } from "@/components/learning-game-card";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
@@ -98,6 +99,8 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
             {shortcuts.map((shortcut) => <Link key={shortcut.title} className={`harmony-shortcut harmony-shortcut-${shortcut.color}`} href={shortcut.href === "student" ? studentHref : shortcut.href}><span className="harmony-shortcut-icon" aria-hidden="true">{shortcut.icon}</span><span><strong>{shortcut.title}</strong><small>{shortcut.note}</small></span><ArrowIcon /></Link>)}
           </nav>
         </section>
+
+        <div className="harmony-container"><LearningGameCard /></div>
 
         <div className="harmony-container harmony-class-grid">
           <section className="harmony-stories" id="bang-tin" aria-labelledby="harmony-stories-title">

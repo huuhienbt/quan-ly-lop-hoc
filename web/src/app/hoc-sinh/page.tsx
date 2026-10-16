@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/auth-buttons";
 import { ClockIcon, HeartIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { StudentTaskList } from "@/components/student-task-list";
+import { LearningGameCard } from "@/components/learning-game-card";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
 import type { ClassEvent, ContentPost, StudentClassSpace } from "@/lib/content-schemas";
@@ -76,7 +77,7 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
 
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
     <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
-    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>Chuẩn bị ngày mai</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-discovery`}>Khám phá</a></nav>
+    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>Chuẩn bị ngày mai</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-discovery`}>Khám phá</a><Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi</Link></nav>
 
     <section className="student-content-panel student-week-panel" id={`${prefix}-week`} aria-labelledby={`${prefix}-week-title`}>
       <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><ClockIcon /></span><div><h3 id={`${prefix}-week-title`}>Tuần của lớp em</h3><p className="student-content-panel-copy">Những hoạt động thầy cô đã hẹn cùng lớp.</p></div></div><span className="student-content-date">{shortDate(weekStart)} — {shortDate(weekEnd)}</span></div>
@@ -134,6 +135,7 @@ export default async function StudentHomePage() {
       <section className="student-dashboard-welcome" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><span className="badge badge-green">Một ngày đến lớp, một ngày vui</span><h1 id="student-dashboard-title">{greeting}</h1><p>Cùng chuẩn bị cho một ngày học nhẹ nhàng và nhiều điều hay.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={(theme === "discovery" || theme === "harmony") ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 280px" /><span className="student-welcome-spark student-welcome-spark-one">✦</span><span className="student-welcome-spark student-welcome-spark-two">✦</span></div></section>
       {!content.students.length && <section className="student-content-panel student-empty-profile"><h2>Chưa có không gian lớp học</h2><p>Em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm để kiểm tra thông tin liên kết tài khoản nhé.</p></section>}
       {content.students.map((space) => <StudentLearningSpace key={space.enrollment_id} space={space} today={content.today} tomorrow={content.tomorrow} weekStart={content.weekStart} weekEnd={content.weekEnd} />)}
+      <div className="student-learning-games" id="tro-choi"><LearningGameCard compact /></div>
       <details className="student-profile-disclosure"><summary>Thông tin học sinh và tài khoản</summary><section className="student-profiles-section" aria-labelledby="student-profiles-title">
         <div className="student-profile-heading"><h2 id="student-profiles-title">Thông tin học sinh</h2><Link className="button button-outline button-small" href="/hoc-sinh/doi-mat-khau"><ShieldIcon /> Đổi mật khẩu</Link></div>
         {account.students.length ? <div className="student-profiles-grid">{account.students.map((student) => <article className="student-profile-card" key={`${student.id}-${student.class_id}`}>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Brand } from "@/components/brand";
+import { LearningGameCard } from "@/components/learning-game-card";
 import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
@@ -56,6 +57,8 @@ export function DiscoveryHome({ bulletin, unavailable, selected, query, user, st
       <div className="discovery-container discovery-values" aria-label="Những điều lớp mình cùng vun đắp"><div><ShieldIcon /><span>An toàn & yêu thương</span></div><div><StarIcon /><span>Thầy cô đồng hành</span></div><div><SchoolIcon /><span>Học qua khám phá</span></div><div><HeartIcon /><span>Mỗi ngày một niềm vui</span></div></div>
 
       <section className="discovery-topics" id="kham-pha" aria-labelledby="discovery-topics-title"><div className="discovery-container"><SectionTitle id="discovery-topics-title">Em muốn khám phá gì?</SectionTitle><p className="discovery-section-intro">Chọn một cánh cửa nhỏ, mở ra những điều hay.</p><div className="discovery-topic-grid">{topicItems.map((topic) => <Link key={topic.title} className={`discovery-topic discovery-topic-${topic.color}`} href={topic.href === "student" ? studentHref : topic.href}><span className="discovery-topic-icon" aria-hidden="true">{topic.icon}</span><strong>{topic.title}</strong><small>{topic.note}</small></Link>)}</div><div className="discovery-topics-spark spark-one" aria-hidden="true">✧</div><div className="discovery-topics-spark spark-two" aria-hidden="true">✦</div></div></section>
+
+      <div className="discovery-container"><LearningGameCard /></div>
 
       <section className="discovery-container discovery-news" aria-labelledby="discovery-notices-title"><div className="discovery-date-line"><span><span /> LỚP MÌNH HÔM NAY</span><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div><div className="discovery-notices"><div className="discovery-notices-heading"><span><ClockIcon /></span><h2 id="discovery-notices-title">Lời nhắn mới</h2></div>{unavailable ? <p role="status">Tạm thời chưa tải được bản tin. Bạn vui lòng quay lại sau ít phút.</p> : announcements.length ? <div className="discovery-notice-items">{announcements.map((post) => <Link href={`/ban-tin/${post.id}`} key={post.id}><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div> : <p>Thầy cô sẽ gửi những thông báo mới của lớp tại đây.</p>}</div></section>
 
