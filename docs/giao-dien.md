@@ -53,13 +53,17 @@ sớm hơn.
 
 ### Backup Giao diện 2 đã thu nhỏ tranh
 
-Bản đã thu gọn được lưu riêng trên GitHub với tag
-[`giao-dien-2-thu-nho`](https://github.com/huuhienbt/quan-ly-lop-hoc/tree/giao-dien-2-thu-nho).
-[Tải bản sao mã nguồn ZIP](https://github.com/huuhienbt/quan-ly-lop-hoc/archive/refs/tags/giao-dien-2-thu-nho.zip).
+Bản đã thu gọn được lưu chính thức trên GitHub với tên
+[`giao-dien-2`](https://github.com/huuhienbt/quan-ly-lop-hoc/tree/giao-dien-2).
+[Tải backup Giao diện 2 dạng ZIP](https://github.com/huuhienbt/quan-ly-lop-hoc/archive/refs/tags/giao-dien-2.zip).
 Tranh đầu trang cao 480–560 px trên máy tính, 525 px trên máy tính bảng và
 490 px trên điện thoại. Các ảnh minh họa gốc vẫn được giữ cùng mã nguồn.
 
-Tag `giao-dien-2` cũ được giữ nguyên để lưu phiên bản trước khi thu gọn.
+Theo yêu cầu lưu bản thu nhỏ vào đúng **Giao diện 2**, tag `giao-dien-2`
+đã được cập nhật. Phiên bản trước khi thu gọn được giữ với tên riêng
+[`giao-dien-2-ban-dau`](https://github.com/huuhienbt/quan-ly-lop-hoc/tree/giao-dien-2-ban-dau),
+giữ đúng đối tượng tag gốc và commit `70e601f6cd2104d59c14afe9a62be6e326723872`.
+Backup riêng `giao-dien-2-thu-nho` đã tạo trước đó cũng được giữ lại.
 Bản backup mới chứa toàn bộ mã nguồn ở thời điểm lưu, gồm cả ba giao diện,
 trò chơi và chức năng chọn ảnh từ thiết bị. Dữ liệu D1 và cấu hình bí mật
 không nằm trong bản sao mã nguồn này.
