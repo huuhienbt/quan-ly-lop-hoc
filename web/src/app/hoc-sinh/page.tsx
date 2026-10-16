@@ -5,6 +5,7 @@ import { SignOutButton } from "@/components/auth-buttons";
 import { ClockIcon, HeartIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { StudentTaskList } from "@/components/student-task-list";
 import { LearningGameCard } from "@/components/learning-game-card";
+import { TimetableToday, TimetablePreparation } from "@/components/timetable-day";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
 import type { ClassEvent, ContentPost, StudentClassSpace } from "@/lib/content-schemas";
@@ -78,10 +79,13 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
   const kindness = thisWeekKindness.length ? thisWeekKindness : kindnessPosts.slice(0, 1);
   const tasks = space.tasks.filter((task) => task.kind === "TODO" && (!task.task_date || task.task_date === today));
   const preparation = space.tasks.filter((task) => task.kind === "PREPARATION" && (!task.task_date || task.task_date === tomorrow));
+  const hasTimetable = space.timetable.hasTimetable;
+  const preparationDate = space.timetable.preparationDate;
+  const preparesLater = !!preparationDate && preparationDate !== tomorrow;
 
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
     <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
-    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>Chuẩn bị ngày mai</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-discovery`}>Khám phá</a><Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi</Link></nav>
+    <nav className="student-content-nav" aria-label={`Góc học tập của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay</a><a href={`#${prefix}-prepare`}>{preparesLater ? "Chuẩn bị buổi tới" : "Chuẩn bị ngày mai"}</a><a href={`#${prefix}-week`}>Lịch tuần</a><a href={`#${prefix}-news`}>Tin lớp</a><a href={`#${prefix}-discovery`}>Khám phá</a><Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi</Link></nav>
 
     <section className="student-content-panel student-week-panel" id={`${prefix}-week`} aria-labelledby={`${prefix}-week-title`}>
       <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><ClockIcon /></span><div><h3 id={`${prefix}-week-title`}>Tuần của lớp em</h3><p className="student-content-panel-copy">Những hoạt động thầy cô đã hẹn cùng lớp.</p></div></div><span className="student-content-date">{shortDate(weekStart)} — {shortDate(weekEnd)}</span></div>
@@ -92,7 +96,8 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
     <div className="student-content-layout"><div className="student-content-main">
       <section className="student-content-panel student-today-panel" id={`${prefix}-today`} aria-labelledby={`${prefix}-today-title`}>
         <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-green"><SunIcon /></span><div><h3 id={`${prefix}-today-title`}>Hôm nay em làm gì?</h3><p className="student-content-panel-copy">Từng việc nhỏ, em làm theo nhịp của mình nhé.</p></div></div><span className="student-content-date">{shortDate(today)}</span></div>
-        {tasks.length ? <StudentTaskList tasks={tasks} enrollmentId={space.enrollment_id} today={today} /> : <p className="student-content-empty">Thầy cô chưa giao việc cho hôm nay. Em có thể ghé góc khám phá trong lúc chờ nhé.</p>}
+        {hasTimetable && <TimetableToday plan={space.timetable} enrollmentId={space.enrollment_id} />}
+        {tasks.length ? <div className={hasTimetable ? "student-extra-reminders" : undefined}>{hasTimetable && <h4>Thầy cô nhắc thêm</h4>}<StudentTaskList tasks={tasks} enrollmentId={space.enrollment_id} today={today} /></div> : !hasTimetable && <p className="student-content-empty">Thầy cô chưa giao việc cho hôm nay. Em có thể ghé góc khám phá trong lúc chờ nhé.</p>}
       </section>
 
       <section className="student-content-panel student-news-panel" id={`${prefix}-news`} aria-labelledby={`${prefix}-news-title`}>
@@ -106,8 +111,9 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd }: { 
       </section>
     </div><aside className="student-content-side" aria-label={`Lời nhắc cho ${space.student_name}`}>
       <section className="student-content-panel student-prepare-panel" id={`${prefix}-prepare`} aria-labelledby={`${prefix}-prepare-title`}>
-        <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><BagIcon /></span><div><h3 id={`${prefix}-prepare-title`}>Chiếc cặp ngày mai</h3><p className="student-content-panel-copy">Chuẩn bị cho ngày {shortDate(tomorrow)}.</p></div></div></div>
-        {preparation.length ? <ol className="student-preparation-list">{preparation.map((task) => <li key={task.id}><strong>{task.title}</strong>{task.details && <p className="student-content-body">{task.details}</p>}</li>)}</ol> : <p className="student-content-empty">Thầy cô chưa có lời nhắc chuẩn bị cho ngày mai.</p>}
+        <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><BagIcon /></span><div><h3 id={`${prefix}-prepare-title`}>{preparesLater ? "Chiếc cặp buổi học tới" : "Chiếc cặp ngày mai"}</h3><p className="student-content-panel-copy">{hasTimetable ? "Sách vở và đồ dùng theo thời khóa biểu." : `Chuẩn bị cho ngày ${shortDate(tomorrow)}.`}</p></div></div></div>
+        {hasTimetable && <TimetablePreparation plan={space.timetable} enrollmentId={space.enrollment_id} />}
+        {preparation.length ? <div className={hasTimetable ? "student-extra-reminders" : undefined}>{hasTimetable && <h4>Lời nhắc thêm cho ngày {shortDate(tomorrow)}</h4>}<ol className="student-preparation-list">{preparation.map((task) => <li key={task.id}><strong>{task.title}</strong>{task.details && <p className="student-content-body">{task.details}</p>}</li>)}</ol></div> : !hasTimetable && <p className="student-content-empty">Thầy cô chưa có lời nhắc chuẩn bị cho ngày mai.</p>}
       </section>
 
       <section className="student-content-panel student-kindness-panel" aria-labelledby={`${prefix}-kindness-title`}>

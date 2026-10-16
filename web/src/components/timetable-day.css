@@ -1,0 +1,25 @@
+.timetable-day { min-width: 0; color: var(--student-ink, #23466b); }
+.timetable-day-caption { margin-bottom: 13px; }
+.timetable-day-caption strong { display: block; color: var(--student-deep-blue, #184c86); font-size: 15px; font-weight: 900; line-height: 1.7; }
+.timetable-day-caption p { margin-top: 4px; color: var(--student-muted, #536c85); font-size: 13px; line-height: 1.8; }
+.timetable-day-caption time { color: #7f6222; font-weight: 800; text-transform: capitalize; }
+.timetable-subject-list { display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.timetable-subject { min-width: 0; padding: 15px 16px; border: 1px solid #d4e9f5; border-radius: 17px; background: #f7fcff; }
+.timetable-preparation .timetable-subject { border-color: #eee1b9; background: #fffcf2; }
+.timetable-subject.is-complete { border-color: #b7ddcf; background: #f0faf5; }
+.timetable-subject-form { display: flex; gap: 11px; align-items: flex-start; min-width: 0; }
+.timetable-subject-checkbox { width: 21px; height: 21px; min-width: 21px; margin-top: 11px; accent-color: #17826e; cursor: pointer; }
+.timetable-subject-checkbox:disabled { cursor: wait; }
+.timetable-subject-checkbox:focus-visible { outline: 3px solid #087fc4; outline-offset: 4px; }
+.timetable-subject-label { display: flex; min-width: 0; min-height: 44px; flex: 1; flex-direction: column; align-items: flex-start; gap: 5px; cursor: pointer; overflow-wrap: anywhere; }
+.timetable-subject-label > strong { color: var(--student-deep-blue, #184c86); font-size: 15px; font-weight: 900; line-height: 1.65; }
+.timetable-periods { display: flex; flex-direction: column; gap: 4px; }
+.timetable-period { display: flex; flex-wrap: wrap; column-gap: 8px; color: #52758d; font-size: 11px; line-height: 1.8; }
+.timetable-period-instructor { color: #658279; }
+.timetable-subject-note { color: #42677f; font-size: 13px; line-height: 1.85; white-space: pre-wrap; }
+.timetable-subject-status { color: #467d70; font-size: 11px; font-weight: 800; line-height: 1.8; margin-top: 2px; }
+.timetable-check-feedback { color: #a43563; font-size: 12px; line-height: 1.8; margin-top: 9px; padding-left: 32px; }
+.timetable-check-feedback.is-success { color: #387360; }
+.timetable-day-footnote { margin-top: 13px; color: var(--student-muted, #536c85); font-size: 12px; line-height: 1.85; }
+.timetable-day-empty { padding: 15px 17px; border: 1px dashed #bfdde9; border-radius: 16px; background: #f4fbff; color: var(--student-muted, #536c85); font-size: 14px; line-height: 1.85; margin-bottom: 12px; }
+@media (max-width: 420px) { .timetable-subject { padding: 12px; } .timetable-subject-form { gap: 9px; } .timetable-subject-label > strong { font-size: 14px; } .timetable-check-feedback { padding-left: 30px; } }

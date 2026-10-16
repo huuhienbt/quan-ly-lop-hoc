@@ -254,3 +254,5 @@
 }
 
 .student-post-cover { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; border-radius: 16px; margin: 18px 0; background: #f1f8f7; }
+.student-extra-reminders { margin-top: 22px; padding-top: 16px; border-top: 1px solid #d9e9e3; }
+.student-extra-reminders > h4 { margin: 0 0 12px; color: #315e65; font-size: 14px; line-height: 1.6; }

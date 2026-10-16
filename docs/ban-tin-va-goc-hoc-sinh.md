@@ -50,6 +50,11 @@ không có bài công khai nào tham chiếu; chưa có album hoặc công cụ 
 
 ## Lịch và nhắc việc
 
+Thời khóa biểu của lớp tạo thêm lời nhắc theo môn trong **Hôm nay em làm gì?**
+và danh sách sách vở trong **Chiếc cặp ngày mai / buổi học tới**. Xem
+[cách sử dụng và cập nhật thời khóa biểu](thoi-khoa-bieu.md). Các công việc nhập
+tay bên dưới được giữ riêng, không bị ghi đè khi đổi lịch.
+
 - **Sự kiện:** nhập ngày thật, giờ tùy chọn và phạm vi công khai/trong lớp. Bản
   nháp không hiển thị với người đọc. Lịch tuần lấy từ thứ Hai đến Chủ nhật theo
   giờ Việt Nam.

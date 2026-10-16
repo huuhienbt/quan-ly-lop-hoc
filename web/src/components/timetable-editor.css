@@ -1,0 +1,50 @@
+.timetable-editor { color: #234f78; min-width: 0; }
+.timetable-editor > fieldset { border: 0; min-width: 0; margin: 0; padding: 0; }
+.timetable-editor-intro { padding: 17px 19px; border: 1px solid #cce8f3; border-radius: 17px; background: #eefbfb; }
+.timetable-editor-intro strong { display: block; color: #176d68; font-size: 16px; font-weight: 900; }
+.timetable-editor-intro p { margin-top: 7px; color: #4b737f; font-size: 14px; line-height: 1.8; }
+.timetable-effective-date { display: grid; gap: 8px; max-width: 290px; margin-top: 22px; font-size: 14px; font-weight: 800; }
+.timetable-effective-date input, .timetable-field input, .timetable-field textarea { width: 100%; min-width: 0; min-height: 46px; border: 1px solid #b9d9ec; border-radius: 12px; padding: 10px 12px; background: #fff; color: #234f78; font: inherit; font-size: 14px; line-height: 1.6; }
+.timetable-field textarea { resize: vertical; }
+.timetable-editor :is(input, textarea, button, summary):focus-visible { outline: 3px solid #087fc4; outline-offset: 3px; }
+.timetable-day-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.timetable-day-buttons button { display: flex; flex: 1 0 100px; min-height: 56px; align-items: center; justify-content: center; flex-direction: column; gap: 3px; padding: 9px 12px; border: 1px solid #bddff2; border-radius: 14px; background: #f6fcff; color: #245783; font-size: 14px; font-weight: 800; cursor: pointer; }
+.timetable-day-buttons button:hover { background: #e5f5ff; }
+.timetable-day-buttons button.is-active { border-color: #087fc4; background: #087fc4; color: #fff; box-shadow: 0 3px 0 #d5ecfb; }
+.timetable-day-count { font-size: 11px; font-weight: 600; }
+.timetable-selected-heading { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; margin-top: 25px; margin-bottom: 14px; }
+.timetable-selected-heading h4 { color: #184c86; font-size: 20px; font-weight: 900; }
+.timetable-selected-heading > span { color: #5b7891; font-size: 13px; line-height: 1.7; }
+.timetable-session-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+.timetable-session { min-width: 0; padding: 18px; border: 1px solid #cae4f2; border-radius: 20px; background: #f3faff; }
+.timetable-session-afternoon { border-color: #ecdda5; background: #fffbed; }
+.timetable-session-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 15px; }
+.timetable-session-heading h5 { color: #225785; font-size: 16px; font-weight: 900; }
+.timetable-session-heading > span { padding: 4px 9px; border-radius: 999px; background: #fff; color: #57758c; font-size: 12px; font-weight: 800; }
+.timetable-editor-lessons { display: grid; gap: 15px; }
+.timetable-lesson-editor { min-width: 0; padding: 14px; border: 1px solid #d5e6f0; border-radius: 15px; background: #fff; }
+.timetable-lesson-editor-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.timetable-lesson-editor-title > strong { font-size: 13px; color: #5c7890; }
+.timetable-remove-lesson { min-height: 44px; padding: 7px 10px; border-radius: 10px; color: #a03968; font-size: 12px; font-weight: 800; cursor: pointer; }
+.timetable-remove-lesson:hover { background: #fff1f7; }
+.timetable-field { display: grid; min-width: 0; gap: 6px; margin-top: 12px; }
+.timetable-field > span { color: #365f83; font-size: 13px; font-weight: 800; line-height: 1.6; }
+.timetable-field small { color: #6a8294; font-size: 11px; font-weight: 500; }
+.timetable-time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.timetable-field input::placeholder, .timetable-field textarea::placeholder { color: #7c90a1; }
+.timetable-lesson-notes { border-top: 1px solid #e1edf4; margin-top: 16px; }
+.timetable-lesson-notes > summary { min-height: 44px; padding-block: 12px; color: #246c9c; font-size: 13px; line-height: 1.6; font-weight: 800; cursor: pointer; }
+.timetable-lesson-notes > summary > span { color: #53816c; font-size: 11px; }
+.timetable-lesson-notes .timetable-field:first-of-type { margin-top: 0; }
+.timetable-empty-session { color: #6b8297; padding: 15px 2px; font-size: 14px; line-height: 1.8; }
+.timetable-add-lesson { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 44px; margin-top: 15px; padding: 9px 12px; border: 1px dashed #91bed8; border-radius: 12px; background: #fff; color: #24608b; font-size: 13px; font-weight: 800; cursor: pointer; }
+.timetable-add-lesson:hover { border-style: solid; background: #edf7ff; }
+.timetable-editor-error { color: #a22c62; font-size: 13px; line-height: 1.8; margin-top: 10px; }
+.timetable-editor-feedback { margin-top: 20px; padding: 13px 16px; border: 1px solid #eed3e0; border-radius: 14px; background: #fff2f8; color: #9a3863; font-size: 14px; line-height: 1.8; }
+.timetable-editor-feedback.is-success { border-color: #baddce; background: #edfaf4; color: #2d6b56; }
+.timetable-editor-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 23px; padding-top: 20px; border-top: 1px solid #d5e9f4; }
+.timetable-editor-footer p { color: #5b7791; font-size: 13px; line-height: 1.8; }
+.timetable-editor-footer button { min-height: 46px; }
+.timetable-editor fieldset:disabled button { cursor: wait; opacity: .7; }
+@media (max-width: 760px) { .timetable-session-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; } .timetable-day-buttons button { flex-basis: 78px; } .timetable-editor-footer .button { width: 100%; } }
+@media (max-width: 420px) { .timetable-session { padding: 12px; } .timetable-lesson-editor { padding: 12px; } .timetable-time-fields { gap: 8px; } .timetable-field input { padding-inline: 9px; } }

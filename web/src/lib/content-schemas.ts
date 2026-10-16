@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { StudentTimetablePlan } from "@/lib/timetable-schemas";
 
 const id = z.string().trim().min(1, "Thiếu mã định danh.").max(100, "Mã định danh quá dài.")
   .regex(/^[a-zA-Z0-9_-]+$/, "Mã định danh không hợp lệ.");
@@ -113,6 +114,7 @@ export interface StudentClassSpace {
   posts: ContentPost[];
   events: ClassEvent[];
   tasks: StudentTask[];
+  timetable: StudentTimetablePlan;
 }
 export interface VietnamDateWindow { today: string; tomorrow: string; weekStart: string; weekEnd: string }
 export interface PublicBulletin extends VietnamDateWindow { posts: ContentPost[]; events: ClassEvent[] }

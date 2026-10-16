@@ -45,6 +45,11 @@ chọn dán liên kết HTTPS. Migration `0006_post_images.sql` lưu ảnh WebP 
 ưu cùng bài trong D1; ảnh riêng được kiểm tra quyền trước mỗi lượt tải. Nhận
 JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịch vụ lưu ảnh.
 
+Thời khóa biểu lớp Bốn 12 tạo việc hôm nay và danh sách sách vở cho buổi học
+tiếp theo; gom môn trùng tiết và lưu dấu hoàn thành riêng từng học sinh. Giáo
+viên chỉnh ngày áp dụng, khung học và lời nhắc tại `/teacher#thoi-khoa-bieu`.
+Xem [thời khóa biểu và lời nhắc](docs/thoi-khoa-bieu.md).
+
 ## Giao diện
 
 Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)

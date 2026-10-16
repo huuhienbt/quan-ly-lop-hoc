@@ -2,6 +2,7 @@ import "server-only";
 
 import { batch, query, type D1Statement } from "@/lib/d1";
 import { normalizePostImage, postImageUrl } from "@/lib/post-images";
+import { getStudentTimetablePlan } from "@/lib/class-timetable";
 import {
   archiveContentSchema,
   eventSchema,
@@ -100,7 +101,7 @@ export async function getPublicPost(id: string): Promise<ContentPost | null> {
     WHERE p.id = ? AND p.status = 'PUBLISHED' AND p.visibility = 'PUBLIC' AND ${activeClass}`, [id]))[0] ?? null;
 }
 
-type StudentSpaceIdentity = Omit<StudentClassSpace, "posts" | "events" | "tasks">;
+type StudentSpaceIdentity = Omit<StudentClassSpace, "posts" | "events" | "tasks" | "timetable">;
 interface StudentTaskRow extends ClassTask { completed: number }
 
 function validStudentIdentity(accountId: string, version: number) {
@@ -127,7 +128,7 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
     ORDER BY pupil.full_name, c.name, enrollment.id`, [accountId, sessionVersion]);
   const students = await Promise.all(identities.map(async (identity): Promise<StudentClassSpace> => {
     const own = [accountId, sessionVersion, identity.enrollment_id];
-    const [posts, events, taskRows] = await Promise.all([
+    const [posts, events, taskRows, timetable] = await Promise.all([
       query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
         WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${activeClass} AND ${studentAccess}
         ORDER BY ${postOrder} LIMIT 100`, [identity.class_id, ...own]),
@@ -142,8 +143,9 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
         WHERE c.id = ? AND task.status = 'PUBLISHED' AND ${activeClass} AND ${studentAccess}
           AND ${taskWindow} ORDER BY task.kind DESC, task.sort_order, task.title, task.id`,
       [identity.enrollment_id, calendar.today, identity.class_id, ...own, calendar.today, calendar.tomorrow]),
+      getStudentTimetablePlan(accountId, sessionVersion, identity.enrollment_id, calendar.today),
     ]);
-    return { ...identity, posts, events, tasks: taskRows.map((task) => ({ ...task, completed: task.completed === 1 })) };
+    return { ...identity, posts, events, tasks: taskRows.map((task) => ({ ...task, completed: task.completed === 1 })), timetable };
   }));
   return { ...calendar, students };
 }
