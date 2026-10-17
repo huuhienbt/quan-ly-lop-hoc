@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteTheme } from "@/lib/site-theme";
 import "./globals.css";
@@ -23,7 +23,11 @@ export const metadata: Metadata = {
   },
   description: "Cùng thầy cô xây dựng một lớp học an toàn, ấm áp và hạnh phúc tại Trường Tiểu học Bến Tre.",
   robots: { index: false, follow: false },
+  appleWebApp: { capable: true, title: "Lớp học hạnh phúc", statusBarStyle: "default" },
+  icons: { apple: "/icons/app-192.png" },
 };
+
+export const viewport: Viewport = { themeColor: "#137e70" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const theme = await getSiteTheme();

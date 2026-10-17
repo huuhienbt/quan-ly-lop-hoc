@@ -1,8 +1,21 @@
 # Bảng tin và góc học sinh
 
-Phần này thực hiện đề xuất đã được chủ dự án chọn: bản tin chung cho gia đình,
-góc riêng cho học sinh và chỗ cập nhật cho thầy cô. Chưa bổ sung sao, cảm xúc,
+Phần này gồm bản tin của lớp, góc riêng cho học sinh và chỗ cập nhật cho thầy cô.
+Chưa bổ sung sao, cảm xúc,
 hòm thư, album hay tiện ích của các giai đoạn sau.
+
+## Trang chủ dễ theo dõi
+
+Cả ba giao diện có lời chào và tranh thu gọn, tiếp theo là sáu lối vào:
+**Việc hôm nay**, **Chuẩn bị buổi tới**, **Trò chuyện**, **Tin lớp**,
+**Lịch tuần** và **Trò chơi học tập**. Học sinh đã đăng nhập được đưa tới đúng
+mục trong góc của mình; học sinh chưa đăng nhập được đưa tới trang đăng nhập.
+Thông báo, bản tin và lịch lớp nằm bên dưới; phần đăng nhập thầy cô ở cuối.
+
+Đã bỏ khối **Ba mẹ cùng con khám phá / Ba mẹ đồng hành**, các liên kết tới khối
+này và chủ đề ba mẹ trong danh sách bài ở trang chủ. Bài thuộc `PARENT_GUIDE`
+vẫn được lưu, biên tập và xem qua đường dẫn bài theo quyền hiện hành; thay đổi
+trang chủ không xóa hay lưu trữ bài. Tên và lựa chọn của ba giao diện được giữ.
 
 ## Cập nhật nội dung
 
@@ -14,7 +27,7 @@ hòm thư, album hay tiện ích của các giai đoạn sau.
 
 Bài viết có tiêu đề, nội dung, loại bài, chủ đề, ảnh bìa tùy chọn và trạng
 thái. Bản nháp chỉ dành cho người biên tập. Chọn **Công khai** và **Xuất bản**
-để xuất hiện trên trang chủ; chọn **Trong lớp** để chỉ học sinh đã liên kết xem.
+để xuất hiện trên trang chủ (trừ chủ đề dành cho ba mẹ); chọn **Trong lớp** để chỉ học sinh đã liên kết xem.
 Việc công khai một bài chỉ áp dụng cho bài đó; hồ sơ, số điện thoại và checklist
 của học sinh vẫn nằm trong khu vực đăng nhập.
 

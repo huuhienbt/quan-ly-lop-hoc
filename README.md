@@ -55,6 +55,24 @@ riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin
 `/teacher#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
 Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 
+Trang chủ có sáu lối tắt, bỏ khối giới thiệu dành cho ba mẹ và thu gọn tranh
+đầu trang ở cả ba giao diện. Góc học sinh chia thành năm thẻ **Hôm nay, Lịch
+tuần, Tin lớp, Khám phá, Trò chuyện**; bản nháp và dấu hoàn thành được giữ khi
+chuyển thẻ. Nội dung bài viết đã nhập vẫn được giữ trong D1 và trang biên tập.
+
+## Ứng dụng Android
+
+Mở [trang cài ứng dụng](https://e-class-vinhlong.vercel.app/cai-ung-dung) trên
+điện thoại để tải APK. Ứng dụng dành cho Android 8 trở lên, dùng Chrome hoặc
+trình duyệt tương thích được cập nhật và cần Internet. Tài khoản, dữ liệu và
+các nội dung mới của lớp dùng chung với website.
+
+Mã nguồn Android nằm trong `android/`; APK đã ký được phục vụ tại
+`web/public/downloads/`, kèm mã SHA-256. Website có manifest và Digital Asset
+Links xác minh đúng chữ ký ứng dụng. Xem [hướng dẫn Android](android/README.md)
+để dựng lại và giữ khóa ký cho các bản cập nhật. Khóa riêng không nằm trong Git
+hoặc thư mục public.
+
 ## Giao diện
 
 Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)

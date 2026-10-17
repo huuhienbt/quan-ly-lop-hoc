@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
-import { LearningGameCard } from "@/components/learning-game-card";
+import { HomeShortcuts } from "@/components/home-shortcuts";
+import { AndroidDownload } from "@/components/android-download";
 import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
@@ -18,13 +19,6 @@ export interface HarmonyHomeProps {
   studentSignedIn: boolean;
   setupReady: boolean;
 }
-
-const shortcuts = [
-  { icon: "📚", title: "Tin lớp", note: "Chuyện mới của chúng mình", href: "/#bang-tin", color: "sky" },
-  { icon: "🗓️", title: "Lịch tuần", note: "Sẵn sàng cho ngày vui", href: "/#lich-tuan", color: "mint" },
-  { icon: "🎒", title: "Việc hôm nay", note: "Mỗi ngày một chút tiến bộ", href: "student", color: "butter" },
-  { icon: "🌟", title: "Góc của em", note: "Một thế giới để khám phá", href: "student", color: "rose" },
-];
 
 function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
   return (
@@ -49,9 +43,8 @@ function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compac
 
 export function HarmonyHome({ bulletin, unavailable, selected, query, user, studentSignedIn, setupReady }: HarmonyHomeProps) {
   const studentHref = studentSignedIn ? "/hoc-sinh" : "/hoc-sinh/dang-nhap";
-  const announcements = bulletin.posts.filter((post) => post.kind === "ANNOUNCEMENT").slice(0, 3);
-  const stories = bulletin.posts.filter((post) => post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected)).slice(0, 4);
-  const parentPosts = bulletin.posts.filter((post) => post.category === "PARENT_GUIDE").slice(0, 2);
+  const announcements = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind === "ANNOUNCEMENT").slice(0, 3);
+  const stories = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected)).slice(0, 4);
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
 
   return (
@@ -59,7 +52,7 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
       <header className={`harmony-header${user?.role === "SUPER_ADMIN" ? " has-theme-settings" : ""}`}>
         <div className="harmony-container harmony-header-inner">
           <Brand />
-          <nav aria-label="Điều hướng chính"><a href="#bang-tin">Tin lớp</a><a href="#lich-tuan">Lịch tuần</a><a href="#dong-hanh">Ba mẹ đồng hành</a></nav>
+          <nav aria-label="Điều hướng chính"><a href="#bang-tin">Tin lớp</a><a href="#lich-tuan">Lịch tuần</a><a href="#loi-tat">Lối vào nhanh</a></nav>
           <div className="harmony-header-actions">
             {user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}
             {user || studentSignedIn ? <SignOutButton /> : <a className="harmony-staff-link" href="#bat-dau">Dành cho thầy cô</a>}
@@ -74,7 +67,7 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
             <div className="harmony-hero-copy">
               <p className="harmony-eyebrow"><span /> LỚP BỐN 12 · TRƯỜNG TIỂU HỌC BẾN TRE</p>
               <h1 id="harmony-home-title">Vui học hôm nay.<br /><span>Khám phá ngày mai.</span></h1>
-              <p className="harmony-hero-description">Một lớp học. Muôn điều hạnh phúc.<span className="harmony-hero-detail"><br />Cùng em học điều hay, làm việc tốt và mở thêm những cánh cửa mới mỗi ngày.</span></p>
+              <p className="harmony-hero-description">Xem việc cần làm, chuẩn bị bài và trò chuyện cùng lớp mình.</p>
               <Link className="harmony-button harmony-button-yellow harmony-hero-cta" href={studentHref}>Vào góc học sinh <ArrowIcon /></Link>
               <p className="harmony-hero-note"><HeartIcon /> Mỗi em đều được lắng nghe và yêu thương.</p>
             </div>
@@ -87,6 +80,8 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
           </div>
         </section>
 
+        <div className="harmony-container"><HomeShortcuts studentSignedIn={studentSignedIn} /></div>
+
         <section className="harmony-container harmony-today" aria-labelledby="harmony-notices-title">
           <div className="harmony-day-line"><p><SunIcon /> LỚP MÌNH HÔM NAY</p><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div>
           <div className="harmony-notices">
@@ -95,17 +90,12 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
               <div className="harmony-notice-items">{announcements.map((post) => <Link href={`/ban-tin/${post.id}`} key={post.id}><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div>
             ) : <p className="harmony-notice-empty">Thầy cô sẽ gửi những thông báo mới của lớp tại đây.</p>}
           </div>
-          <nav className="harmony-shortcuts" aria-label="Lối vào lớp học">
-            {shortcuts.map((shortcut) => <Link key={shortcut.title} className={`harmony-shortcut harmony-shortcut-${shortcut.color}`} href={shortcut.href === "student" ? studentHref : shortcut.href}><span className="harmony-shortcut-icon" aria-hidden="true">{shortcut.icon}</span><span><strong>{shortcut.title}</strong><small>{shortcut.note}</small></span><ArrowIcon /></Link>)}
-          </nav>
         </section>
-
-        <div className="harmony-container"><LearningGameCard /></div>
 
         <div className="harmony-container harmony-class-grid">
           <section className="harmony-stories" id="bang-tin" aria-labelledby="harmony-stories-title">
             <div className="harmony-section-heading"><p className="harmony-eyebrow">NHỮNG ĐIỀU NHỎ, NIỀM VUI TO</p><h2 id="harmony-stories-title">Chuyện lớp mình <span aria-hidden="true">✦</span></h2><p>Hoạt động, điều hay và những khoảnh khắc cùng lớn lên.</p></div>
-            <nav className="harmony-tabs" aria-label="Chủ đề bản tin"><Link href="/#bang-tin" aria-current={!selected ? "page" : undefined}>Tất cả</Link>{postCategories.map((category) => <Link key={category} href={`/?muc=${category}#bang-tin`} aria-current={selected === category ? "page" : undefined}>{categoryLabels[category]}</Link>)}</nav>
+            <nav className="harmony-tabs" aria-label="Chủ đề bản tin"><Link href="/#bang-tin" aria-current={!selected ? "page" : undefined}>Tất cả</Link>{postCategories.filter((category) => category !== "PARENT_GUIDE").map((category) => <Link key={category} href={`/?muc=${category}#bang-tin`} aria-current={selected === category ? "page" : undefined}>{categoryLabels[category]}</Link>)}</nav>
             {unavailable ? <div className="harmony-empty" role="status"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Bạn vẫn có thể dùng mục đăng nhập bên dưới.</p></div> : stories.length ? <div className="harmony-story-grid">{stories.map((post) => <HarmonyStoryCard key={post.id} post={post} />)}</div> : <div className="harmony-empty"><SunIcon /><h3>Câu chuyện mới đang được chuẩn bị</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}
           </section>
 
@@ -116,19 +106,14 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
               {bulletin.events.length ? <ol className="harmony-events">{bulletin.events.map((event) => <li key={event.id}><time dateTime={event.event_date}><strong>{event.event_date.slice(8)}</strong><span>Tháng {Number(event.event_date.slice(5, 7))}</span></time><div><h3>{event.title}</h3><p>{event.class_name}{event.starts_at ? ` · ${event.starts_at}` : ""}</p>{event.body && <p className="harmony-event-body">{event.body}</p>}</div></li>)}</ol> : <div className="harmony-calendar-empty"><span aria-hidden="true">🗓️</span><p>{unavailable ? "Chưa tải được lịch tuần." : "Thầy cô đang cập nhật lịch tuần. Mình cùng chờ thông báo nhé!"}</p></div>}
               <p className="harmony-calendar-note">Lịch học và hoạt động được thầy cô cập nhật theo tuần.</p>
             </section>
-            <section className="harmony-daily" aria-labelledby="harmony-daily-title"><span className="harmony-daily-icon" aria-hidden="true">🎒</span><div><p className="harmony-eyebrow">MỖI NGÀY MỘT CHÚT TIẾN BỘ</p><h2 id="harmony-daily-title">Việc nhỏ, em làm được!</h2><p>Vào góc của em để xem lời nhắn, đánh dấu việc đã làm và chuẩn bị cho ngày mai.</p><Link className="harmony-button harmony-button-yellow" href={studentHref}>Xem việc hôm nay <ArrowIcon /></Link></div></section>
+            <section className="harmony-kindness" id="dieu-hay" aria-labelledby="harmony-kindness-title"><div className="harmony-kindness-mark"><HeartIcon /><span aria-hidden="true">✦</span></div><p className="harmony-eyebrow">MỖI TUẦN MỘT ĐIỀU TỐT</p><h2 id="harmony-kindness-title">{kindness?.title ?? "Một lời tử tế, một ngày vui."}</h2><p>{kindness?.body.split("\n").find(Boolean) ?? "Mình cùng lắng nghe, nói lời cảm ơn và dành cho nhau một chút quan tâm mỗi ngày."}</p>{kindness && <Link className="harmony-text-link" href={`/ban-tin/${kindness.id}`}>Mình cùng thực hành <ArrowIcon /></Link>}</section>
           </aside>
         </div>
 
-        <section className="harmony-community" aria-label="Cùng vun đắp một lớp học hạnh phúc">
-          <div className="harmony-container harmony-community-grid">
-            <section className="harmony-kindness" id="dieu-hay" aria-labelledby="harmony-kindness-title"><div className="harmony-kindness-mark"><HeartIcon /><span aria-hidden="true">✦</span></div><p className="harmony-eyebrow">MỖI TUẦN MỘT ĐIỀU TỐT</p><h2 id="harmony-kindness-title">{kindness?.title ?? "Một lời tử tế, một ngày vui."}</h2><p>{kindness?.body.split("\n").find(Boolean) ?? "Mình cùng lắng nghe, nói lời cảm ơn và dành cho nhau một chút quan tâm mỗi ngày."}</p>{kindness && <Link className="harmony-text-link" href={`/ban-tin/${kindness.id}`}>Mình cùng thực hành <ArrowIcon /></Link>}</section>
-            <section className="harmony-parents" id="dong-hanh" aria-labelledby="harmony-parents-title"><div className="harmony-section-heading"><p className="harmony-eyebrow">YÊU THƯƠNG LÀ CÙNG NHAU LỚN LÊN</p><h2 id="harmony-parents-title">Ba mẹ đồng hành <span aria-hidden="true">🌱</span></h2><p>Những gợi ý nhỏ để hiểu con và kết nối mỗi ngày.</p></div>{parentPosts.length ? <div className="harmony-parent-stories">{parentPosts.map((post) => <HarmonyStoryCard post={post} key={post.id} compact />)}</div> : <div className="harmony-parent-empty"><PeopleIcon /><p>Những chia sẻ dành cho phụ huynh sẽ được thầy cô cập nhật tại đây.</p></div>}</section>
-          </div>
-        </section>
+      <AndroidDownload />
 
         <section className="harmony-container harmony-access" id="bat-dau" aria-labelledby="harmony-access-title">
-          <div className="harmony-access-copy"><span className="harmony-access-book" aria-hidden="true">📖</span><p className="harmony-eyebrow">THẦY CÔ KẾT NỐI · LỚP MÌNH LỚN LÊN</p><h2 id="harmony-access-title">Cùng viết tiếp<br /><span>những ngày hạnh phúc.</span></h2><p>Cập nhật chuyện lớp, lịch tuần và những việc cần chuẩn bị để gia đình và nhà trường cùng đồng hành.</p><p className="harmony-privacy-note"><ShieldIcon />Nội dung riêng của lớp dành cho các tài khoản đã được liên kết.</p></div>
+          <div className="harmony-access-copy"><span className="harmony-access-book" aria-hidden="true">📖</span><p className="harmony-eyebrow">THẦY CÔ KẾT NỐI · LỚP MÌNH LỚN LÊN</p><h2 id="harmony-access-title">Không gian<br /><span>dành cho thầy cô.</span></h2><p>Đăng thông báo, chỉnh thời khóa biểu và trả lời tin nhắn của học sinh.</p><p className="harmony-privacy-note"><ShieldIcon />Nội dung riêng của lớp dành cho các tài khoản đã được liên kết.</p></div>
           <div className="harmony-account-card">
             {typeof query.error === "string" && <p className="form-message is-error" role="alert">Chưa thể đăng nhập bằng tài khoản này. Vui lòng thử lại hoặc liên hệ quản trị viên.</p>}
             {query.access === "denied" && <p className="form-message is-error" role="alert">Tài khoản của bạn chưa có quyền truy cập trang quản trị.</p>}

@@ -1,0 +1,66 @@
+import groovy.json.JsonSlurper
+
+plugins {
+    id 'com.android.application'
+}
+
+// Only an external private file can enable release signing. No signing values are
+// committed, put in the APK, or sent to the website.
+def signingPath = providers.environmentVariable('ECLASS_ANDROID_SIGNING_FILE').orNull
+def signingData = signingPath ? new JsonSlurper().parse(new File(signingPath)) : null
+def releaseRequested = gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }
+if (releaseRequested && signingData == null) {
+    throw new GradleException('Set ECLASS_ANDROID_SIGNING_FILE to the private signing JSON before building a release.')
+}
+// Generic `build` or `assemble` also includes release outputs. Check the resolved
+// graph as well so those commands cannot silently emit an unsigned release.
+gradle.taskGraph.whenReady { graph ->
+    if (signingData == null && graph.allTasks.any {
+        it.project == project && it.name in ['assembleRelease', 'packageRelease', 'bundleRelease', 'packageReleaseBundle']
+    }) {
+        throw new GradleException('Release output requires ECLASS_ANDROID_SIGNING_FILE; unsigned release output is disabled.')
+    }
+}
+
+android {
+    namespace 'vn.edu.bentre.eclass'
+    compileSdk 36
+    buildToolsVersion '35.0.0'
+
+    defaultConfig {
+        applicationId 'vn.edu.bentre.eclass'
+        minSdk 26
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        if (signingData != null) {
+            release {
+                storeFile file(signingData.storeFile)
+                storePassword signingData.storePassword
+                keyAlias signingData.keyAlias
+                keyPassword signingData.keyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (signingData != null) signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+}

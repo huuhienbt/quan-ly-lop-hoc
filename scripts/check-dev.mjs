@@ -29,7 +29,9 @@ if (!result.success || result.result?.[0]?.results?.[0]?.id !== 'school-ben-tre'
 const frontend = await fetch(process.env.LHH_DEV_APP_URL || 'http://127.0.0.1:3000', {
   redirect: 'error', signal: AbortSignal.timeout(10000),
 });
-if (!frontend.ok || !(await frontend.text()).includes('Một lớp học.')) {
+const homepage = await frontend.text();
+if (!frontend.ok || !homepage.includes('class="home-shortcuts-grid"') ||
+    !homepage.includes('href="/tro-choi/ca-dao-tuc-ngu"')) {
   throw new Error('Ứng dụng chưa trả về trang chủ hợp lệ.');
 }
 console.log('D1 truy vấn được seed trường và Next.js trả về trang chủ: đạt.');

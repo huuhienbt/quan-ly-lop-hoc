@@ -400,3 +400,19 @@
 @media (prefers-reduced-motion: reduce) {
   .harmony-home *, .harmony-home *::before, .harmony-home *::after { scroll-behavior: auto; transition: none !important; }
 }
+
+/* Keep the daily actions above the news, without repeated promotional blocks. */
+.harmony-home .harmony-hero { min-height: 330px; padding-block: 25px; }
+.harmony-home .harmony-hero-frame { height: 260px; }
+.harmony-home .harmony-hero h1 { font-size: clamp(35px, 3.4vw, 45px); }
+.harmony-home .harmony-today { padding-top: 0; }
+.harmony-home .harmony-week-column .harmony-kindness { margin-top: 22px; padding: 24px; }
+.harmony-home .harmony-week-column .harmony-kindness h2 { font-size: 24px; }
+.harmony-home .harmony-tabs > a, .harmony-home .harmony-text-link, .harmony-home .harmony-footer a { min-height: 44px; display: inline-flex; align-items: center; }
+@media (max-width: 760px) {
+  .harmony-home .harmony-hero { min-height: 0; gap: 16px; padding-block: 23px; }
+  .harmony-home .harmony-hero h1 { font-size: 35px; }
+  .harmony-home .harmony-hero-frame { height: 155px; }
+  .harmony-home .harmony-hero-art { max-width: 340px; }
+  .harmony-home .harmony-art-note { display: none; }
+}
