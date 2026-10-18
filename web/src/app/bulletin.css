@@ -210,23 +210,25 @@
 @media(prefers-reduced-motion:reduce){.bulletin-card{transition:none}.bulletin-card:hover{transform:none}}
 
 /* Keep the first screen focused on the pupil entrance and daily shortcuts. */
-.bulletin-home .bulletin-hero { padding-block: 26px 16px; gap: 28px; }
+.bulletin-home .bulletin-hero { padding-block: 21px 13px; gap: 22px; }
 .bulletin-home .bulletin-hero .hero-copy { padding-block: 0; }
 .bulletin-home .bulletin-hero .hero-copy h1 { font-size: clamp(34px, 3.6vw, 46px); }
 .bulletin-home .bulletin-hero .hero-description { margin-top: 14px; }
 .bulletin-home .bulletin-hero .hero-origin { margin-top: 17px; }
-.bulletin-home .bulletin-hero .playful-school-art { width: 100%; max-width: 390px; min-height: 260px; margin: 0 auto; }
+.bulletin-home .bulletin-hero .playful-school-art { width: 100%; max-width: 312px; min-height: 208px; margin: 0 auto; }
 .bulletin-home .bulletin-hero-sky { padding-bottom: 10px; }
 .bulletin-home .bulletin-access { margin-top: 32px; }
 .bulletin-home .bulletin-header .button, .bulletin-home .bulletin-header .button-quiet { min-height: 44px; }
 @media (max-width: 760px) {
-  .bulletin-home .bulletin-hero { padding-block: 24px 8px; gap: 12px; }
+  .bulletin-home .bulletin-hero { padding-block: 19px 6px; gap: 10px; }
   .bulletin-home .bulletin-hero .hero-copy h1 { font-size: 35px; max-width: 100%; }
   .bulletin-home .bulletin-hero .hero-description { margin-top: 12px; }
   .bulletin-home .bulletin-hero .hero-origin { display: none; }
-  .bulletin-home .bulletin-hero .playful-school-art { max-width: 240px; min-height: 160px; }
+  .bulletin-home .bulletin-hero .playful-school-art { max-width: 192px; min-height: 128px; }
   .bulletin-home .bulletin-hero .art-school-label, .bulletin-home .bulletin-hero .art-note { display: none; }
-  .bulletin-home .bulletin-header .header-actions { flex-wrap: wrap; justify-content: flex-start; gap: 8px 18px; }
+  .bulletin-home .bulletin-header { flex-wrap: nowrap; gap: 10px; }
+  .bulletin-home .bulletin-header .brand-copy strong { font-size: 17px; }
+  .bulletin-home .bulletin-header .header-actions { width: auto; flex-wrap: nowrap; margin-left: auto; }
   .bulletin-home .bulletin-header .header-actions .bulletin-student-link { margin-left: auto; }
   .bulletin-home .bulletin-header .header-actions > .nav-link[href="#loi-tat"] { display: none; }
 }

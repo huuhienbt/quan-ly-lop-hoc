@@ -3,14 +3,14 @@
 import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 
-export function GoogleSignInButton({ enabled, compact = false }: { enabled: boolean; compact?: boolean }) {
+export function GoogleSignInButton({ enabled, compact = false, callbackUrl = "/" }: { enabled: boolean; compact?: boolean; callbackUrl?: "/" | "/dang-nhap" }) {
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
 
   async function login() {
     setPending(true);
     setFailed(false);
-    try { await signIn("google", { callbackUrl: "/" }); }
+    try { await signIn("google", { callbackUrl }); }
     catch { setPending(false); setFailed(true); }
   }
 

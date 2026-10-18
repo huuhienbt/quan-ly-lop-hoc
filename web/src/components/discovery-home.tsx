@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
+import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
-import { ThemeSettingsLink } from "@/components/theme-settings-link";
-import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
+import { GoogleSignInButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
 import { postCategories, type ContentPost, type PostCategory, type PublicBulletin } from "@/lib/content-schemas";
@@ -35,19 +35,17 @@ function SectionTitle({ id, children, label }: { id: string; children: ReactNode
 }
 
 export function DiscoveryHome({ bulletin, unavailable, selected, query, user, studentSignedIn, setupReady }: DiscoveryHomeProps) {
-  const studentHref = studentSignedIn ? "/hoc-sinh" : "/hoc-sinh/dang-nhap";
-  const announcements = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind === "ANNOUNCEMENT").slice(0, 3);
+  const studentHref = studentSignedIn ? "/hoc-sinh" : "/dang-nhap";
   const feed = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected)).slice(0, 4);
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
 
   return <div className="discovery-home">
-    <header className={`discovery-header${user?.role === "SUPER_ADMIN" ? " has-theme-settings" : ""}`}><div className="discovery-container discovery-header-inner"><Brand /><nav aria-label="Điều hướng chính"><a href="#noi-dung" aria-current="page">Trang chủ</a><a href="#loi-tat">Lối vào nhanh</a><a href="#bang-tin">Chuyện lớp</a><a href="#lich-tuan">Lịch tuần</a></nav><div className="discovery-header-actions">{user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}{user || studentSignedIn ? <SignOutButton /> : <a className="discovery-teacher-link" href="#bat-dau">Thầy cô</a>}<Link className="discovery-button discovery-button-teal" href={studentHref}><StarIcon />{studentSignedIn ? "Góc của em" : "Góc học sinh"}</Link></div></div></header>
+    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand /><div className="discovery-header-actions"><Link className="discovery-button discovery-button-teal" href="/dang-nhap">{user || studentSignedIn ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></div></header>
     <main id="noi-dung">
-      <section className="discovery-hero" aria-labelledby="discovery-home-title"><Image className="discovery-hero-image" src="/images/discovery-hero-3d.webp" alt="" fill sizes="100vw" preload /><div className="discovery-hero-shade" /><div className="discovery-hero-copy"><p className="discovery-hero-eyebrow"><span>✦</span> CHÀO MỪNG ĐẾN VỚI LỚP BỐN 12 <span>✦</span></p><h1 id="discovery-home-title">Để trí tò mò<br /><span>dẫn lối cho em.</span></h1><p>Xem việc cần làm, chuẩn bị bài<br />và trò chuyện cùng lớp mình.</p><Link className="discovery-button discovery-button-yellow" href={studentHref}>Vào góc học sinh <ArrowIcon /></Link><span className="discovery-hero-school">Trường Tiểu học Bến Tre</span></div><div className="discovery-hero-bottom" /></section>
+      <section className="discovery-hero" aria-labelledby="discovery-home-title"><Image className="discovery-hero-image" src="/images/discovery-hero-3d.webp" alt="" fill sizes="100vw" preload /><div className="discovery-hero-shade" /><div className="discovery-hero-copy"><p className="discovery-hero-eyebrow"><span>✦</span> CHÀO MỪNG ĐẾN VỚI LỚP BỐN 12 <span>✦</span></p><h1 id="discovery-home-title">Để trí tò mò<br /><span>dẫn lối cho em.</span></h1><Link className="discovery-button discovery-button-yellow" href={studentHref}>Vào lớp học <ArrowIcon /></Link><span className="discovery-hero-school">Trường Tiểu học Bến Tre</span></div><div className="discovery-hero-bottom" /></section>
 
       <div className="discovery-container"><HomeShortcuts studentSignedIn={studentSignedIn} /></div>
-
-      <section className="discovery-container discovery-news" aria-labelledby="discovery-notices-title"><div className="discovery-date-line"><span><span /> LỚP MÌNH HÔM NAY</span><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div><div className="discovery-notices"><div className="discovery-notices-heading"><span><ClockIcon /></span><h2 id="discovery-notices-title">Lời nhắn mới</h2></div>{unavailable ? <p role="status">Tạm thời chưa tải được bản tin. Bạn vui lòng quay lại sau ít phút.</p> : announcements.length ? <div className="discovery-notice-items">{announcements.map((post) => <Link href={`/ban-tin/${post.id}`} key={post.id}><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div> : <p>Thầy cô sẽ gửi những thông báo mới của lớp tại đây.</p>}</div></section>
+      <HomeGalleryPreview />
 
       <section className="discovery-stories" id="bang-tin" aria-labelledby="discovery-stories-title"><div className="discovery-container"><SectionTitle id="discovery-stories-title" label="MỖI CÂU CHUYỆN, MỘT ĐIỀU HAY">Tin lớp mình</SectionTitle><nav className="discovery-tabs" aria-label="Chủ đề bản tin"><Link href="/#bang-tin" aria-current={!selected ? "page" : undefined}>Tất cả câu chuyện</Link>{postCategories.filter((category) => category !== "GENERAL" && category !== "DISCOVERY" && category !== "PARENT_GUIDE").map((category) => <Link key={category} href={`/?muc=${category}#bang-tin`} aria-current={selected === category ? "page" : undefined}>{categoryLabels[category]}</Link>)}</nav>{unavailable ? <div className="discovery-empty" role="status"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Bạn vẫn có thể dùng mục đăng nhập phía dưới.</p></div> : feed.length ? <div className="discovery-story-grid">{feed.map((post) => <DiscoveryCard key={post.id} post={post} />)}</div> : <div className="discovery-empty"><SunIcon /><h3>Câu chuyện mới đang được chuẩn bị</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}</div></section>
 

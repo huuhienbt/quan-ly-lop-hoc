@@ -129,6 +129,7 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd, firs
 
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
     <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
+    <p className="student-gallery-entry"><Link className="button button-outline button-small" href={`/thu-vien-anh?class=${encodeURIComponent(space.class_id)}`}>Thư viện ảnh của lớp <span aria-hidden="true">→</span></Link></p>
     <StudentSectionTabs prefix={prefix} studentName={space.student_name} firstStudent={firstStudent} today={todayContent} week={weekContent} news={newsContent} discovery={discoveryContent} chat={chatContent} />
   </section>;
 }

@@ -87,3 +87,13 @@ sách giao diện, giữ nguyên lựa chọn hiện tại và lịch sử thay 
 áp dụng mẫu mới thì giao diện chung của website mới thay đổi.
 
 Chi tiết thiết kế: [Giao diện 3](giao-dien-3-de-xuat.md).
+
+## Bố cục hiện tại
+
+Ở cả ba giao diện, đầu trang chỉ giữ logo và nút **Đăng nhập** (hoặc
+**Tài khoản** khi đã đăng nhập), bỏ menu ngang và khối “Lời nhắn mới”. Banner
+thu nhỏ thêm khoảng 20% so với bản trước; bỏ dòng mô tả được chủ dự án yêu
+cầu. Thư viện ảnh theo album được đặt ngay sau các lối tắt. Bản tin, thời khóa
+biểu, trò chuyện và ứng dụng Android tiếp tục dùng dữ liệu hiện có.
+
+Những thay đổi này nằm trên nhánh chính, không ghi đè các tag backup đã lưu.

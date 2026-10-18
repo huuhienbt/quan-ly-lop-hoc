@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
+import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
-import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
+import { GoogleSignInButton } from "@/components/auth-buttons";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
-import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
-import { ThemeSettingsLink } from "@/components/theme-settings-link";
+import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { postCategories, type ContentPost, type PostCategory, type PublicBulletin } from "@/lib/content-schemas";
 import type { CurrentUser } from "@/lib/rbac";
 
@@ -42,22 +42,16 @@ function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compac
 }
 
 export function HarmonyHome({ bulletin, unavailable, selected, query, user, studentSignedIn, setupReady }: HarmonyHomeProps) {
-  const studentHref = studentSignedIn ? "/hoc-sinh" : "/hoc-sinh/dang-nhap";
-  const announcements = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind === "ANNOUNCEMENT").slice(0, 3);
+  const studentHref = studentSignedIn ? "/hoc-sinh" : "/dang-nhap";
   const stories = bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE" && post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected)).slice(0, 4);
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
 
   return (
     <div className="harmony-home">
-      <header className={`harmony-header${user?.role === "SUPER_ADMIN" ? " has-theme-settings" : ""}`}>
+      <header className="harmony-header">
         <div className="harmony-container harmony-header-inner">
           <Brand />
-          <nav aria-label="Điều hướng chính"><a href="#bang-tin">Tin lớp</a><a href="#lich-tuan">Lịch tuần</a><a href="#loi-tat">Lối vào nhanh</a></nav>
-          <div className="harmony-header-actions">
-            {user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}
-            {user || studentSignedIn ? <SignOutButton /> : <a className="harmony-staff-link" href="#bat-dau">Dành cho thầy cô</a>}
-            <Link className="harmony-button harmony-button-yellow" href={studentHref}><StarIcon />{studentSignedIn ? "Góc của em" : "Góc học sinh"}</Link>
-          </div>
+          <div className="harmony-header-actions"><Link className="harmony-button harmony-button-yellow" href="/dang-nhap">{user || studentSignedIn ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div>
         </div>
       </header>
 
@@ -67,8 +61,7 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
             <div className="harmony-hero-copy">
               <p className="harmony-eyebrow"><span /> LỚP BỐN 12 · TRƯỜNG TIỂU HỌC BẾN TRE</p>
               <h1 id="harmony-home-title">Vui học hôm nay.<br /><span>Khám phá ngày mai.</span></h1>
-              <p className="harmony-hero-description">Xem việc cần làm, chuẩn bị bài và trò chuyện cùng lớp mình.</p>
-              <Link className="harmony-button harmony-button-yellow harmony-hero-cta" href={studentHref}>Vào góc học sinh <ArrowIcon /></Link>
+              <Link className="harmony-button harmony-button-yellow harmony-hero-cta" href={studentHref}>Vào lớp học <ArrowIcon /></Link>
               <p className="harmony-hero-note"><HeartIcon /> Mỗi em đều được lắng nghe và yêu thương.</p>
             </div>
             <div className="harmony-hero-art">
@@ -81,16 +74,7 @@ export function HarmonyHome({ bulletin, unavailable, selected, query, user, stud
         </section>
 
         <div className="harmony-container"><HomeShortcuts studentSignedIn={studentSignedIn} /></div>
-
-        <section className="harmony-container harmony-today" aria-labelledby="harmony-notices-title">
-          <div className="harmony-day-line"><p><SunIcon /> LỚP MÌNH HÔM NAY</p><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div>
-          <div className="harmony-notices">
-            <div className="harmony-notice-heading"><span><ClockIcon /></span><h2 id="harmony-notices-title">Lời nhắn mới</h2></div>
-            {unavailable ? <p className="harmony-notice-empty" role="status">Tạm thời chưa tải được thông báo. Bạn vui lòng quay lại sau ít phút.</p> : announcements.length ? (
-              <div className="harmony-notice-items">{announcements.map((post) => <Link href={`/ban-tin/${post.id}`} key={post.id}><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div>
-            ) : <p className="harmony-notice-empty">Thầy cô sẽ gửi những thông báo mới của lớp tại đây.</p>}
-          </div>
-        </section>
+      <HomeGalleryPreview />
 
         <div className="harmony-container harmony-class-grid">
           <section className="harmony-stories" id="bang-tin" aria-labelledby="harmony-stories-title">

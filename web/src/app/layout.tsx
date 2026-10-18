@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteTheme } from "@/lib/site-theme";
 import "./globals.css";
+import "./gallery.css";
 import "./discovery-portals.css";
 import "./harmony-portals.css";
 

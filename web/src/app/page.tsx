@@ -2,8 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
+import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
-import { GoogleSignInButton, SignOutButton } from "@/components/auth-buttons";
+import { GoogleSignInButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
 import { HarmonyHome } from "@/components/harmony-home";
@@ -15,7 +16,6 @@ import { getSetupState } from "@/lib/config";
 import { getCurrentUser } from "@/lib/rbac";
 import { getCurrentStudentAccount } from "@/lib/student-session";
 import { getSiteTheme } from "@/lib/site-theme";
-import { ThemeSettingsLink } from "@/components/theme-settings-link";
 import "./bulletin.css";
 import "./discovery-home.css";
 import "./harmony-home.css";
@@ -35,7 +35,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   }
   const selected = postCategories.find((value) => value !== "PARENT_GUIDE" && value === query.muc);
   bulletin = { ...bulletin, posts: bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE") };
-  const announcements = bulletin.posts.filter((post) => post.kind === "ANNOUNCEMENT").slice(0, 3);
   const feed = bulletin.posts.filter((post) => post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected));
   const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
   const authError = typeof query.error === "string";
@@ -49,14 +48,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   }
 
   return <div className="site-shell bulletin-home">
-    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><nav className="header-actions" aria-label="Điều hướng chính"><a className="nav-link" href="#bang-tin">Bảng tin</a><a className="nav-link" href="#lich-tuan">Lịch tuần</a><a className="nav-link" href="#loi-tat">Lối vào nhanh</a>{user?.role === "SUPER_ADMIN" && <ThemeSettingsLink />}{user || student ? <SignOutButton /> : <a className="nav-link bulletin-staff-link" href="#bat-dau">Thầy cô</a>}<Link className="button button-primary bulletin-student-link" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}>{student ? "Góc của em" : "Góc học sinh"}<ArrowIcon /></Link></nav></header></div>
+    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><div className="header-actions"><Link className="button button-primary bulletin-student-link" href="/dang-nhap">{user || student ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></header></div>
     <main id="noi-dung">
-      <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><p className="hero-description">Xem việc cần làm, chuẩn bị bài và trò chuyện cùng lớp mình.</p><div className="bulletin-hero-actions"><Link className="button button-primary" href={student ? "/hoc-sinh" : "/hoc-sinh/dang-nhap"}>Vào góc học sinh <ArrowIcon /></Link><a className="button bulletin-hero-secondary" href="#bang-tin">Xem tin lớp</a></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
+      <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><div className="bulletin-hero-actions"><Link className="button button-primary" href={student ? "/hoc-sinh" : "/dang-nhap"}>Vào lớp học <ArrowIcon /></Link><a className="button bulletin-hero-secondary" href="#bang-tin">Xem tin lớp</a></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 
       <div className="page-width"><HomeShortcuts studentSignedIn={Boolean(student)} /></div>
-
-      <div className="page-width bulletin-date-line"><span><span className="status-dot" /> KẾT NỐI YÊU THƯƠNG MỖI NGÀY</span><time dateTime={bulletin.today}>{formatContentDate(bulletin.today)}</time></div>
-      <section className="page-width bulletin-notices" aria-labelledby="notices-title"><h2 id="notices-title"><span className="bulletin-notice-icon"><ClockIcon /></span>Thông báo mới</h2>{unavailable ? <p role="status">Tạm thời chưa tải được bản tin. Bạn vui lòng quay lại sau ít phút.</p> : announcements.length ? <div className="bulletin-notice-list">{announcements.map((post) => <Link key={post.id} href={`/ban-tin/${post.id}`} className="bulletin-notice"><span>{post.is_pinned === 1 ? "Đáng chú ý" : post.class_name}</span><strong>{post.title}</strong><ArrowIcon /></Link>)}</div> : <p>Thông báo mới sẽ xuất hiện tại đây khi thầy cô đăng bài.</p>}</section>
+      <HomeGalleryPreview />
 
       <div className="page-width bulletin-columns"><section className="bulletin-feed" id="bang-tin" aria-labelledby="bulletin-title"><div className="bulletin-section-heading"><div><p className="eyebrow"><StarIcon /> GÓC BẢN TIN LỚP MÌNH</p><h2 id="bulletin-title">Chuyện nhỏ, <span>niềm vui to!</span></h2></div><span className="bulletin-flower" aria-hidden="true">✦</span></div><nav className="bulletin-tabs" aria-label="Chủ đề bản tin"><Link href="/#bang-tin" aria-current={!selected ? "page" : undefined}>Tất cả</Link>{postCategories.filter((category) => category !== "GENERAL" && category !== "DISCOVERY" && category !== "PARENT_GUIDE").map((category) => <Link key={category} href={`/?muc=${category}#bang-tin`} aria-current={selected === category ? "page" : undefined}>{categoryLabels[category]}</Link>)}</nav>
         {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Bạn vẫn có thể dùng mục đăng nhập phía dưới.</p></div> : feed.length ? <div className="bulletin-card-grid">{feed.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Câu chuyện mới đang được chuẩn bị</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}

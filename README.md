@@ -18,6 +18,7 @@ Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa 
 
 ## Đăng nhập học sinh
 
+- `/dang-nhap`: lối đăng nhập chung từ đầu trang; học sinh dùng số điện thoại, giáo viên/quản trị dùng Google. Phiên đã đăng nhập được chuyển tới không gian đúng vai trò.
 - `/hoc-sinh/dang-nhap`: đăng nhập bằng số điện thoại đã đăng ký.
 - `/hoc-sinh/doi-mat-khau`: bắt buộc đổi mật khẩu ban đầu; đổi xong phải đăng nhập lại.
 - `/hoc-sinh`: chỉ hiển thị học sinh được liên kết với tài khoản đang đăng nhập.
@@ -29,7 +30,7 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Bảng tin và nội dung lớp
 
-- `/`: bản tin công khai, thông báo, điều tốt trong tuần và góc phụ huynh.
+- `/`: bản tin công khai, lịch tuần, điều tốt trong tuần và thư viện ảnh.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
 - `/teacher`: giáo viên được phân công và Super Admin tạo/sửa/lưu trữ bài, sự kiện và nhắc việc.
 - `/hoc-sinh`: tin của lớp, lịch tuần, việc hôm nay, chuẩn bị ngày mai, khám phá và hồ sơ riêng.
@@ -59,6 +60,22 @@ Trang chủ có sáu lối tắt, bỏ khối giới thiệu dành cho ba mẹ v
 đầu trang ở cả ba giao diện. Góc học sinh chia thành năm thẻ **Hôm nay, Lịch
 tuần, Tin lớp, Khám phá, Trò chuyện**; bản nháp và dấu hoàn thành được giữ khi
 chuyển thẻ. Nội dung bài viết đã nhập vẫn được giữ trong D1 và trang biên tập.
+
+Đầu trang hiện chỉ có logo và nút **Đăng nhập/Tài khoản**; bỏ menu ngang,
+khối ngày/“Lời nhắn mới” và thu nhỏ banner thêm khoảng 20% trên cả ba giao diện.
+Các tag backup giao diện được giữ nguyên.
+
+## Thư viện ảnh của lớp
+
+- `/thu-vien-anh`: xem album công khai và album riêng của lớp sau đăng nhập.
+- `/thu-vien-anh/[id]`: xem ảnh theo album, 60 ảnh mỗi trang.
+- `/teacher#thu-vien-anh`: tạo/sửa/lưu trữ album, chọn nhiều ảnh từ thiết bị, thêm chú thích và ẩn ảnh.
+
+Album mới mặc định **Trong lớp**. Chọn **Công khai** để hiện trên trang chủ
+và cho phép người chưa đăng nhập xem. Ảnh riêng luôn được kiểm tra quyền tại
+server; đổi quyền hoặc ẩn ảnh có hiệu lực ngay ở URL ảnh. Migration
+`0009_gallery_images.sql` lưu WebP đã tối ưu, không cần dịch vụ/khóa mới.
+Xem [hướng dẫn thư viện ảnh](docs/thu-vien-anh.md).
 
 ## Ứng dụng Android
 

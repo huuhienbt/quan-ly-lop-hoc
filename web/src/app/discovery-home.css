@@ -218,9 +218,9 @@
 @media (max-width: 390px) { .discovery-home .discovery-container { width: calc(100% - 30px); } .discovery-home .brand-copy strong { font-size: 15px; } .discovery-home .brand-copy > span { font-size: 5.5px; } .discovery-home .brand-symbol { width: 32px; height: 32px; } .discovery-home .brand-symbol svg { width: 29px; height: 29px; } .discovery-home .discovery-header-actions { gap: 5px; } .discovery-home .discovery-header .discovery-button { font-size: 9px; padding: 9px 10px; gap: 4px; } .discovery-home .discovery-hero h1 { font-size: 41px; } .discovery-home .discovery-topic strong { font-size: 13px; } .discovery-home .discovery-topic small { font-size: 7px; } .discovery-home .discovery-story-grid, .discovery-home .discovery-parent-grid { gap: 13px; } .discovery-home .discovery-story-body h3, .discovery-home .discovery-parent-grid .discovery-story-body h3 { font-size: 19px; } .discovery-home .discovery-story-body, .discovery-home .discovery-parent-grid .discovery-story-body { padding-inline: 19px; } .discovery-home .discovery-story-meta time { display: none; } }
 @media (prefers-reduced-motion: reduce) { .discovery-home *, .discovery-home *::before, .discovery-home *::after { scroll-behavior: auto; transition: none !important; } }
 
-/* A compact welcome leaves room for the practical entrances. */
-.discovery-home .discovery-hero { height: 350px; }
-.discovery-home .discovery-hero-copy { padding-top: 25px; }
+/* Keep the welcome banner one fifth shorter while retaining readable entrances. */
+.discovery-home .discovery-hero { height: 280px; }
+.discovery-home .discovery-hero-copy { padding-top: 20px; }
 .discovery-home .discovery-hero h1 { font-size: 44px; margin-block: 8px 10px; }
 .discovery-home .discovery-hero-bottom { background: var(--discovery-cream); height: 26px; }
 .discovery-home .discovery-header nav a, .discovery-home .discovery-teacher-link, .discovery-home .discovery-header .discovery-button, .discovery-home .discovery-header .button-quiet { min-height: 44px; display: inline-flex; align-items: center; }
@@ -229,10 +229,12 @@
 .discovery-home .discovery-week-section { padding-block: 32px; }
 .discovery-home .discovery-tabs > a, .discovery-home .discovery-footer a, .discovery-home .discovery-text-link { min-height: 44px; display: inline-flex; align-items: center; }
 @media (max-width: 760px) {
-  .discovery-home .discovery-hero { height: 330px; }
-  .discovery-home .discovery-hero-copy { padding-top: 24px; }
+  .discovery-home .discovery-hero { height: 264px; }
+  .discovery-home .discovery-hero-copy { padding-top: 19px; }
   .discovery-home .discovery-hero h1 { font-size: 35px; margin-block: 10px; }
   .discovery-home .discovery-hero-eyebrow { letter-spacing: .7px; font-size: 9px; }
   .discovery-home .discovery-hero-image { object-position: center 68%; }
   .discovery-home .discovery-hero-copy > p:not(.discovery-hero-eyebrow) { font-size: 14px; }
 }
+
+.discovery-home .discovery-header .discovery-button { min-height: 44px; font-size: 13px; padding-inline: 17px; white-space: nowrap; }

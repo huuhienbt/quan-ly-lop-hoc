@@ -1,0 +1,13 @@
+.unified-login { padding-block: 24px 64px; }
+.unified-login-header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.unified-login-title { margin:36px 0 24px; text-align:center; }
+.unified-login-title h1 { margin:6px 0; font-size:clamp(30px,4vw,42px); }
+.unified-login-title > p:last-child { margin-top:8px; color:var(--muted); }
+.unified-login-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:940px; margin:auto; align-items:start; }
+.unified-login .student-auth-card { min-width:0; padding:28px; }
+.unified-login .student-auth-card h2 { margin-top:14px; font-size:25px; }
+.unified-google > p { line-height:1.7; margin-block:14px 24px; }
+.unified-google .button-google { width:100%; justify-content:center; }
+.unified-pending { max-width:560px; margin:auto; }
+.unified-pending p { margin-block:16px; }
+@media(max-width:640px) { .unified-login-grid { grid-template-columns:1fr; gap:16px; }.unified-login .student-auth-card { padding:22px; }.unified-login-header .brand-copy strong { font-size:17px; }.unified-login-header .brand-copy > span { font-size:8px; }.unified-login-header { gap:8px; }.unified-login-title { margin-top:28px; } }
