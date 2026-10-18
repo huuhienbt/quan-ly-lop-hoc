@@ -8,8 +8,8 @@
 .site-theme-option > input { position: absolute; z-index: 2; top: 18px; right: 18px; width: 22px; height: 22px; accent-color: #128d79; cursor: pointer; }
 .site-theme-option:has(input:focus-visible) { outline: 3px solid #135ca0; outline-offset: 5px; }
 .site-theme-preview { position: relative; display: block; aspect-ratio: 2.55; overflow: hidden; background: #d1edfa; }
-.site-theme-preview.theme-preview-discovery { background: #c9f5ed; }
-.site-theme-preview.theme-preview-discovery > img { object-position: center 78%; }
+.site-theme-preview.theme-preview-discovery { aspect-ratio: 16 / 10; background: #fffefb; }
+.site-theme-preview.theme-preview-discovery > img { object-position: top center; }
 .site-theme-preview.theme-preview-harmony::before { content: "Vui học hôm nay.\A Khám phá ngày mai."; position: absolute; left: 12px; top: 47%; width: 44%; white-space: pre-line; color: #175d9b; font-size: 13px; font-weight: 950; line-height: 1.5; }
 .site-theme-preview.theme-preview-harmony > img { width: 50%; margin-left: auto; object-position: center 73%; border-radius: 0 0 0 35%; }
 .site-theme-preview.theme-preview-harmony { background: #e8faf5; }
@@ -21,7 +21,6 @@
 .site-theme-check { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; flex: 0 0 24px; border-radius: 50%; color: transparent; background: #edf4f6; font-size: 15px; }
 .site-theme-option.is-selected .site-theme-check { color: #fff; background: #128d79; }
 .site-theme-description { display: block; margin-top: 8px; color: #536b7b; font-size: .88rem; line-height: 1.6; }
-.site-theme-update-note { display: inline-block; margin-top: 10px; padding: 5px 10px; border-radius: 14px; color: #146956; background: #e5f6ef; font-size: .75rem; font-weight: 800; line-height: 1.5; }
 .site-theme-colors { display: flex; gap: 7px; margin-top: 14px; }
 .site-theme-colors > span { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #dde9ed; }
 .site-theme-form-bottom { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 22px; }
