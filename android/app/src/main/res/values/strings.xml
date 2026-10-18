@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Lớp học hạnh phúc</string>
+    <string name="launch_waiting">Đang mở lớp học…\nNếu chờ lâu, chọn Mở bằng trình duyệt.</string>
+    <string name="launch_opened">Đã mở lớp học trong trình duyệt.</string>
+    <string name="launch_unavailable">Chưa mở được trình duyệt. Vui lòng cài hoặc cập nhật Chrome, rồi thử lại. Có thể sao chép địa chỉ để mở website.</string>
+    <string name="launch_ready">Chọn Thử lại hoặc Mở bằng trình duyệt để vào lớp học.</string>
+    <string name="launch_browser">Mở bằng trình duyệt</string>
+    <string name="launch_retry">Thử lại</string>
+    <string name="launch_copy">Sao chép địa chỉ website</string>
+    <string name="launch_copied">Đã sao chép địa chỉ website.</string>
+    <string name="launch_help">Cần kết nối Internet. Học sinh và giáo viên đăng nhập bằng tài khoản đang dùng trên website.</string>
+    <string name="launch_website" translatable="false">https://e-class-vinhlong.vercel.app</string>
     <string name="asset_statements" translatable="false">[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://e-class-vinhlong.vercel.app\"}}]</string>
 </resources>

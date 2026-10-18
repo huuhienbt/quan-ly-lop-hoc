@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout android:id="@+id/launch_root"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:gravity="center" android:padding="24dp">
+        <ImageView android:layout_width="88dp" android:layout_height="88dp"
+            android:src="@mipmap/ic_launcher" android:importantForAccessibility="no"
+            android:layout_marginBottom="20dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/app_name" android:textColor="@color/brand_blue"
+            android:textSize="26sp" android:textStyle="bold" android:gravity="center" />
+        <ProgressBar android:id="@+id/launch_progress" android:layout_width="40dp"
+            android:layout_height="40dp" android:layout_marginTop="24dp" />
+        <TextView android:id="@+id/launch_status" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="@string/launch_waiting"
+            android:textColor="#365E68" android:textSize="16sp" android:gravity="center"
+            android:lineSpacingExtra="5dp" android:layout_marginTop="18dp"
+            android:accessibilityLiveRegion="polite" />
+        <Button android:id="@+id/launch_browser" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:minHeight="52dp"
+            android:layout_marginTop="24dp" android:text="@string/launch_browser"
+            android:textAllCaps="false" />
+        <Button android:id="@+id/launch_retry" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:minHeight="48dp"
+            android:text="@string/launch_retry" android:textAllCaps="false" />
+        <Button android:id="@+id/launch_copy" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:minHeight="48dp"
+            android:text="@string/launch_copy" android:textAllCaps="false" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="18dp" android:text="@string/launch_help"
+            android:textSize="14sp" android:textColor="#365E68" android:gravity="center"
+            android:lineSpacingExtra="4dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" android:text="@string/launch_website"
+            android:textSize="13sp" android:textColor="@color/brand_blue"
+            android:textIsSelectable="true" android:gravity="center" />
+    </LinearLayout>
+</ScrollView>
