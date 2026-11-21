@@ -30,9 +30,9 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Bảng tin và nội dung lớp
 
-- `/`: bản tin công khai và thư viện ảnh.
+- `/`: bản tin công khai; mỗi bài có ảnh chiếm khoảng hai phần ba chiều ngang trên máy tính.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
-- `/teacher`: giáo viên và Super Admin quản lý bài viết, đăng ảnh, mở trò chơi và trò chuyện. Chọn **Thêm bài viết mới** để mở biểu mẫu soạn bài.
+- `/teacher`: giáo viên và Super Admin dùng hai tab riêng: **Bài viết** và **Trò chuyện**. Chọn **Thêm bài viết mới** để soạn bài và thêm ảnh bìa.
 - `/hoc-sinh`: tin lớp, khám phá, trò chuyện, trò chơi học tập và hồ sơ riêng.
 
 Dữ liệu lịch, nhắc việc và dấu hoàn thành đã lưu vẫn nằm trong D1. Có thể dùng `scripts/seed-class-content.mjs`
@@ -47,7 +47,7 @@ JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịc
 
 Mục **Trò chuyện** trong Góc học sinh có phòng chung của lớp và kênh nhắn
 riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin nhắn tại
-`/teacher#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
+`/teacher?tab=tro-chuyen#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
 Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 
 Trang chủ có ba lối tắt: **Tin lớp**, **Trò chơi học tập**, **Trò chuyện**.
@@ -61,7 +61,7 @@ Các tag backup giao diện được giữ nguyên.
 
 - `/thu-vien-anh`: xem album công khai và album riêng của lớp sau đăng nhập.
 - `/thu-vien-anh/[id]`: xem ảnh theo album, 60 ảnh mỗi trang.
-- `/teacher#thu-vien-anh`: tạo/sửa/lưu trữ album, chọn nhiều ảnh từ thiết bị, thêm chú thích và ẩn ảnh.
+- Mục thư viện ảnh đã được gỡ khỏi trang chủ và trang biên tập; album đã lưu vẫn có đường dẫn riêng và giữ quyền xem cũ.
 
 Album mới mặc định **Trong lớp**. Chọn **Công khai** để hiện trên trang chủ
 và cho phép người chưa đăng nhập xem. Ảnh riêng luôn được kiểm tra quyền tại

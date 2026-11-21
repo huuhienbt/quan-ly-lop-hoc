@@ -12,7 +12,6 @@ export function HomeFooter() {
         </div>
         <nav aria-label="Liên kết cuối trang">
           <a href="#bang-tin">Tin lớp</a>
-          <Link href="/thu-vien-anh">Thư viện ảnh</Link>
           <Link href="/tro-choi/ca-dao-tuc-ngu">Trò chơi học tập</Link>
           <Link href="/dang-nhap">Đăng nhập</Link>
         </nav>

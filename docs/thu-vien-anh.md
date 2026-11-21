@@ -1,24 +1,8 @@
-# Thư viện ảnh của lớp
+# Album ảnh đã lưu
 
-Trang chủ có mục **Thư viện ảnh của lớp** và nút **Mở thư viện ảnh**. Học sinh
-cũng có nút thư viện ngay dưới tên lớp trong không gian của mình.
+Đường dẫn `/thu-vien-anh` và các đường dẫn album cũ vẫn mở theo quyền hiện có. Khối thư viện trên trang chủ và các nút tạo album/tải ảnh album đã được gỡ khỏi trang biên tập.
 
-## Thầy thêm ảnh
-
-1. Bấm **Đăng nhập**, đăng nhập Google bằng tài khoản đang quản lý lớp.
-2. Trong quản trị, chọn **Thư viện ảnh**, hoặc mở `/teacher#thu-vien-anh`.
-3. Chọn đúng lớp, tạo album, đặt tên và ngày sự kiện nếu có.
-4. Giữ **Trong lớp** để chỉ học sinh và giáo viên của lớp xem. Chỉ chọn
-   **Công khai** khi muốn cho mọi người xem album trên trang chủ.
-5. Trong album, bấm **Chọn ảnh từ thiết bị**, chọn ảnh, nhập chú thích nếu
-   cần rồi tải lên. Mỗi lượt chọn tối đa 10 ảnh.
-6. Có thể sửa thông tin/quyền xem album, ẩn từng ảnh hoặc lưu trữ cả album.
-   Với ảnh cũ, mở toàn bộ album để xem và quản lý qua các trang ảnh.
-
-Ảnh nhận định dạng JPG, PNG hoặc WebP, tối đa 20 MB mỗi ảnh trước khi tối ưu
-trên thiết bị. Máy chủ kiểm tra lại, đổi sang WebP tối đa 256 KiB/1.600 px và
-bỏ thông tin EXIF/GPS. Không nhận tệp GIF. Khi tải lỗi, ảnh chưa lưu được
-giữ trong biểu mẫu để thử lại; đóng trang sẽ mất lựa chọn tạm trên thiết bị.
+Để thêm ảnh bìa cho tin lớp, mở **Bài viết** và chọn **Thêm bài viết mới** hoặc **Chỉnh sửa bài viết**.
 
 ## Quyền xem và lưu trữ
 

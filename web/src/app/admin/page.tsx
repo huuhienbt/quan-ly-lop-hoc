@@ -46,9 +46,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
         </div>
         <nav className="admin-nav" aria-label="Công việc thường dùng">
           <Link href="/teacher#bai-viet">Bài viết</Link>
-          <Link href="/teacher#thu-vien-anh">Đăng ảnh</Link>
-          <Link href="/teacher#tro-choi">Trò chơi học tập</Link>
-          <Link href="/teacher#tro-chuyen">Trò chuyện</Link>
+          <Link href="/teacher?tab=tro-chuyen#tro-chuyen">Trò chuyện</Link>
         </nav>
 
         {!section && (

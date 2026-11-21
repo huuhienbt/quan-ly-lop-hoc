@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
-import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
@@ -18,6 +17,7 @@ import { getSiteTheme } from "@/lib/site-theme";
 import "./bulletin.css";
 import "./discovery-home.css";
 import "./harmony-home.css";
+import "./home-news.css";
 
 export const dynamic = "force-dynamic";
 
@@ -44,10 +44,9 @@ export default async function Home() {
       <div className="page-width"><HomeShortcuts studentSignedIn={Boolean(student)} /></div>
       <section className="page-width bulletin-feed bulletin-feed-full" id="bang-tin" aria-labelledby="bulletin-title">
         <div className="bulletin-section-heading"><div><p className="eyebrow"><StarIcon /> GÓC BẢN TIN LỚP MÌNH</p><h2 id="bulletin-title">Tin lớp mình</h2></div><span className="bulletin-flower" aria-hidden="true">✦</span></div>
-        {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="bulletin-card-grid">{posts.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ thông báo và câu chuyện của lớp tại đây.</p></div>}
+        {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="bulletin-card-grid home-news-list">{posts.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ thông báo và câu chuyện của lớp tại đây.</p></div>}
       </section>
 
-      <HomeGalleryPreview />
       <AndroidDownload />
     </main>
     <HomeFooter />

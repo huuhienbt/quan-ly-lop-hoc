@@ -48,6 +48,7 @@
 .teacher-post-create > .teacher-panel { max-width: 760px; margin-top: 18px; }
 .teacher-section-nav a { display: inline-flex; align-items: center; min-height: 46px; gap: 10px; border: 2px solid #c4e5fa; border-radius: 999px; background: #fff; color: #205f94; font-weight: 900; font-size: 14px; padding: 9px 17px; }
 .teacher-section-nav a:hover { background: #e8f7ff; border-color: #0a92dc; }
+.teacher-shell .teacher-section-nav a[aria-current="page"] { background: #ffedab; border-color: #deb742; color: #564000; }
 .teacher-section-nav a:nth-child(2) { border-color: #f4c7de; color: #a73970; }
 .teacher-section-nav a:nth-child(3) { border-color: #f1dc8f; color: #7b5c08; }
 .teacher-section-nav a span { display: grid; place-items: center; min-width: 25px; height: 25px; padding-inline: 5px; border-radius: 50%; background: #e4f4ff; color: #1c6096; font-size: 12px; }

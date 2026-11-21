@@ -19,11 +19,11 @@ export function PostArtwork({ category }: { category: PostCategory }) {
 }
 
 export function PostCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
-  return <article className={`bulletin-card card-${post.category.toLowerCase()}${compact ? " is-compact" : ""}`}>
-    <Link href={`/ban-tin/${post.id}`} className="bulletin-cover-link" tabIndex={-1} aria-hidden="true">
+  return <article className={`bulletin-card home-news-item card-${post.category.toLowerCase()}${compact ? " is-compact" : ""}`}>
+    <Link href={`/ban-tin/${post.id}`} className="bulletin-cover-link home-news-cover" tabIndex={-1} aria-hidden="true">
       {post.cover_url ? <Image className="bulletin-cover" src={post.cover_url} alt="" width={720} height={400} unoptimized /> : <PostArtwork category={post.category} />}
     </Link>
-    <div className="bulletin-card-body"><div className="bulletin-card-meta"><span className={`bulletin-tag tag-${post.category.toLowerCase()}`}>{categoryLabels[post.category]}</span>{post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}</div>
+    <div className="bulletin-card-body home-news-body"><div className="bulletin-card-meta"><span className={`bulletin-tag tag-${post.category.toLowerCase()}`}>{categoryLabels[post.category]}</span>{post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}</div>
       <h3><Link href={`/ban-tin/${post.id}`}>{post.title}</Link></h3><p className="bulletin-excerpt">{post.body}</p>
       <Link className="bulletin-read-more" href={`/ban-tin/${post.id}`}>Đọc câu chuyện <ArrowIcon /></Link>
     </div>

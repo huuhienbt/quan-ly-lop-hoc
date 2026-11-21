@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
-import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
 import { HomeFooter } from "@/components/home-footer";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
@@ -18,13 +17,13 @@ export interface HarmonyHomeProps {
 
 function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
   return (
-    <article className={`harmony-story-card${compact ? " is-compact" : ""}`}>
-      <Link className="harmony-story-cover" href={`/ban-tin/${post.id}`} tabIndex={-1} aria-hidden="true">
+    <article className={`harmony-story-card home-news-item${compact ? " is-compact" : ""}`}>
+      <Link className="harmony-story-cover home-news-cover" href={`/ban-tin/${post.id}`} tabIndex={-1} aria-hidden="true">
         {post.cover_url ? (
-          <Image src={post.cover_url} alt="" fill sizes="(max-width: 650px) 100vw, (max-width: 1000px) 50vw, 34vw" unoptimized />
+          <Image src={post.cover_url} alt="" fill sizes="(max-width: 760px) 100vw, 70vw" unoptimized />
         ) : <span className={`harmony-story-art harmony-art-${post.category.toLowerCase()}`} />}
       </Link>
-      <div className="harmony-story-body">
+      <div className="harmony-story-body home-news-body">
         <div className="harmony-story-meta">
           <span>{categoryLabels[post.category]}</span>
           {post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}
@@ -72,12 +71,11 @@ export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: H
           <section className="harmony-stories" id="bang-tin" aria-labelledby="harmony-stories-title">
             <div className="harmony-section-heading"><p className="harmony-eyebrow">NHỮNG ĐIỀU NHỎ, NIỀM VUI TO</p><h2 id="harmony-stories-title">Tin lớp mình <span aria-hidden="true">✦</span></h2><p>Hoạt động, điều hay và những khoảnh khắc cùng lớn lên.</p></div>
 
-            {unavailable ? <div className="harmony-empty" role="status"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="harmony-story-grid">{posts.map((post) => <HarmonyStoryCard key={post.id} post={post} />)}</div> : <div className="harmony-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}
+            {unavailable ? <div className="harmony-empty" role="status"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="harmony-story-grid home-news-list">{posts.map((post) => <HarmonyStoryCard key={post.id} post={post} />)}</div> : <div className="harmony-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}
           </section>
 
         </div>
 
-        <HomeGalleryPreview />
         <AndroidDownload />
       </main>
       <HomeFooter />
