@@ -32,7 +32,7 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 - `/`: bản tin công khai và thư viện ảnh.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
-- `/teacher`: giáo viên và Super Admin quản lý bài viết, đăng ảnh, mở trò chơi và trò chuyện. Sự kiện và nhắc việc đã lưu mở ở `/teacher?muc=luu-tru`.
+- `/teacher`: giáo viên và Super Admin quản lý bài viết, đăng ảnh, mở trò chơi và trò chuyện. Chọn **Thêm bài viết mới** để mở biểu mẫu soạn bài.
 - `/hoc-sinh`: tin lớp, khám phá, trò chuyện, trò chơi học tập và hồ sơ riêng.
 
 Dữ liệu lịch, nhắc việc và dấu hoàn thành đã lưu vẫn nằm trong D1. Có thể dùng `scripts/seed-class-content.mjs`
@@ -44,8 +44,6 @@ Biểu mẫu bài viết có **Chọn ảnh từ thiết bị**, xem trước, t
 chọn dán liên kết HTTPS. Migration `0006_post_images.sql` lưu ảnh WebP đã tối
 ưu cùng bài trong D1; ảnh riêng được kiểm tra quyền trước mỗi lượt tải. Nhận
 JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịch vụ lưu ảnh.
-
-Giáo viên vẫn quản lý dữ liệu thời khóa biểu tại `/teacher?muc=luu-tru#thoi-khoa-bieu`.
 
 Mục **Trò chuyện** trong Góc học sinh có phòng chung của lớp và kênh nhắn
 riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin nhắn tại

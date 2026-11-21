@@ -10,7 +10,7 @@ const shortcuts = [
 
 export function HomeShortcuts({ studentSignedIn }: { studentSignedIn: boolean }) {
   return <section className="home-shortcuts" id="loi-tat" aria-labelledby="home-shortcuts-title">
-    <div className="home-shortcuts-heading"><h2 id="home-shortcuts-title">Em muốn làm gì?</h2><p>Chọn một mục để bắt đầu.</p></div>
+    <div className="home-shortcuts-heading"><h2 id="home-shortcuts-title">Em muốn làm gì?</h2></div>
     <nav className="home-shortcuts-grid" aria-label="Lối vào nhanh">
       {shortcuts.map((shortcut) => <Link key={shortcut.title} className={`home-shortcut home-shortcut-${shortcut.color}`} href={shortcut.student && !studentSignedIn ? "/dang-nhap?tiep=tro-chuyen" : shortcut.href}>
         <span className="home-shortcut-icon" aria-hidden="true">{shortcut.icon}</span><span className="home-shortcut-copy"><strong>{shortcut.title}</strong><small>{shortcut.note}</small></span><ArrowIcon />

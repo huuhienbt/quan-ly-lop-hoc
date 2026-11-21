@@ -24,7 +24,7 @@
 .teacher-title-row > div > p:not(.eyebrow) { max-width: 640px; font-size: 15px; color: #f2fbff; margin-top: 12px; line-height: 1.85; }
 .teacher-title-sun { display: grid; place-items: center; width: 90px; height: 90px; border: 3px solid #ffe381; border-radius: 29px; color: #8d5b00; background: linear-gradient(145deg, #ffe576, #ffcf35 70%); box-shadow: 0 7px 0 #dba718, 0 11px 20px #1260973d, inset 0 3px 0 #fff6c0; flex-shrink: 0; transform: rotate(8deg); }
 .teacher-title-sun svg { width: 53px; height: 53px; }
-.teacher-account-line { display: flex; align-items: center; gap: 12px; margin-top: 24px; color: #4e7090; font-size: 14px; }
+.teacher-account-line { display: flex; align-items: center; gap: 12px; color: #4e7090; font-size: 14px; }
 .teacher-account-line > span:not(.badge) { font-size: 14px; }
 .teacher-account-line strong { color: #184c86; font-weight: 800; }
 .teacher-class-panel { display: flex; justify-content: space-between; align-items: center; gap: 30px; margin-top: 24px; padding: 25px 28px; background: #fff; border: 2px solid #cae8fb; border-radius: 24px; box-shadow: 0 5px 0 #e2f2fc; }
@@ -39,7 +39,13 @@
 .teacher-class-switch select { min-width: 0; min-height: 46px; flex: 1; border: 1px solid #a8d4ef; border-radius: 13px; background: #f5fbff; padding: 10px 12px; font-size: 14px; color: #184c86; }
 .teacher-class-switch button { flex-shrink: 0; }
 .teacher-section-nav { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-.teacher-archive-link { margin-block: 28px; }
+.teacher-post-create { margin-bottom: 22px; }
+.teacher-post-create > summary { display: inline-flex; list-style: none; cursor: pointer; }
+.teacher-post-create > summary::-webkit-details-marker { display: none; }
+.teacher-post-create > summary:focus-visible { outline: 3px solid currentColor; outline-offset: 4px; }
+.teacher-post-create-icon { display: inline-block; font-size: 21px; line-height: 1; }
+.teacher-post-create[open] .teacher-post-create-icon { transform: rotate(45deg); }
+.teacher-post-create > .teacher-panel { max-width: 760px; margin-top: 18px; }
 .teacher-section-nav a { display: inline-flex; align-items: center; min-height: 46px; gap: 10px; border: 2px solid #c4e5fa; border-radius: 999px; background: #fff; color: #205f94; font-weight: 900; font-size: 14px; padding: 9px 17px; }
 .teacher-section-nav a:hover { background: #e8f7ff; border-color: #0a92dc; }
 .teacher-section-nav a:nth-child(2) { border-color: #f4c7de; color: #a73970; }

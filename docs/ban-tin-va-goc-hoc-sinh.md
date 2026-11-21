@@ -28,7 +28,8 @@ thái. Bản nháp chỉ dành cho người biên tập. Chọn **Công khai** v
 Việc công khai một bài chỉ áp dụng cho bài đó; hồ sơ, số điện thoại và checklist
 của học sinh vẫn nằm trong khu vực đăng nhập.
 
-Thầy cô có thể ghim thông báo, chỉnh sửa bài và lưu trữ nội dung không còn dùng.
+Chọn **Thêm bài viết mới** để mở biểu mẫu. Thầy cô có thể ghim thông báo,
+chỉnh sửa bài và lưu trữ nội dung không còn dùng.
 Lưu trữ ẩn nội dung khỏi người đọc nhưng giữ lịch sử trong cơ sở dữ liệu.
 Góc điều tử tế ưu tiên bài đăng trong tuần; nếu chưa có bài mới, lời nhắn gần
 nhất tiếp tục hiển thị cho đến khi thầy cô thay thế hoặc lưu trữ.
@@ -60,9 +61,8 @@ không có bài công khai nào tham chiếu; chưa có album hoặc công cụ 
 
 ## Lịch và nhắc việc đã lưu
 
-Trang chủ và góc học sinh đã bỏ phần lịch tuần và các khối nhắc việc, chuẩn bị
-đồ dùng. Dữ liệu sự kiện, thời khóa biểu và nhắc việc đã lưu vẫn được giữ để
-thầy cô quản lý trong khu vực biên tập.
+Trang chủ, góc học sinh và trang biên tập đã bỏ các mục lịch và nhắc việc.
+Dữ liệu sự kiện, thời khóa biểu và nhắc việc đã lưu vẫn được giữ trong D1.
 
 ## Trò chuyện
 

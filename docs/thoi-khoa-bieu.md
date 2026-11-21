@@ -8,26 +8,10 @@ bắt đầu lúc 09:05. Tên môn TANN giữ nguyên theo ảnh.
 
 Theo xác nhận của giáo viên, Lịch sử - Địa lý chiều thứ Tư học một tiết
 15:25–16:00; Tiếng Anh chiều thứ Năm học hai tiết 15:25–16:35.
-Thầy cô có thể điều chỉnh giờ và môn khi có lịch mới.
 
-Trang chủ và Góc học sinh hiện không hiển thị lịch tuần, việc cần làm hằng
-ngày hay danh sách đồ dùng cho buổi học tới. Thời khóa biểu và các lời nhắc đã
-lưu vẫn được giữ để thầy cô quản lý trong khu vực biên tập.
-
-## Giáo viên cập nhật
-
-1. Dùng tài khoản Google Super Admin hoặc giáo viên được phân công lớp.
-2. Mở **Lịch và nhắc việc đã lưu → Thời khóa biểu** trong trang biên tập; chọn lớp nếu phụ trách nhiều lớp.
-3. Chọn ngày trong tuần, thêm/bỏ khung giờ sáng hoặc chiều, chỉnh môn và giáo viên.
-4. Mở **Lời nhắc ôn lại và chuẩn bị** để sửa việc cần làm và đồ dùng cho từng môn.
-5. Chọn **Áp dụng từ ngày** trong năm học, rồi **Lưu thời khóa biểu**.
-
-Mỗi lần lưu tạo một phiên bản đầy đủ cho cả tuần, thay thế lịch cũ kể từ ngày
-áp dụng. Phiên bản mới có ngày áp dụng trong tương lai chưa ảnh hưởng lịch hiện
-hành. Các phiên bản cũ và dấu hoàn thành được giữ lại; lịch vừa thay đổi có bộ
-dấu riêng. Một cửa sổ đang giữ phiên bản cũ phải tải lại trước khi ghi tiếp.
-
-Thao tác chỉnh thời khóa biểu không thay đổi các bài đã đăng trong bản tin.
+Trang chủ, Góc học sinh và trang biên tập không còn hiển thị các mục lịch,
+sự kiện và nhắc việc. Thời khóa biểu, các phiên bản cũ và dấu hoàn thành vẫn
+được giữ trong D1.
 
 ## Nhập lịch và triển khai
 
