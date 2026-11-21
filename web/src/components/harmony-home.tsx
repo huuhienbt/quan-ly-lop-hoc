@@ -20,7 +20,7 @@ function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compac
     <article className={`harmony-story-card home-news-item${compact ? " is-compact" : ""}`}>
       <Link className="harmony-story-cover home-news-cover" href={`/ban-tin/${post.id}`} tabIndex={-1} aria-hidden="true">
         {post.cover_url ? (
-          <Image src={post.cover_url} alt="" fill sizes="(max-width: 760px) 100vw, 70vw" unoptimized />
+          <Image src={post.cover_url} alt="" fill sizes="(max-width: 520px) 100vw, (max-width: 760px) 520px, (max-width: 890px) 66vw, 540px" unoptimized />
         ) : <span className={`harmony-story-art harmony-art-${post.category.toLowerCase()}`} />}
       </Link>
       <div className="harmony-story-body home-news-body">

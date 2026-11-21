@@ -306,7 +306,7 @@ function ChatRoom({ mode, classId, enrollmentId, threadEnrollmentId, roomKey, dr
     <form ref={form} action={sendAction} onReset={(event) => event.preventDefault()} className="class-chat-compose" aria-busy={sending}>
       <ChatContextFields {...context} />
       <label htmlFor={`${prefix}-body`}>{threadEnrollmentId ? mode === "student" ? "Lời nhắn của em gửi thầy cô" : "Lời nhắn gửi học sinh" : mode === "student" ? "Em muốn chia sẻ điều gì?" : "Lời nhắn gửi cả lớp"}</label>
-      <textarea id={`${prefix}-body`} name="body" value={draft.body} readOnly={accessBlocked} required maxLength={2000} rows={3} placeholder={threadEnrollmentId ? "Viết lời nhắn riêng tại đây…" : "Gửi một lời chào, câu hỏi hay điều em muốn chia sẻ…"} aria-describedby={`${prefix}-help ${prefix}-count`} onChange={(event) => {
+      <textarea id={`${prefix}-body`} name="body" value={draft.body} readOnly={accessBlocked} required maxLength={2000} rows={2} placeholder={threadEnrollmentId ? "Viết lời nhắn riêng tại đây…" : "Gửi một lời chào, câu hỏi hay điều em muốn chia sẻ…"} aria-describedby={`${prefix}-help ${prefix}-count`} onChange={(event) => {
         const body = event.target.value;
         updateDraft(roomKey, (current) => ({ body, request: current.request?.body === body ? current.request : null }));
       }} onKeyDown={(event) => { if ((event.ctrlKey || event.metaKey) && event.key === "Enter" && !sending && !accessBlocked && draft.body.trim()) { event.preventDefault(); form.current?.requestSubmit(); } }} />

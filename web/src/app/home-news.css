@@ -2,12 +2,14 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(16px, 2.5vw, 26px);
+  max-inline-size: 810px;
   margin-top: 22px;
+  margin-inline: auto;
 }
 
 #bang-tin .home-news-item {
   display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
 #bang-tin .home-news-cover {
@@ -15,7 +17,7 @@
   position: relative;
   margin: 0;
   border-radius: 0;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
 }
 
@@ -33,6 +35,10 @@
 }
 
 @media (max-width: 760px) {
+  #bang-tin .home-news-list {
+    max-inline-size: 520px;
+  }
+
   #bang-tin .home-news-item {
     grid-template-columns: minmax(0, 1fr);
   }
