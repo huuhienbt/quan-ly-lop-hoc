@@ -68,6 +68,7 @@
 .bulletin-notice:hover strong{text-decoration:underline;text-underline-offset:4px}
 .bulletin-columns{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:30px;align-items:start}
 .bulletin-feed,.bulletin-sidebar{min-width:0}
+.bulletin-feed-full{padding-block:28px 36px}
 .bulletin-section-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}
 .bulletin-section-heading .eyebrow{font-size:10px;font-weight:900;letter-spacing:1px;color:#2788bf}
 .bulletin-section-heading .eyebrow svg{width:17px;height:17px;color:#e8ad00;flex-shrink:0}

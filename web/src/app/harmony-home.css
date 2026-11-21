@@ -85,6 +85,7 @@
 .harmony-home .harmony-shortcut small { display: block; margin-top: 4px; color: #5b767c; font-size: 11px; line-height: 1.6; }
 .harmony-home .harmony-shortcut > svg { width: 18px; height: 18px; flex-shrink: 0; margin-left: auto; color: var(--harmony-teal); }
 .harmony-home .harmony-class-grid { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); gap: 29px; align-items: start; padding-top: 42px; padding-bottom: 46px; }
+.harmony-home .harmony-feed-wrap { padding-block: clamp(22px, 4vw, 42px); }
 .harmony-home .harmony-section-heading h2 { font-size: 29px; line-height: 1.3; letter-spacing: -.6px; margin-top: 7px; font-weight: 1000; }
 .harmony-home .harmony-section-heading h2 > span { display: inline-block; color: #e3ac30; font-size: 23px; vertical-align: middle; margin-left: 5px; }
 .harmony-home .harmony-section-heading > p:last-child:not(.harmony-eyebrow) { color: var(--harmony-muted); font-size: 15px; margin-top: 7px; }

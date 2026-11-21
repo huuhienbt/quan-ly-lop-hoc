@@ -6,7 +6,7 @@ tin, ngân hàng sao, cảm xúc hoặc các tiện ích của giai đoạn sau.
 
 ## Dành cho học sinh và phụ huynh
 
-1. Mở `/hoc-sinh/dang-nhap`, hoặc chọn **Học sinh** trên trang chủ.
+1. Mở `/dang-nhap`, hoặc chọn **Đăng nhập** trên trang chủ rồi chọn **Học sinh**.
 2. Nhập số điện thoại đã đăng ký với lớp và mật khẩu ban đầu do giáo viên cung cấp.
    Có thể nhập số bắt đầu bằng `0` hoặc `+84`; hệ thống giữ số `0` đầu khi chuẩn hóa.
 3. Lần đăng nhập đầu, chọn mật khẩu riêng từ 8 đến 128 ký tự, khác mật khẩu được

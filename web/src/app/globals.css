@@ -155,6 +155,11 @@ svg { display: block; }
 .admin-nav a:first-child { color: var(--green-dark); }
 .admin-columns { display: grid; grid-template-columns: 1.45fr 1fr; gap: 24px; align-items: start; }
 .admin-column { display: grid; gap: 24px; min-width: 0; }
+.admin-advanced { margin-block: 20px; padding: 0 20px; }
+.admin-advanced > summary { cursor: pointer; min-height: 48px; padding-block: 12px; font-weight: 900; color: #235b6b; }
+.admin-settings-links { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 16px; }
+.admin-settings-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 9px 13px; border: 1px solid #cce4e2; border-radius: 12px; color: #245b65; font-size: 14px; font-weight: 800; }
+.admin-settings-links a[aria-current="page"] { background: #e4f4ef; border-color: #8fc1b7; }
 .panel { border: 1px solid #d5e8f6; border-radius: 23px; background: #ffffff; overflow: hidden; box-shadow: 0 6px 20px #1f75b006; }
 .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 18px; border-bottom: 1px solid #e8f2f9; }
 .panel-heading h2 { font-size: 18px; font-weight: 900; letter-spacing: -.3px; color: #184c86; }

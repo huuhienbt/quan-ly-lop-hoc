@@ -17,7 +17,7 @@ lưu vẫn được giữ để thầy cô quản lý trong khu vực biên tậ
 ## Giáo viên cập nhật
 
 1. Dùng tài khoản Google Super Admin hoặc giáo viên được phân công lớp.
-2. Mở **Biên tập nội dung lớp → Thời khóa biểu**, chọn đúng lớp.
+2. Mở **Lịch và nhắc việc đã lưu → Thời khóa biểu** trong trang biên tập; chọn lớp nếu phụ trách nhiều lớp.
 3. Chọn ngày trong tuần, thêm/bỏ khung giờ sáng hoặc chiều, chỉnh môn và giáo viên.
 4. Mở **Lời nhắc ôn lại và chuẩn bị** để sửa việc cần làm và đồ dùng cho từng môn.
 5. Chọn **Áp dụng từ ngày** trong năm học, rồi **Lưu thời khóa biểu**.

@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
   })],
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt", maxAge: 8 * 60 * 60 },
-  pages: { signIn: "/", error: "/" },
+  pages: { signIn: "/dang-nhap", error: "/dang-nhap" },
   debug: false,
   logger: {
     error(code) { console.error("[auth]", code); },
@@ -125,12 +125,12 @@ export const authOptions: NextAuthOptions = {
           name: user.name?.trim() || email.split("@")[0],
           image: user.image ?? null,
         });
-        if (result === "collision") return "/?error=OAuthAccountNotLinked";
-        if (result === "suspended") return "/?error=AccessDenied";
+        if (result === "collision") return "/dang-nhap?error=OAuthAccountNotLinked";
+        if (result === "suspended") return "/dang-nhap?error=AccessDenied";
         user.id = result.id;
         return true;
       } catch {
-        return "/?error=AuthenticationUnavailable";
+        return "/dang-nhap?error=AuthenticationUnavailable";
       }
     },
     async jwt({ token, user, account }) {

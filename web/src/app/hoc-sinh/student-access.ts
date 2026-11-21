@@ -7,7 +7,7 @@ export async function requireStudentPageAccount(allowPasswordChange = false) {
     return await requireStudentAccount({ allowPasswordChange });
   } catch (error) {
     if (error instanceof StudentAuthorizationError) {
-      redirect(error.code === "PASSWORD_CHANGE_REQUIRED" ? "/hoc-sinh/doi-mat-khau" : "/hoc-sinh/dang-nhap");
+      redirect(error.code === "PASSWORD_CHANGE_REQUIRED" ? "/hoc-sinh/doi-mat-khau" : "/dang-nhap");
     }
     throw error;
   }

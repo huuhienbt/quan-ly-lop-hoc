@@ -19,7 +19,7 @@ Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa 
 ## Đăng nhập học sinh
 
 - `/dang-nhap`: lối đăng nhập chung từ đầu trang; học sinh dùng số điện thoại, giáo viên/quản trị dùng Google. Phiên đã đăng nhập được chuyển tới không gian đúng vai trò.
-- `/hoc-sinh/dang-nhap`: đăng nhập bằng số điện thoại đã đăng ký.
+- `/dang-nhap`: trang đăng nhập chung. Học sinh dùng số điện thoại và mật khẩu; giáo viên và quản trị viên chọn **Giáo viên** để đăng nhập Google.
 - `/hoc-sinh/doi-mat-khau`: bắt buộc đổi mật khẩu ban đầu; đổi xong phải đăng nhập lại.
 - `/hoc-sinh`: chỉ hiển thị học sinh được liên kết với tài khoản đang đăng nhập.
 
@@ -30,9 +30,9 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Bảng tin và nội dung lớp
 
-- `/`: bản tin công khai, điều tốt trong tuần và thư viện ảnh.
+- `/`: bản tin công khai và thư viện ảnh.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
-- `/teacher`: giáo viên được phân công và Super Admin tạo/sửa/lưu trữ bài, sự kiện và nhắc việc.
+- `/teacher`: giáo viên và Super Admin quản lý bài viết, đăng ảnh, mở trò chơi và trò chuyện. Sự kiện và nhắc việc đã lưu mở ở `/teacher?muc=luu-tru`.
 - `/hoc-sinh`: tin lớp, khám phá, trò chuyện, trò chơi học tập và hồ sơ riêng.
 
 Dữ liệu lịch, nhắc việc và dấu hoàn thành đã lưu vẫn nằm trong D1. Có thể dùng `scripts/seed-class-content.mjs`
@@ -45,14 +45,14 @@ chọn dán liên kết HTTPS. Migration `0006_post_images.sql` lưu ảnh WebP 
 ưu cùng bài trong D1; ảnh riêng được kiểm tra quyền trước mỗi lượt tải. Nhận
 JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịch vụ lưu ảnh.
 
-Giáo viên vẫn quản lý dữ liệu thời khóa biểu tại `/teacher#thoi-khoa-bieu`.
+Giáo viên vẫn quản lý dữ liệu thời khóa biểu tại `/teacher?muc=luu-tru#thoi-khoa-bieu`.
 
 Mục **Trò chuyện** trong Góc học sinh có phòng chung của lớp và kênh nhắn
 riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin nhắn tại
 `/teacher#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
 Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 
-Trang chủ có ba lối tắt: **Trò chuyện**, **Tin lớp** và **Trò chơi học tập**.
+Trang chủ có ba lối tắt: **Tin lớp**, **Trò chơi học tập**, **Trò chuyện**.
 Góc học sinh mở ở thẻ **Tin lớp**, bên cạnh **Khám phá** và **Trò chuyện**.
 
 Đầu trang hiện chỉ có logo và nút **Đăng nhập/Tài khoản**; bỏ menu ngang,
@@ -91,7 +91,7 @@ tại `/tro-choi/ca-dao-tuc-ngu`: 30 câu hỏi, 5 câu mỗi lượt, có đáp
 Trò chơi xuất hiện trên trang chủ và trong góc học sinh; kết quả luyện tập không
 ghi vào điểm hay sao của tài khoản.
 
-Ba giao diện có thể chuyển qua lại tại `/admin#giao-dien`: **Giao diện 1 –
+Ba giao diện có thể chuyển qua lại tại `/admin?muc=giao-dien#cai-dat`: **Giao diện 1 –
 Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá** và **Giao diện 3 –
 Lớp học khám phá hạnh phúc**. Lựa chọn lưu trên D1,
 chỉ Super Admin được đổi và không cần redeploy. Bản nguồn Giao diện 1 còn được

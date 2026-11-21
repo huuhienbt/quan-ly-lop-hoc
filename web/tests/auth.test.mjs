@@ -99,7 +99,7 @@ test("a new Google sub cannot take over an existing email even when Google verif
   const first = googleSignIn();
   assert.equal(await authOptions.callbacks.signIn(first), true);
   const second = googleSignIn({ profile: { sub: "attacker-google-sub" } });
-  assert.equal(await authOptions.callbacks.signIn(second), "/?error=OAuthAccountNotLinked");
+  assert.equal(await authOptions.callbacks.signIn(second), "/dang-nhap?error=OAuthAccountNotLinked");
   assert.equal(second.user.id, "provider-user-id");
   assert.equal(fixture.database.prepare("SELECT count(*) AS n FROM users").get().n, 1);
   assert.equal(fixture.database.prepare("SELECT count(*) AS n FROM accounts").get().n, 1);
@@ -113,7 +113,7 @@ test("an existing Google sub can update its unused email but cannot take another
   assert.equal(changed.user.id, first.user.id);
   insertUser(fixture.database, { email: "occupied@example.com" });
   const collision = googleSignIn({ profile: { email: "occupied@example.com" } });
-  assert.equal(await authOptions.callbacks.signIn(collision), "/?error=OAuthAccountNotLinked");
+  assert.equal(await authOptions.callbacks.signIn(collision), "/dang-nhap?error=OAuthAccountNotLinked");
   assert.equal(fixture.database.prepare("SELECT email FROM users WHERE id = ?").get(first.user.id).email, "changed@example.com");
 });
 
@@ -122,7 +122,7 @@ test("suspended users cannot sign in and are not reactivated by the bootstrap al
   assert.equal(await authOptions.callbacks.signIn(first), true);
   fixture.database.prepare("UPDATE users SET status = 'SUSPENDED' WHERE id = ?").run(first.user.id);
   process.env.SUPER_ADMIN_EMAILS = "teacher@example.com";
-  assert.equal(await authOptions.callbacks.signIn(googleSignIn()), "/?error=AccessDenied");
+  assert.equal(await authOptions.callbacks.signIn(googleSignIn()), "/dang-nhap?error=AccessDenied");
   const user = fixture.database.prepare("SELECT role, status FROM users WHERE id = ?").get(first.user.id);
   assert.equal(user.status, "SUSPENDED");
   assert.equal(user.role, "PENDING");
@@ -144,7 +144,7 @@ test("JWT and session callbacks retain only application identity rather than rol
 test("an unavailable database produces a generic authentication failure without linking an account", async () => {
   globalThis.fetch = async () => { throw new Error("upstream SQL and secret should not reach the client"); };
   const attempt = googleSignIn();
-  assert.equal(await authOptions.callbacks.signIn(attempt), "/?error=AuthenticationUnavailable");
+  assert.equal(await authOptions.callbacks.signIn(attempt), "/dang-nhap?error=AuthenticationUnavailable");
   assert.equal(attempt.user.id, "provider-user-id");
   assert.equal(fixture.database.prepare("SELECT count(*) AS n FROM users").get().n, 0);
 });

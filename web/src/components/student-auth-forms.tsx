@@ -7,7 +7,7 @@ import { useActionState, useEffect, useState, type FormEvent } from "react";
 import { updateStudentPassword, type StudentPasswordState } from "@/app/hoc-sinh/doi-mat-khau/actions";
 import { ArrowIcon } from "./icons";
 
-export function StudentLoginForm({ enabled }: { enabled: boolean }) {
+export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabled: boolean; destination?: "/hoc-sinh" | "/hoc-sinh#tro-chuyen" }) {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +22,7 @@ export function StudentLoginForm({ enabled }: { enabled: boolean }) {
     try {
       const response = await signIn("student", { phone, password, redirect: false, callbackUrl: "/hoc-sinh" });
       if (response?.ok && !response.error) {
-        router.replace("/hoc-sinh");
+        router.replace(destination);
         router.refresh();
         return;
       }
@@ -35,7 +35,7 @@ export function StudentLoginForm({ enabled }: { enabled: boolean }) {
   }
 
   return (
-    <form onSubmit={login} className="student-form" aria-busy={pending}>
+    <form method="post" onSubmit={login} className="student-form" aria-busy={pending}>
       <fieldset disabled={!enabled || pending}>
         <legend className="sr-only">Tài khoản học sinh</legend>
         <div className="student-field"><label htmlFor="student-phone">Số điện thoại</label><input id="student-phone" name="phone" type="tel" inputMode="tel" autoComplete="username" required maxLength={20} placeholder="Nhập số điện thoại đã đăng ký" value={phone} onChange={(event) => setPhone(event.target.value)} /></div>
@@ -55,13 +55,13 @@ export function StudentPasswordForm({ forced = false }: { forced?: boolean }) {
   const [signOutFailed, setSignOutFailed] = useState(false);
 
   async function finishPasswordChange() {
-    try { await signOut({ callbackUrl: "/hoc-sinh/dang-nhap?changed=1" }); }
+    try { await signOut({ callbackUrl: "/dang-nhap?changed=1" }); }
     catch { setSignOutFailed(true); }
   }
 
   useEffect(() => {
     if (state.success) {
-      signOut({ callbackUrl: "/hoc-sinh/dang-nhap?changed=1" }).catch(() => setSignOutFailed(true));
+      signOut({ callbackUrl: "/dang-nhap?changed=1" }).catch(() => setSignOutFailed(true));
     }
   }, [state.success]);
 

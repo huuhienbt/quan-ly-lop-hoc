@@ -5,7 +5,7 @@ sinh với thầy cô phụ trách. Dùng tài khoản hiện có, không cần 
 
 ## Học sinh
 
-1. Đăng nhập tại `/hoc-sinh/dang-nhap`; hoàn tất đổi mật khẩu lần đầu nếu được yêu cầu.
+1. Đăng nhập tại `/dang-nhap`; hoàn tất đổi mật khẩu lần đầu nếu được yêu cầu.
 2. Trong Góc học sinh, chọn **Trò chuyện** ở thanh điều hướng của lớp.
 3. Chọn **Cả lớp** để trao đổi cùng thầy cô và các bạn trong lớp.
 4. Chọn **Nhắn riêng với thầy cô** khi muốn hỏi hoặc chia sẻ riêng.

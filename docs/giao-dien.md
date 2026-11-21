@@ -3,8 +3,7 @@
 ## Chọn giao diện
 
 1. Đăng nhập Google bằng tài khoản Super Admin.
-2. Chọn **Đổi giao diện** ở đầu trang chủ, trang biên tập hoặc trang quản trị;
-   liên kết dẫn tới `/admin#giao-dien`.
+2. Mở **Cài đặt nâng cao → Giao diện website** từ trang biên tập. Đường dẫn: `/admin?muc=giao-dien#cai-dat`.
 3. Chọn **Giao diện 1 – Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá**
    hoặc **Giao diện 3 – Lớp học khám phá hạnh phúc**.
 4. Chọn **Áp dụng giao diện**. Sau khi lưu thành công, trang tải lại để áp dụng.
@@ -73,7 +72,7 @@ trò chơi và chức năng chọn ảnh từ thiết bị. Dữ liệu D1 và c
 không nằm trong bản sao mã nguồn này.
 
 Để sử dụng lại thiết kế đã thu nhỏ, chọn **Giao diện 2 – Thế giới khám phá**
-trong `/admin#giao-dien`; lựa chọn này không cần khôi phục mã nguồn cũ.
+trong `/admin?muc=giao-dien#cai-dat`; lựa chọn này không cần khôi phục mã nguồn cũ.
 
 ## Giao diện 3 – Lớp học khám phá hạnh phúc
 

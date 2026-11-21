@@ -4,15 +4,14 @@ import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
 import { HomeGalleryPreview } from "@/components/home-gallery-preview";
 import { AndroidDownload } from "@/components/android-download";
-import { GoogleSignInButton } from "@/components/auth-buttons";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
 import { HarmonyHome } from "@/components/harmony-home";
-import { PostCard, categoryLabels } from "@/components/bulletin";
-import { ArrowIcon, ClockIcon, HeartIcon, PeopleIcon, SchoolIcon, ShieldIcon, StarIcon, SunIcon } from "@/components/icons";
-import { getPublicBulletin } from "@/lib/class-content";
-import { getVietnamDateWindow, postCategories, type PublicBulletin } from "@/lib/content-schemas";
-import { getSetupState } from "@/lib/config";
+import { HomeFooter } from "@/components/home-footer";
+import { PostCard } from "@/components/bulletin";
+import { ArrowIcon, ClockIcon, SchoolIcon, StarIcon, SunIcon } from "@/components/icons";
+import { getPublicPosts } from "@/lib/class-content";
+import type { ContentPost } from "@/lib/content-schemas";
 import { getCurrentUser } from "@/lib/rbac";
 import { getCurrentStudentAccount } from "@/lib/student-session";
 import { getSiteTheme } from "@/lib/site-theme";
@@ -22,29 +21,19 @@ import "./harmony-home.css";
 
 export const dynamic = "force-dynamic";
 
-export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const setup = getSetupState();
-  const student = await getCurrentStudentAccount();
+export default async function Home() {
+  const [student, user] = await Promise.all([getCurrentStudentAccount(), getCurrentUser()]);
   if (student?.must_change_password) redirect("/hoc-sinh/doi-mat-khau");
-  const user = await getCurrentUser();
-  const query = await searchParams;
-  let bulletin: PublicBulletin = { ...getVietnamDateWindow(), posts: [], events: [] };
-  let unavailable = !setup.databaseReady;
-  if (setup.databaseReady) {
-    try { bulletin = await getPublicBulletin(); } catch { unavailable = true; }
-  }
-  const selected = postCategories.find((value) => value !== "PARENT_GUIDE" && value === query.muc);
-  bulletin = { ...bulletin, posts: bulletin.posts.filter((post) => post.category !== "PARENT_GUIDE") };
-  const feed = bulletin.posts.filter((post) => post.kind !== "ANNOUNCEMENT" && (!selected || post.category === selected));
-  const kindness = bulletin.posts.find((post) => post.category === "KINDNESS");
-  const authError = typeof query.error === "string";
+  let posts: ContentPost[] = [];
+  let unavailable = false;
+  try { posts = await getPublicPosts(); } catch { unavailable = true; }
 
   const theme = await getSiteTheme();
   if (theme === "harmony") {
-    return <HarmonyHome bulletin={bulletin} unavailable={unavailable} selected={selected} query={query} user={user} studentSignedIn={Boolean(student)} setupReady={setup.ready} />;
+    return <HarmonyHome posts={posts} unavailable={unavailable} signedIn={Boolean(student || user)} studentSignedIn={Boolean(student)} />;
   }
   if (theme === "discovery") {
-    return <DiscoveryHome bulletin={bulletin} unavailable={unavailable} selected={selected} query={query} user={user} studentSignedIn={Boolean(student)} setupReady={setup.ready} />;
+    return <DiscoveryHome posts={posts} unavailable={unavailable} signedIn={Boolean(student || user)} studentSignedIn={Boolean(student)} />;
   }
 
   return <div className="site-shell bulletin-home">
@@ -53,20 +42,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
       <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><div className="bulletin-hero-actions"><Link className="button button-primary" href={student ? "/hoc-sinh" : "/dang-nhap"}>Vào lớp học <ArrowIcon /></Link><a className="button bulletin-hero-secondary" href="#bang-tin">Xem tin lớp</a></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 
       <div className="page-width"><HomeShortcuts studentSignedIn={Boolean(student)} /></div>
+      <section className="page-width bulletin-feed bulletin-feed-full" id="bang-tin" aria-labelledby="bulletin-title">
+        <div className="bulletin-section-heading"><div><p className="eyebrow"><StarIcon /> GÓC BẢN TIN LỚP MÌNH</p><h2 id="bulletin-title">Tin lớp mình</h2></div><span className="bulletin-flower" aria-hidden="true">✦</span></div>
+        {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="bulletin-card-grid">{posts.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ thông báo và câu chuyện của lớp tại đây.</p></div>}
+      </section>
+
       <HomeGalleryPreview />
-
-      <div className="page-width bulletin-columns"><section className="bulletin-feed" id="bang-tin" aria-labelledby="bulletin-title"><div className="bulletin-section-heading"><div><p className="eyebrow"><StarIcon /> GÓC BẢN TIN LỚP MÌNH</p><h2 id="bulletin-title">Chuyện nhỏ, <span>niềm vui to!</span></h2></div><span className="bulletin-flower" aria-hidden="true">✦</span></div><nav className="bulletin-tabs" aria-label="Chủ đề bản tin"><Link href="/#bang-tin" aria-current={!selected ? "page" : undefined}>Tất cả</Link>{postCategories.filter((category) => category !== "GENERAL" && category !== "DISCOVERY" && category !== "PARENT_GUIDE").map((category) => <Link key={category} href={`/?muc=${category}#bang-tin`} aria-current={selected === category ? "page" : undefined}>{categoryLabels[category]}</Link>)}</nav>
-        {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Bạn vẫn có thể dùng mục đăng nhập phía dưới.</p></div> : feed.length ? <div className="bulletin-card-grid">{feed.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Câu chuyện mới đang được chuẩn bị</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}
-      </section><aside className="bulletin-sidebar">
-        <section className="bulletin-kindness-card" id="dieu-hay" aria-labelledby="kindness-title"><span className="bulletin-kindness-heart"><HeartIcon /></span><p className="eyebrow">MỖI TUẦN MỘT ĐIỀU TỐT</p><h2 id="kindness-title">{kindness?.title ?? "Một lời tử tế, một ngày vui."}</h2><p>{kindness?.body.split("\n").find(Boolean) ?? "Mình cùng lắng nghe, nói lời cảm ơn và dành cho nhau một chút quan tâm mỗi ngày."}</p>{kindness && <Link href={`/ban-tin/${kindness.id}`}>Cùng thực hành <ArrowIcon /></Link>}</section>
-      </aside></div>
-
       <AndroidDownload />
-
-      <section id="bat-dau" className="access-section page-width bulletin-access" aria-labelledby="access-title"><div className="access-intro"><p className="eyebrow">THẦY CÔ KẾT NỐI · LỚP MÌNH LỚN LÊN</p><h2 id="access-title">Không gian<br />dành cho thầy cô.</h2><p>Đăng thông báo, chỉnh thời khóa biểu và trả lời tin nhắn của học sinh.</p><p className="privacy-note"><ShieldIcon /> Nội dung riêng của lớp dành cho các tài khoản đã được liên kết.</p></div><div className="access-card">
-        {authError && <p className="form-message is-error" role="alert">Chưa thể đăng nhập bằng tài khoản này. Vui lòng thử lại hoặc liên hệ quản trị viên.</p>}{query.access === "denied" && <p className="form-message is-error" role="alert">Tài khoản của bạn chưa có quyền truy cập trang quản trị.</p>}
-        {student ? <><div className="access-icon"><SunIcon /></div><h3>Góc học sinh đang chờ em</h3><p className="access-description">Đọc tin lớp, khám phá điều hay và trò chuyện cùng thầy cô, bạn bè.</p><Link className="button button-primary full-width" href="/hoc-sinh">Vào góc của em <ArrowIcon /></Link></> : user ? <><div className="account-avatar">{user.name.slice(0, 1).toLocaleUpperCase("vi")}</div><p className="card-kicker">RẤT VUI ĐƯỢC GẶP THẦY CÔ</p><h3>Xin chào, {user.name}!</h3><p className="account-email">{user.email}</p>{user.role === "SUPER_ADMIN" || user.role === "TEACHER" ? <><span className="badge badge-green">{user.role === "SUPER_ADMIN" ? "Quản trị viên" : "Giáo viên"}</span><p className="access-description">Cập nhật nội dung cho các lớp thầy cô phụ trách.</p><Link className="button button-primary full-width" href="/teacher">Cập nhật bản tin lớp <ArrowIcon /></Link>{user.role === "SUPER_ADMIN" && <Link className="bulletin-admin-link" href="/admin">Quản trị trường học</Link>}</> : <><span className="badge badge-amber"><ClockIcon /> Đang chờ xét duyệt</span><p className="access-description">Liên hệ quản trị viên để được xét duyệt quyền và phân công lớp.</p></>}</> : <><div className="access-icon"><PeopleIcon /></div><h3>Chào mừng thầy cô</h3><p className="access-description">Đăng nhập Google để cập nhật<br />những câu chuyện của lớp mình.</p>{!setup.ready && <p className="setup-note"><span className="status-dot" /> Đăng nhập đang được thiết lập</p>}<GoogleSignInButton enabled={setup.ready} /><p className="sign-in-note">Quyền quản lý được xét duyệt riêng cho từng tài khoản.</p><p className="student-home-access">Em là học sinh? <Link href="/hoc-sinh/dang-nhap">Đăng nhập tại đây <ArrowIcon /></Link></p></>}
-      </div></section>
-    </main><div className="bulletin-footer-band"><footer className="site-footer page-width bulletin-footer"><Brand compact /><p>Gieo yêu thương · Nuôi hạnh phúc<br /><span>Bốn 12 · Trường Tiểu học Bến Tre</span></p><a href="#noi-dung" className="bulletin-footer-top">Lên đầu trang ↑</a></footer></div>
+    </main>
+    <HomeFooter />
   </div>;
 }

@@ -7,8 +7,9 @@ hòm thư, album hay tiện ích của các giai đoạn sau.
 ## Trang chủ dễ theo dõi
 
 Cả ba giao diện có lời chào và tranh thu gọn, tiếp theo là ba lối vào:
-**Trò chuyện**, **Tin lớp** và **Trò chơi học tập**. Bản tin, thư viện ảnh
-và **Mỗi tuần một điều tốt** vẫn có trên trang chủ; phần đăng nhập thầy cô ở cuối.
+**Tin lớp**, **Trò chơi học tập**, **Trò chuyện**. Bản tin hiển thị trực tiếp các
+bài công khai; thư viện ảnh ở bên dưới. Học sinh và giáo viên dùng chung
+trang **Đăng nhập**.
 
 Đã bỏ khối **Ba mẹ cùng con khám phá / Ba mẹ đồng hành**, các liên kết tới khối
 này và chủ đề ba mẹ trong danh sách bài ở trang chủ. Bài thuộc `PARENT_GUIDE`
@@ -18,9 +19,7 @@ trang chủ không xóa hay lưu trữ bài. Tên và lựa chọn của ba giao
 ## Cập nhật nội dung
 
 1. Đăng nhập Google bằng tài khoản quản trị hoặc giáo viên đã được phân công.
-2. Vào `/teacher` bằng nút **Cập nhật bản tin lớp** trên trang chủ. Super Admin
-   cũng có đường dẫn **Biên tập nội dung lớp** trong `/admin`; có thể dùng cùng
-   tài khoản để quản lý trường và biên tập lớp Bốn 12.
+2. Chọn **Giáo viên** tại trang đăng nhập để vào **Quản lý nội dung lớp**. Super Admin mở **Cài đặt nâng cao** nếu cần đổi giao diện, tạo năm học/lớp hoặc duyệt và phân công giáo viên.
 3. Chọn đúng lớp trước khi tạo bài, lịch hoặc việc cần làm.
 
 Bài viết có tiêu đề, nội dung, loại bài, chủ đề, ảnh bìa tùy chọn và trạng

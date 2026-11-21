@@ -4,7 +4,7 @@ import { ArrowIcon, HeartIcon, PeopleIcon, SchoolIcon, SunIcon } from "@/compone
 import type { ContentPost, PostCategory } from "@/lib/content-schemas";
 
 export const categoryLabels: Record<PostCategory, string> = {
-  GENERAL: "Tin lớp học", CLASS_STORY: "Chuyện vui lớp mình", KINDNESS: "Mỗi tuần một điều tốt",
+  GENERAL: "Tin lớp học", CLASS_STORY: "Chuyện lớp", KINDNESS: "Việc tốt",
   PARENT_GUIDE: "Cùng con lớn lên", DISCOVERY: "Góc khám phá",
 };
 

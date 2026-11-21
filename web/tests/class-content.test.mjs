@@ -4,6 +4,7 @@ import {
   archiveContent,
   getPublicBulletin,
   getPublicPost,
+  getPublicPosts,
   getStudentClassContent,
   getTeacherContentOverview,
   saveEvent,
@@ -160,6 +161,16 @@ test("public bulletin and direct post lookup expose only explicitly public publi
   for (const sensitive of ["PRIVATE_SENTINEL", "DRAFT_SENTINEL", "PRIVATE_EVENT_SENTINEL", "DRAFT_EVENT_SENTINEL", "0900000001", "Học sinh giả lập"]) {
     assert.equal(serialized.includes(sensitive), false);
   }
+});
+
+test("homepage lists public news and announcements while excluding private, draft and parent guide posts", async () => {
+  const announcement = await savePost(administrator.id, postInput(classA.id, { kind: "ANNOUNCEMENT" }));
+  const kindness = await savePost(administrator.id, postInput(classA.id, { category: "KINDNESS", is_pinned: true }));
+  const parentGuide = await savePost(administrator.id, postInput(classA.id, { category: "PARENT_GUIDE" }));
+  await savePost(administrator.id, postInput(classA.id, { visibility: "PRIVATE" }));
+  await savePost(administrator.id, postInput(classA.id, { status: "DRAFT" }));
+  assert.deepEqual((await getPublicPosts()).map((post) => post.id), [kindness, announcement]);
+  assert.equal((await getPublicPost(parentGuide)).id, parentGuide);
 });
 
 test("public event windows include Monday and Sunday and exclude surrounding weeks", async () => {

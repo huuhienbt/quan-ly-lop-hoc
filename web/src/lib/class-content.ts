@@ -79,12 +79,21 @@ const eventOrder = "event.event_date, COALESCE(event.starts_at, '99:99'), event.
 const taskWindow = `((task.kind = 'TODO' AND (task.task_date IS NULL OR task.task_date = ?))
   OR (task.kind = 'PREPARATION' AND (task.task_date IS NULL OR task.task_date = ?)))`;
 
+function queryPublicPosts({ includeParentGuide = true } = {}) {
+  return query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
+      WHERE p.status = 'PUBLISHED' AND p.visibility = 'PUBLIC' AND ${activeClass}
+      ${includeParentGuide ? "" : "AND p.category <> 'PARENT_GUIDE'"}
+      ORDER BY ${postOrder} LIMIT 30`);
+}
+
+export function getPublicPosts(): Promise<ContentPost[]> {
+  return queryPublicPosts({ includeParentGuide: false });
+}
+
 export async function getPublicBulletin(): Promise<PublicBulletin> {
   const calendar = getVietnamDateWindow();
   const [posts, events] = await Promise.all([
-    query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
-      WHERE p.status = 'PUBLISHED' AND p.visibility = 'PUBLIC' AND ${activeClass}
-      ORDER BY ${postOrder} LIMIT 30`),
+    queryPublicPosts(),
     query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
       WHERE event.status = 'PUBLISHED' AND event.visibility = 'PUBLIC' AND ${activeClass}
         AND event.event_date BETWEEN ? AND ? ORDER BY ${eventOrder} LIMIT 100`,
@@ -150,7 +159,10 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
   return { ...calendar, students };
 }
 
-export async function getTeacherContentOverview(actorId: string): Promise<TeacherContentOverview> {
+export async function getTeacherContentOverview(
+  actorId: string,
+  { includeLegacy = true }: { includeLegacy?: boolean } = {},
+): Promise<TeacherContentOverview> {
   const calendar = getVietnamDateWindow();
   const [classes, posts, events, tasks] = await Promise.all([
     query<ContentClass>(`SELECT c.id, c.name, c.slug, c.school_id, school.name AS school_name
@@ -159,12 +171,12 @@ export async function getTeacherContentOverview(actorId: string): Promise<Teache
     query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
       WHERE p.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
       ORDER BY ${postOrder} LIMIT 500`, [actorId]),
-    query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
+    includeLegacy ? query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
       WHERE event.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
-      ORDER BY ${eventOrder} LIMIT 500`, [actorId]),
-    query<ClassTask>(`SELECT ${taskFields} FROM class_tasks task ${taskJoins}
+      ORDER BY ${eventOrder} LIMIT 500`, [actorId]) : [],
+    includeLegacy ? query<ClassTask>(`SELECT ${taskFields} FROM class_tasks task ${taskJoins}
       WHERE task.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
-      ORDER BY task.sort_order, task.title, task.id LIMIT 500`, [actorId]),
+      ORDER BY task.sort_order, task.title, task.id LIMIT 500`, [actorId]) : [],
   ]);
   return { ...calendar, classes, posts, events, tasks };
 }

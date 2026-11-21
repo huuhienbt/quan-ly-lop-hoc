@@ -1,0 +1,14 @@
+.class-home-footer { background: #126b60; color: #fff; margin-top: 24px; }
+html[data-site-theme="playful"] .class-home-footer { background: #205d96; }
+.class-home-footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding-block: 26px; }
+.class-home-footer .brand-copy strong { color: #fff; }
+.class-home-footer .brand-copy > span, .class-home-footer-identity > p { color: #e5f4ef; }
+.class-home-footer-identity > p { margin-top: 8px; font-size: 13px; }
+.class-home-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 18px; }
+.class-home-footer nav a, .class-home-footer-top { display: inline-flex; align-items: center; min-height: 44px; color: inherit; font-size: 14px; font-weight: 800; }
+.class-home-footer nav a:hover, .class-home-footer-top:hover { text-decoration: underline; }
+.class-home-footer-top span { margin-left: 6px; }
+@media (max-width: 680px) {
+  .class-home-footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; padding-block: 20px; }
+  .class-home-footer nav { gap: 0 16px; }
+}
