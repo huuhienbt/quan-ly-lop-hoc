@@ -3,11 +3,8 @@ import { ArrowIcon } from "@/components/icons";
 import "./home-shortcuts.css";
 
 const shortcuts = [
-  { icon: "☀️", title: "Việc hôm nay", note: "Xem và đánh dấu việc đã làm", href: "/hoc-sinh#viec-hom-nay", student: true, color: "yellow" },
-  { icon: "🎒", title: "Chuẩn bị buổi tới", note: "Sách vở và đồ dùng cần mang", href: "/hoc-sinh#chuan-bi", student: true, color: "mint" },
   { icon: "💬", title: "Trò chuyện", note: "Nhắn với thầy cô và các bạn", href: "/hoc-sinh#tro-chuyen", student: true, color: "pink" },
   { icon: "📚", title: "Tin lớp", note: "Thông báo và hoạt động mới", href: "/#bang-tin", color: "blue" },
-  { icon: "🗓️", title: "Lịch tuần", note: "Theo dõi những ngày sắp tới", href: "/#lich-tuan", color: "lavender" },
   { icon: "🧩", title: "Trò chơi học tập", note: "Đố vui ca dao, tục ngữ", href: "/tro-choi/ca-dao-tuc-ngu", color: "peach" },
 ];
 

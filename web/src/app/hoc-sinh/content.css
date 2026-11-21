@@ -272,7 +272,7 @@ html[data-site-theme] .student-content-page .student-dashboard-welcome.student-d
 .student-content-page .student-section-toolbar > p { color: var(--student-deep-blue); font-size: 15px; font-weight: 800; }
 .student-content-page .student-game-shortcut { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 9px 16px; border: 1px solid #eed58e; border-radius: 14px; background: #fff5cd; color: #75541b; font-size: 14px; font-weight: 900; }
 .student-content-page .student-game-shortcut:hover { background: #ffedaa; }
-.student-content-page .student-section-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding: 8px; margin-bottom: 20px; border: 1px solid #d1e7f1; border-radius: 21px; background: #eef7fb; }
+.student-content-page .student-section-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 8px; margin-bottom: 20px; border: 1px solid #d1e7f1; border-radius: 21px; background: #eef7fb; }
 .student-content-page .student-section-tabs > button { display: flex; align-items: center; justify-content: center; gap: 10px; min-width: 0; min-height: 67px; padding: 11px 9px; border: 1px solid transparent; border-radius: 15px; background: transparent; color: #46677e; font-size: 15px; line-height: 1.5; font-weight: 900; text-align: left; cursor: pointer; }
 .student-content-page .student-section-tabs > button:hover { background: #fff; }
 .student-content-page .student-section-tabs > button[aria-selected="true"] { border-color: #81b8d6; background: #fff; color: #075d94; box-shadow: 0 3px 0 #c5e2f2; }

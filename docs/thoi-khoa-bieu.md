@@ -10,24 +10,9 @@ Theo xác nhận của giáo viên, Lịch sử - Địa lý chiều thứ Tư h
 15:25–16:00; Tiếng Anh chiều thứ Năm học hai tiết 15:25–16:35.
 Thầy cô có thể điều chỉnh giờ và môn khi có lịch mới.
 
-## Học sinh sử dụng
-
-Sau khi đăng nhập và hoàn tất đổi mật khẩu ban đầu, mở **Góc học sinh**:
-
-- **Hôm nay em làm gì?**: hiện các môn hôm nay, buổi và giờ học, kèm lời nhắc
-  ôn lại hoặc hoạt động cần hoàn thành. Nhiều tiết cùng môn được gom vào một
-  mục, vẫn liệt kê đầy đủ các giờ học.
-- **Chiếc cặp ngày mai**: sách, vở và đồ dùng theo lịch của ngày học tiếp theo.
-  Nếu ngày mai không có tiết, tiêu đề đổi thành **Chiếc cặp buổi học tới** và
-  ghi rõ ngày cần chuẩn bị, chẳng hạn thứ Sáu chuẩn bị cho thứ Hai.
-- Đánh dấu khi đã làm hoặc đã soạn xong. Dấu chỉ đổi sau khi máy chủ xác nhận,
-  và vẫn được giữ khi tải lại trang. Mỗi học sinh có dấu riêng. Việc chuẩn bị
-  cho cùng một buổi học được giữ xuyên cuối tuần; các ngày học khác có dấu mới.
-
-Lời nhắc theo lịch là gợi ý, không suy đoán trang sách hoặc bài tập chưa được
-thầy cô giao. Những việc đọc sách, sắp xếp góc học tập và lời nhắc nhập trước
-đó tiếp tục xuất hiện bên dưới. Thông báo nghỉ học thực tế của nhà trường và
-lời dặn của giáo viên được ưu tiên; ứng dụng không tự suy đoán ngày nghỉ lễ.
+Trang chủ và Góc học sinh hiện không hiển thị lịch tuần, việc cần làm hằng
+ngày hay danh sách đồ dùng cho buổi học tới. Thời khóa biểu và các lời nhắc đã
+lưu vẫn được giữ để thầy cô quản lý trong khu vực biên tập.
 
 ## Giáo viên cập nhật
 
@@ -42,8 +27,7 @@ Mỗi lần lưu tạo một phiên bản đầy đủ cho cả tuần, thay th�
 hành. Các phiên bản cũ và dấu hoàn thành được giữ lại; lịch vừa thay đổi có bộ
 dấu riêng. Một cửa sổ đang giữ phiên bản cũ phải tải lại trước khi ghi tiếp.
 
-Lớp chưa nhập thời khóa biểu vẫn dùng các lời nhắc cũ. Học sinh chỉ thấy lịch
-của lớp mình; thời khóa biểu không được đưa vào bản tin công khai.
+Thao tác chỉnh thời khóa biểu không thay đổi các bài đã đăng trong bản tin.
 
 ## Nhập lịch và triển khai
 

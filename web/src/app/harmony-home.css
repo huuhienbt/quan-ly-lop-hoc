@@ -115,7 +115,7 @@
 .harmony-home .harmony-empty > svg { width: 35px; height: 35px; margin-inline: auto; color: #4c9c8b; }
 .harmony-home .harmony-empty h3 { margin-top: 12px; font-size: 20px; }
 .harmony-home .harmony-empty p { color: var(--harmony-muted); margin-top: 8px; font-size: 14px; }
-.harmony-home .harmony-week-column { display: grid; gap: 23px; min-width: 0; }
+.harmony-home .harmony-kindness-column { min-width: 0; }
 .harmony-home .harmony-calendar { background: #e8faf5; border: 1px solid #cce9dd; border-radius: 24px; padding: 24px; box-shadow: 0 5px 0 #cce5d74d; }
 .harmony-home .harmony-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 10px; letter-spacing: .7px; }
@@ -237,7 +237,6 @@
   .harmony-home .harmony-shortcut strong { font-size: 17px; }
   .harmony-home .harmony-shortcut small { font-size: 10px; }
   .harmony-home .harmony-class-grid { grid-template-columns: 1fr; gap: 30px; }
-  .harmony-home .harmony-week-column { grid-template-columns: 1.15fr 1fr; gap: 20px; }
   .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 10px; }
   .harmony-home .harmony-community-grid { grid-template-columns: 1fr 1.2fr; }
   .harmony-home .harmony-kindness { padding: 25px; }
@@ -345,7 +344,6 @@
   .harmony-home .harmony-story-body { padding: 16px 19px 15px; }
   .harmony-home .harmony-story-body h3 { font-size: 21px; }
   .harmony-home .harmony-story-body > p { font-size: 14px; }
-  .harmony-home .harmony-week-column { grid-template-columns: 1fr; gap: 20px; }
   .harmony-home .harmony-calendar { padding: 23px; }
   .harmony-home .harmony-calendar-heading h2 { font-size: 26px; }
   .harmony-home .harmony-calendar-heading .harmony-eyebrow { font-size: 9px; }
@@ -406,8 +404,8 @@
 .harmony-home .harmony-hero-frame { height: 208px; }
 .harmony-home .harmony-hero h1 { font-size: clamp(35px, 3.4vw, 45px); }
 .harmony-home .harmony-today { padding-top: 0; }
-.harmony-home .harmony-week-column .harmony-kindness { margin-top: 22px; padding: 24px; }
-.harmony-home .harmony-week-column .harmony-kindness h2 { font-size: 24px; }
+.harmony-home .harmony-kindness-column .harmony-kindness { margin-top: 22px; padding: 24px; }
+.harmony-home .harmony-kindness-column .harmony-kindness h2 { font-size: 24px; }
 .harmony-home .harmony-tabs > a, .harmony-home .harmony-text-link, .harmony-home .harmony-footer a { min-height: 44px; display: inline-flex; align-items: center; }
 @media (max-width: 760px) {
   .harmony-home .harmony-hero { min-height: 0; gap: 13px; padding-block: 18px; }

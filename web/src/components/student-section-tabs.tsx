@@ -3,42 +3,37 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 
-type SectionKey = "today" | "week" | "news" | "discovery" | "chat";
+type SectionKey = "news" | "discovery" | "chat";
 type Section = { key: SectionKey; label: string; hint: string; symbol: string };
 const sections: Section[] = [
-  { key: "today", label: "Hôm nay", hint: "Việc cần làm và chuẩn bị", symbol: "☀" },
-  { key: "week", label: "Lịch tuần", hint: "Hoạt động của lớp", symbol: "▦" },
   { key: "news", label: "Tin lớp", hint: "Thông báo từ thầy cô", symbol: "▤" },
   { key: "discovery", label: "Khám phá", hint: "Đọc và học điều hay", symbol: "✦" },
   { key: "chat", label: "Trò chuyện", hint: "Với thầy cô và các bạn", symbol: "✉" },
 ];
-const firstStudentAliases: Record<string, string> = { "viec-hom-nay": "today", "chuan-bi": "prepare", "lich-tuan": "week", "tin-lop": "news", "kham-pha": "discovery", "tro-chuyen": "chat" };
+const firstStudentAliases: Record<string, string> = { "tin-lop": "news", "kham-pha": "discovery", "tro-chuyen": "chat" };
 
 function resolveHash(hash: string, prefix: string, firstStudent: boolean): { section: SectionKey; target: string } | null {
   let target: string;
   try { target = decodeURIComponent(hash.replace(/^#/, "")); } catch { return null; }
   if (firstStudent && Object.hasOwn(firstStudentAliases, target)) target = `${prefix}-${firstStudentAliases[target]}`;
   if (!target.startsWith(`${prefix}-`)) return null;
-  const suffix = target.slice(prefix.length + 1);
-  const section = suffix === "prepare" ? "today" : suffix;
+  const section = target.slice(prefix.length + 1);
   return sections.some((item) => item.key === section) ? { section: section as SectionKey, target } : null;
 }
 
 /** The page supplies server-rendered sections; switching views keeps forms and drafts mounted. */
-export function StudentSectionTabs({ prefix, studentName, firstStudent = false, today, week, news, discovery, chat }: {
+export function StudentSectionTabs({ prefix, studentName, firstStudent = false, news, discovery, chat }: {
   prefix: string;
   studentName: string;
   firstStudent?: boolean;
-  today: ReactNode;
-  week: ReactNode;
   news: ReactNode;
   discovery: ReactNode;
   chat: ReactNode;
 }) {
-  const [active, setActive] = useState<SectionKey>("today");
+  const [active, setActive] = useState<SectionKey>("news");
   const root = useRef<HTMLDivElement>(null);
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
-  const contents = { today, week, news, discovery, chat };
+  const contents = { news, discovery, chat };
 
   useEffect(() => {
     let frame = 0;
@@ -49,7 +44,7 @@ export function StudentSectionTabs({ prefix, studentName, firstStudent = false, 
       cancelAnimationFrame(frame);
       cancelAnimationFrame(scrollFrame);
       frame = requestAnimationFrame(() => {
-        const next = matched?.section ?? "today";
+        const next = matched?.section ?? "news";
         const focusedPanel = document.activeElement?.closest(".student-section-view");
         const movesFocus = !!focusedPanel && !!root.current?.contains(focusedPanel) && focusedPanel.id !== `${prefix}-view-${next}`;
         setActive(next);

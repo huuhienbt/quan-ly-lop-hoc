@@ -17,10 +17,9 @@
 .home-shortcuts .home-shortcut-lavender { background: #f0ecfb; border-color: #e1daf2; }
 .home-shortcuts .home-shortcut-peach { background: #fff0df; border-color: #f0dec5; }
 @media (max-width: 760px) {
-  .home-shortcuts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .home-shortcuts .home-shortcut { flex-wrap: wrap; gap: 6px 9px; min-height: 116px; padding: 13px; align-content: flex-start; }
+  .home-shortcuts-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .home-shortcuts .home-shortcut { gap: 10px; min-height: 68px; padding: 12px 14px; }
   .home-shortcuts .home-shortcut-icon { font-size: 26px; }
-  .home-shortcuts .home-shortcut-copy { flex-basis: 100%; order: 1; }
   .home-shortcuts .home-shortcut strong { font-size: 15px; }
   .home-shortcuts .home-shortcut small { font-size: 11px; line-height: 1.5; }
   .home-shortcuts .home-shortcut > svg { width: 16px; height: 16px; }

@@ -6,11 +6,9 @@ hòm thư, album hay tiện ích của các giai đoạn sau.
 
 ## Trang chủ dễ theo dõi
 
-Cả ba giao diện có lời chào và tranh thu gọn, tiếp theo là sáu lối vào:
-**Việc hôm nay**, **Chuẩn bị buổi tới**, **Trò chuyện**, **Tin lớp**,
-**Lịch tuần** và **Trò chơi học tập**. Học sinh đã đăng nhập được đưa tới đúng
-mục trong góc của mình; học sinh chưa đăng nhập được đưa tới trang đăng nhập.
-Thông báo, bản tin và lịch lớp nằm bên dưới; phần đăng nhập thầy cô ở cuối.
+Cả ba giao diện có lời chào và tranh thu gọn, tiếp theo là ba lối vào:
+**Trò chuyện**, **Tin lớp** và **Trò chơi học tập**. Bản tin, thư viện ảnh
+và **Mỗi tuần một điều tốt** vẫn có trên trang chủ; phần đăng nhập thầy cô ở cuối.
 
 Đã bỏ khối **Ba mẹ cùng con khám phá / Ba mẹ đồng hành**, các liên kết tới khối
 này và chủ đề ba mẹ trong danh sách bài ở trang chủ. Bài thuộc `PARENT_GUIDE`
@@ -61,21 +59,11 @@ kiểm tra quyền hiện hành và trả `private, no-store`; các thẻ `Image
 ảnh công khai. Ảnh cũ đã thay được giữ trong D1 nhưng không còn công khai khi
 không có bài công khai nào tham chiếu; chưa có album hoặc công cụ dọn ảnh cũ.
 
-## Lịch và nhắc việc
+## Lịch và nhắc việc đã lưu
 
-Thời khóa biểu của lớp tạo thêm lời nhắc theo môn trong **Hôm nay em làm gì?**
-và danh sách sách vở trong **Chiếc cặp ngày mai / buổi học tới**. Xem
-[cách sử dụng và cập nhật thời khóa biểu](thoi-khoa-bieu.md). Các công việc nhập
-tay bên dưới được giữ riêng, không bị ghi đè khi đổi lịch.
-
-- **Sự kiện:** nhập ngày thật, giờ tùy chọn và phạm vi công khai/trong lớp. Bản
-  nháp không hiển thị với người đọc. Lịch tuần lấy từ thứ Hai đến Chủ nhật theo
-  giờ Việt Nam.
-- **Việc cần làm:** học sinh thấy những việc của hôm nay.
-- **Chuẩn bị ngày mai:** học sinh thấy những việc có ngày mục tiêu là ngày mai.
-- Để trống ngày của công việc để lặp lại hằng ngày. Mỗi học sinh có dấu hoàn
-  thành riêng theo ngày thực hiện, kể cả việc chuẩn bị cho ngày mai. Sang ngày
-  mới, công việc lặp lại bắt đầu với trạng thái chưa đánh dấu; lịch sử được giữ.
+Trang chủ và góc học sinh đã bỏ phần lịch tuần và các khối nhắc việc, chuẩn bị
+đồ dùng. Dữ liệu sự kiện, thời khóa biểu và nhắc việc đã lưu vẫn được giữ để
+thầy cô quản lý trong khu vực biên tập.
 
 ## Trò chuyện
 

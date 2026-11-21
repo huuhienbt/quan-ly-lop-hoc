@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Lớp học hạnh phúc",
     short_name: "Lớp học",
-    description: "Việc hôm nay, thời khóa biểu và trò chuyện của lớp Bốn 12, Trường Tiểu học Bến Tre.",
+    description: "Tin lớp, thư viện ảnh và trò chuyện của lớp Bốn 12, Trường Tiểu học Bến Tre.",
     lang: "vi",
     start_url: "/",
     scope: "/",
@@ -18,7 +18,6 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/app-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
     ],
     shortcuts: [
-      { name: "Việc hôm nay", url: "/hoc-sinh#viec-hom-nay" },
       { name: "Trò chuyện với lớp", url: "/hoc-sinh#tro-chuyen" },
       { name: "Trò chơi học tập", url: "/tro-choi/ca-dao-tuc-ngu" },
     ],

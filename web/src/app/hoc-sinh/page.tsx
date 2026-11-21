@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { SignOutButton } from "@/components/auth-buttons";
-import { ClockIcon, HeartIcon, SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
-import { StudentTaskList } from "@/components/student-task-list";
+import { HeartIcon, SchoolIcon, ShieldIcon } from "@/components/icons";
 import { LearningGameCard } from "@/components/learning-game-card";
-import { TimetableToday, TimetablePreparation } from "@/components/timetable-day";
 import { ClassChat } from "@/components/class-chat";
 import { StudentSectionTabs } from "@/components/student-section-tabs";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
-import type { ClassEvent, ContentPost, StudentClassSpace } from "@/lib/content-schemas";
+import type { ContentPost, StudentClassSpace } from "@/lib/content-schemas";
 import { requireStudentPageAccount } from "./student-access";
 import "./content.css";
 
@@ -25,10 +23,6 @@ function dateOfBirth(value: string | null) {
   return `${day}/${month}/${year}`;
 }
 
-function shortDate(value: string) {
-  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${value}T12:00:00+07:00`));
-}
-
 function vietnamDate(value: string) {
   const parts = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).formatToParts(new Date(value));
   return ["year", "month", "day"].map((key) => parts.find((part) => part.type === key)?.value).join("-");
@@ -36,28 +30,6 @@ function vietnamDate(value: string) {
 
 function postDate(value: string | null) {
   return value ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value)) : "";
-}
-
-function weekDates(start: string) {
-  return Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(`${start}T12:00:00Z`);
-    date.setUTCDate(date.getUTCDate() + index);
-    return date.toISOString().slice(0, 10);
-  });
-}
-
-function WeekAgenda({ events, weekStart, today }: { events: ClassEvent[]; weekStart: string; today: string }) {
-  const labels = ["Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy", "Chủ nhật"];
-  return <div className="student-week-grid">{weekDates(weekStart).map((day, index) => {
-    const items = events.filter((event) => event.event_date === day);
-    return <div className={`student-week-day${day === today ? " is-today" : ""}`} key={day}>
-      <span className="student-week-label">{labels[index]}{day === today && <span className="sr-only">, hôm nay</span>}</span>
-      <time className="student-week-number" dateTime={day}>{shortDate(day)}</time>
-      <div className="student-week-events">{items.length ? items.map((event) => <article className="student-week-event" key={event.id}>
-        {event.starts_at && <span>{event.starts_at}</span>}<h4>{event.title}</h4>{event.body && <p>{event.body}</p>}
-      </article>) : <span className="student-week-empty">Chưa có lịch</span>}</div>
-    </div>;
-  })}</div>;
 }
 
 function PostCover({ post }: { post: ContentPost }) {
@@ -71,7 +43,7 @@ function ClassNews({ posts }: { posts: ContentPost[] }) {
   </details>)}</div>;
 }
 
-function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd, firstStudent }: { space: StudentClassSpace; today: string; tomorrow: string; weekStart: string; weekEnd: string; firstStudent: boolean }) {
+function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { space: StudentClassSpace; weekStart: string; weekEnd: string; firstStudent: boolean }) {
   const prefix = `lop-${space.enrollment_id}`;
   const news = space.posts.filter((post) => post.category !== "DISCOVERY" && post.category !== "KINDNESS");
   const discovery = space.posts.filter((post) => post.category === "DISCOVERY");
@@ -79,33 +51,6 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd, firs
   const thisWeekKindness = kindnessPosts.filter((post) =>
     vietnamDate(post.published_at || post.created_at) >= weekStart && vietnamDate(post.published_at || post.created_at) <= weekEnd);
   const kindness = thisWeekKindness.length ? thisWeekKindness : kindnessPosts.slice(0, 1);
-  const tasks = space.tasks.filter((task) => task.kind === "TODO" && (!task.task_date || task.task_date === today));
-  const preparation = space.tasks.filter((task) => task.kind === "PREPARATION" && (!task.task_date || task.task_date === tomorrow));
-  const hasTimetable = space.timetable.hasTimetable;
-  const preparationDate = space.timetable.preparationDate;
-  const preparesLater = !!preparationDate && preparationDate !== tomorrow;
-
-  const weekContent = <section className="student-content-panel student-week-panel" id={`${prefix}-week`} aria-labelledby={`${prefix}-week-title`}>
-      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><ClockIcon /></span><div><h3 id={`${prefix}-week-title`}>Tuần của lớp em</h3><p className="student-content-panel-copy">Những hoạt động thầy cô đã hẹn cùng lớp.</p></div></div><span className="student-content-date">{shortDate(weekStart)} — {shortDate(weekEnd)}</span></div>
-      {!space.events.length && <p className="student-today-note">Thầy cô chưa cập nhật lịch cho tuần này.</p>}
-      <WeekAgenda events={space.events} weekStart={weekStart} today={today} />
-    </section>;
-
-  const todayContent = <div className="student-content-layout student-daily-layout">
-      <nav className="student-daily-jumps" aria-label={`Việc cần nhớ của ${space.student_name}`}><a href={`#${prefix}-today`}>Việc hôm nay <span aria-hidden="true">↓</span></a><a href={`#${prefix}-prepare`}>{preparesLater ? "Chuẩn bị buổi tới" : "Chuẩn bị ngày mai"} <span aria-hidden="true">↓</span></a></nav>
-      <section className="student-content-panel student-today-panel" id={`${prefix}-today`} aria-labelledby={`${prefix}-today-title`}>
-        <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-green"><SunIcon /></span><div><h3 id={`${prefix}-today-title`}>Hôm nay em làm gì?</h3><p className="student-content-panel-copy">Từng việc nhỏ, em làm theo nhịp của mình nhé.</p></div></div><span className="student-content-date">{shortDate(today)}</span></div>
-        {hasTimetable && <TimetableToday plan={space.timetable} enrollmentId={space.enrollment_id} />}
-        {tasks.length ? <div className={hasTimetable ? "student-extra-reminders" : undefined}>{hasTimetable && <h4>Thầy cô nhắc thêm</h4>}<StudentTaskList tasks={tasks} enrollmentId={space.enrollment_id} today={today} /></div> : !hasTimetable && <p className="student-content-empty">Thầy cô chưa giao việc cho hôm nay. Em có thể ghé góc khám phá trong lúc chờ nhé.</p>}
-      </section>
-
-      <section className="student-content-panel student-prepare-panel" id={`${prefix}-prepare`} aria-labelledby={`${prefix}-prepare-title`}>
-        <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><BagIcon /></span><div><h3 id={`${prefix}-prepare-title`}>{preparesLater ? "Chiếc cặp buổi học tới" : "Chiếc cặp ngày mai"}</h3><p className="student-content-panel-copy">{hasTimetable ? "Sách vở và đồ dùng theo thời khóa biểu." : `Chuẩn bị cho ngày ${shortDate(tomorrow)}.`}</p></div></div></div>
-        {hasTimetable && <TimetablePreparation plan={space.timetable} enrollmentId={space.enrollment_id} />}
-        {preparation.length ? <div className={hasTimetable ? "student-extra-reminders" : undefined}>{hasTimetable && <h4>Lời nhắc thêm cho ngày {shortDate(tomorrow)}</h4>}<ol className="student-preparation-list">{preparation.map((task) => <li key={task.id}><strong>{task.title}</strong>{task.details && <p className="student-content-body">{task.details}</p>}</li>)}</ol></div> : !hasTimetable && <p className="student-content-empty">Thầy cô chưa có lời nhắc chuẩn bị cho ngày mai.</p>}
-      </section>
-    </div>;
-
   const newsContent = <section className="student-content-panel student-news-panel" id={`${prefix}-news`} aria-labelledby={`${prefix}-news-title`}>
     <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-peach"><SchoolIcon /></span><div><h3 id={`${prefix}-news-title`}>Tin từ lớp em</h3><p className="student-content-panel-copy">Lời nhắn và những câu chuyện mới của lớp.</p></div></div></div>
     {news.length ? <ClassNews posts={news} /> : <p className="student-content-empty">Khi thầy cô có thông báo mới, em sẽ đọc được tại đây.</p>}
@@ -130,7 +75,7 @@ function StudentLearningSpace({ space, today, tomorrow, weekStart, weekEnd, firs
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
     <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
     <p className="student-gallery-entry"><Link className="button button-outline button-small" href={`/thu-vien-anh?class=${encodeURIComponent(space.class_id)}`}>Thư viện ảnh của lớp <span aria-hidden="true">→</span></Link></p>
-    <StudentSectionTabs prefix={prefix} studentName={space.student_name} firstStudent={firstStudent} today={todayContent} week={weekContent} news={newsContent} discovery={discoveryContent} chat={chatContent} />
+    <StudentSectionTabs prefix={prefix} studentName={space.student_name} firstStudent={firstStudent} news={newsContent} discovery={discoveryContent} chat={chatContent} />
   </section>;
 }
 
@@ -140,10 +85,6 @@ function ChatIcon() {
 
 function DiscoveryIcon() {
   return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5c3-1 5.7-.5 8 1.2 2.3-1.7 5-2.2 8-1.2V19c-3-1-5.7-.5-8 1.2C9.7 18.5 7 18 4 19V5.5Zm8 1.2v13.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-
-function BagIcon() {
-  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="6" width="14" height="15" rx="4" stroke="currentColor" strokeWidth="1.7" /><path d="M9 6V5a3 3 0 0 1 6 0v1M8.5 14h7v4h-7zM5 11h14" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
 export default async function StudentHomePage() {
@@ -156,9 +97,9 @@ export default async function StudentHomePage() {
   return (
     <main id="noi-dung" className="student-dashboard-main student-content-page page-width">
       <div className="student-page-toolbar"><p className="eyebrow">LỚP HỌC HẠNH PHÚC · GÓC HỌC SINH</p><SignOutButton /></div>
-      <section className="student-dashboard-welcome student-dashboard-welcome-compact" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><h1 id="student-dashboard-title">{greeting}</h1><p>Xem việc hôm nay, chuẩn bị đồ dùng và trò chuyện với lớp.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={(theme === "discovery" || theme === "harmony") ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 180px" /></div></section>
+      <section className="student-dashboard-welcome student-dashboard-welcome-compact" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><h1 id="student-dashboard-title">{greeting}</h1><p>Đọc tin lớp, khám phá điều hay và trò chuyện với lớp.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={(theme === "discovery" || theme === "harmony") ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 180px" /></div></section>
       {!content.students.length && <section className="student-content-panel student-empty-profile"><h2>Chưa có không gian lớp học</h2><p>Em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm để kiểm tra thông tin liên kết tài khoản nhé.</p></section>}
-      {content.students.map((space, index) => <StudentLearningSpace key={space.enrollment_id} space={space} today={content.today} tomorrow={content.tomorrow} weekStart={content.weekStart} weekEnd={content.weekEnd} firstStudent={index === 0} />)}
+      {content.students.map((space, index) => <StudentLearningSpace key={space.enrollment_id} space={space} weekStart={content.weekStart} weekEnd={content.weekEnd} firstStudent={index === 0} />)}
       <div className="student-learning-games" id="tro-choi"><LearningGameCard compact /></div>
       <details className="student-profile-disclosure"><summary>Thông tin học sinh và tài khoản</summary><section className="student-profiles-section" aria-labelledby="student-profiles-title">
         <div className="student-profile-heading"><h2 id="student-profiles-title">Thông tin học sinh</h2><Link className="button button-outline button-small" href="/hoc-sinh/doi-mat-khau"><ShieldIcon /> Đổi mật khẩu</Link></div>

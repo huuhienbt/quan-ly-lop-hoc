@@ -7,7 +7,7 @@ NextAuth Google/JWT, phân quyền kiểm tra tại server và dashboard `/admin
 Dashboard duyệt Teacher, tạo năm học/lớp, phân công GVCN và tạm khóa tài khoản.
 Schema ban đầu bao quát cả bốn giai đoạn. Theo yêu cầu tiếp theo của chủ dự án,
 đã bổ sung tài khoản học sinh đăng nhập bằng số điện thoại, đổi mật khẩu lần đầu,
-bảng tin công khai, lịch tuần, góc học sinh và màn hình biên tập của giáo viên.
+bảng tin công khai, góc học sinh và màn hình biên tập của giáo viên.
 Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa được triển khai.
 
 - Tên miền đã được Vercel xác nhận Valid Configuration, gắn Production của project `web`: `https://e-class-vinhlong.vercel.app`.
@@ -30,13 +30,12 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Bảng tin và nội dung lớp
 
-- `/`: bản tin công khai, lịch tuần, điều tốt trong tuần và thư viện ảnh.
+- `/`: bản tin công khai, điều tốt trong tuần và thư viện ảnh.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
 - `/teacher`: giáo viên được phân công và Super Admin tạo/sửa/lưu trữ bài, sự kiện và nhắc việc.
-- `/hoc-sinh`: tin của lớp, lịch tuần, việc hôm nay, chuẩn bị ngày mai, khám phá và hồ sơ riêng.
+- `/hoc-sinh`: tin lớp, khám phá, trò chuyện, trò chơi học tập và hồ sơ riêng.
 
-Checklist lưu trên D1 theo từng học sinh và từng ngày Việt Nam; tải lại trang vẫn
-giữ trạng thái. Lịch cụ thể do thầy cô nhập. Có thể dùng `scripts/seed-class-content.mjs`
+Dữ liệu lịch, nhắc việc và dấu hoàn thành đã lưu vẫn nằm trong D1. Có thể dùng `scripts/seed-class-content.mjs`
 để thêm nội dung khởi đầu cho một lớp một cách chủ động; script giữ nguyên bài/việc
 đã có, không tạo sự kiện hoặc ngày hẹn giả. Không chạy script này tự động khi setup.
 Xem [hướng dẫn bản tin và nội dung lớp](docs/ban-tin-va-goc-hoc-sinh.md).
@@ -46,20 +45,15 @@ chọn dán liên kết HTTPS. Migration `0006_post_images.sql` lưu ảnh WebP 
 ưu cùng bài trong D1; ảnh riêng được kiểm tra quyền trước mỗi lượt tải. Nhận
 JPG/PNG/WebP tối đa 20 MB, không cần thêm biến môi trường hay dịch vụ lưu ảnh.
 
-Thời khóa biểu lớp Bốn 12 tạo việc hôm nay và danh sách sách vở cho buổi học
-tiếp theo; gom môn trùng tiết và lưu dấu hoàn thành riêng từng học sinh. Giáo
-viên chỉnh ngày áp dụng, khung học và lời nhắc tại `/teacher#thoi-khoa-bieu`.
-Xem [thời khóa biểu và lời nhắc](docs/thoi-khoa-bieu.md).
+Giáo viên vẫn quản lý dữ liệu thời khóa biểu tại `/teacher#thoi-khoa-bieu`.
 
 Mục **Trò chuyện** trong Góc học sinh có phòng chung của lớp và kênh nhắn
 riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin nhắn tại
 `/teacher#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
 Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 
-Trang chủ có sáu lối tắt, bỏ khối giới thiệu dành cho ba mẹ và thu gọn tranh
-đầu trang ở cả ba giao diện. Góc học sinh chia thành năm thẻ **Hôm nay, Lịch
-tuần, Tin lớp, Khám phá, Trò chuyện**; bản nháp và dấu hoàn thành được giữ khi
-chuyển thẻ. Nội dung bài viết đã nhập vẫn được giữ trong D1 và trang biên tập.
+Trang chủ có ba lối tắt: **Trò chuyện**, **Tin lớp** và **Trò chơi học tập**.
+Góc học sinh mở ở thẻ **Tin lớp**, bên cạnh **Khám phá** và **Trò chuyện**.
 
 Đầu trang hiện chỉ có logo và nút **Đăng nhập/Tài khoản**; bỏ menu ngang,
 khối ngày/“Lời nhắn mới” và thu nhỏ banner thêm khoảng 20% trên cả ba giao diện.

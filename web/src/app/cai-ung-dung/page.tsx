@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Cài ứng dụng Android" };
 
 export default function InstallAppPage() {
   return <div className="install-app-shell"><header className="page-width install-app-header"><Brand /><Link href="/">Về trang chủ</Link></header><main id="noi-dung" className="install-app-main page-width">
-    <section className="install-app-card" aria-labelledby="install-app-title"><div className="install-app-heading"><Image src="/icons/app-192.png" alt="" width={80} height={80} /><div><p className="install-app-eyebrow">ỨNG DỤNG ANDROID</p><h1 id="install-app-title">Lớp học hạnh phúc</h1><p>Việc hôm nay, thời khóa biểu và trò chuyện cùng lớp.</p></div></div>
+    <section className="install-app-card" aria-labelledby="install-app-title"><div className="install-app-heading"><Image src="/icons/app-192.png" alt="" width={80} height={80} /><div><p className="install-app-eyebrow">ỨNG DỤNG ANDROID</p><h1 id="install-app-title">Lớp học hạnh phúc</h1><p>Tin lớp, thư viện ảnh và trò chuyện cùng lớp.</p></div></div>
       <p className="install-app-intro">Mở lớp học từ biểu tượng trên điện thoại. Dùng chung tài khoản và dữ liệu với website; kết nối Internet khi sử dụng.</p>
       <a className="install-app-download" href={androidRelease.downloadUrl} download>Tải ứng dụng APK <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4" /></svg></a>
       <p className="install-app-version">Phiên bản {androidRelease.version} · Android {androidRelease.minimumAndroid} trở lên · Chrome được cập nhật</p>
