@@ -36,16 +36,16 @@ export function postImageUrl(id: string): string {
   return `/api/post-images/${id}`;
 }
 
-export async function normalizePostImage(file: File): Promise<NormalizedPostImage> {
+export async function normalizePostImage(file: File, maxInputBytes = MAX_POST_IMAGE_INPUT_BYTES): Promise<NormalizedPostImage> {
   if (!file || typeof file.arrayBuffer !== "function" || !Number.isSafeInteger(file.size) || file.size <= 0) {
     throw new PostImageValidationError("Thầy cô hãy chọn một ảnh từ thiết bị.");
   }
-  if (file.size > MAX_POST_IMAGE_INPUT_BYTES) {
-    throw new PostImageValidationError("Ảnh quá lớn. Thầy cô hãy chọn ảnh nhỏ hơn 700 KB.");
+  if (file.size > maxInputBytes) {
+    throw new PostImageValidationError(`Ảnh quá lớn. Thầy cô hãy chọn ảnh nhỏ hơn ${maxInputBytes >= 1024 * 1024 ? `${maxInputBytes / (1024 * 1024)} MB` : `${maxInputBytes / 1024} KB`}.`);
   }
   try {
     const bytes = Buffer.from(await file.arrayBuffer());
-    if (bytes.length !== file.size || bytes.length > MAX_POST_IMAGE_INPUT_BYTES) throw new PostImageValidationError();
+    if (bytes.length !== file.size || bytes.length > maxInputBytes) throw new PostImageValidationError();
     const format = detectedFormat(bytes);
     if (!format || (file.type && file.type !== `image/${format}`)) throw new PostImageValidationError();
     const options = { limitInputPixels: MAX_IMAGE_PIXELS, failOn: "error" as const, sequentialRead: true };

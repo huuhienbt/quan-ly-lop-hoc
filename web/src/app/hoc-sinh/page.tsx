@@ -5,6 +5,8 @@ import { SignOutButton } from "@/components/auth-buttons";
 import { HeartIcon, SchoolIcon, ShieldIcon } from "@/components/icons";
 import { LearningGameCard } from "@/components/learning-game-card";
 import { ClassChat } from "@/components/class-chat";
+import { LessonContent } from "@/components/lesson-render";
+import { decodeLesson } from "@/lib/lessons";
 import { StudentSectionTabs } from "@/components/student-section-tabs";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
@@ -58,8 +60,14 @@ function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { spa
 
   const discoveryContent = <div className="student-discovery-layout">
     <section className="student-content-panel student-discovery-panel" id={`${prefix}-discovery`} aria-labelledby={`${prefix}-discovery-title`}>
-      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Mỗi ngày một điều hay</h3><p className="student-content-panel-copy">Mở một câu chuyện, gặp một điều mới.</p></div></div></div>
-      {discovery.length ? <div className="student-article-list">{discovery.map((post) => <details className="student-article-card" key={post.id}><summary><span className="student-content-kicker">Góc khám phá</span><h4>{post.title}</h4><span className="student-news-more">Cùng tìm hiểu <span aria-hidden="true">↗</span></span></summary><PostCover post={post} /><p className="student-content-body">{post.body}</p></details>)}</div> : <p className="student-content-empty">Những bài khám phá sẽ xuất hiện khi thầy cô đăng. Em nhớ quay lại nhé.</p>}
+      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Bài học của lớp</h3><p className="student-content-panel-copy">Chọn bài để đọc và mở tài liệu.</p></div></div></div>
+      {discovery.length ? <div className="student-article-list">{discovery.map((post) => {
+        const blocks = decodeLesson(post.lesson_content);
+        return <details className="student-article-card" key={post.id}>
+          <summary><span className="student-content-kicker">Bài học</span><h4>{post.title}</h4><span className="student-news-more">Mở bài học <span aria-hidden="true">↗</span></span></summary>
+          <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} /> : <p className="student-content-body">{post.body}</p>}
+        </details>;
+      })}</div> : <p className="student-content-empty">Bài học sẽ xuất hiện khi thầy cô đăng.</p>}
     </section>
       <section className="student-content-panel student-kindness-panel" aria-labelledby={`${prefix}-kindness-title`}>
         <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><HeartIcon /></span><div><h3 id={`${prefix}-kindness-title`}>Một điều tử tế tuần này</h3><p className="student-content-panel-copy">Việc nhỏ hôm nay, niềm vui ngày mai.</p></div></div></div>

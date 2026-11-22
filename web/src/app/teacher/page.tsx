@@ -8,6 +8,7 @@ import { SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getCurrentUser } from "@/lib/rbac";
 import { getTeacherContentOverview } from "@/lib/class-content";
 import type { PostCategory } from "@/lib/content-schemas";
+import { LessonEditor } from "@/components/lesson-editor";
 import { ClassChat } from "@/components/class-chat";
 
 export const dynamic = "force-dynamic";
@@ -21,12 +22,13 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
   if (!actor) redirect("/dang-nhap?vai=giaovien");
   if (actor.role !== "TEACHER" && actor.role !== "SUPER_ADMIN") redirect("/dang-nhap?vai=giaovien");
   const query = await searchParams;
-  const tab = query.tab === "tro-chuyen" ? "tro-chuyen" : "bai-viet";
+  const tab = query.tab === "tro-chuyen" || query.tab === "hoc-tap" ? query.tab : "bai-viet";
   const overview = await getTeacherContentOverview(actor.id, { includeLegacy: false });
   const requestedClass = typeof query.class === "string" ? query.class : undefined;
   const selectedClass = overview.classes.find((item) => item.id === requestedClass) ?? overview.classes[0];
   const invalidClass = query.class !== undefined && (!requestedClass || !overview.classes.some((item) => item.id === requestedClass));
-  const posts = selectedClass && tab === "bai-viet" ? overview.posts.filter((item) => item.class_id === selectedClass.id && item.status !== "ARCHIVED") : [];
+  const posts = selectedClass && tab !== "tro-chuyen" ? overview.posts.filter((item) =>
+    item.class_id === selectedClass.id && item.status !== "ARCHIVED" && (item.category === "DISCOVERY") === (tab === "hoc-tap")) : [];
   const classQuery = selectedClass ? `class=${encodeURIComponent(selectedClass.id)}&` : "";
 
   return (
@@ -40,6 +42,7 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
           {invalidClass && <p className="teacher-feedback is-error" role="alert">Lớp được chọn không thuộc danh sách thầy cô có quyền biên tập. Trang đang hiển thị một lớp trong danh sách được phân công.</p>}
           <nav className="teacher-section-nav" aria-label="Công việc thường dùng">
             <Link href={`/teacher?${classQuery}tab=bai-viet`} aria-current={tab === "bai-viet" ? "page" : undefined}>Bài viết</Link>
+            <Link href={`/teacher?${classQuery}tab=hoc-tap`} aria-current={tab === "hoc-tap" ? "page" : undefined}>Học tập</Link>
             <Link href={`/teacher?${classQuery}tab=tro-chuyen`} aria-current={tab === "tro-chuyen" ? "page" : undefined}>Trò chuyện</Link>
           </nav>
           {tab === "bai-viet" ? <section className="teacher-content-section" id="bai-viet" aria-labelledby="teacher-posts-title"><div className="teacher-section-heading"><div><p className="eyebrow">GỬI GẮM NHỮNG ĐIỀU TỐT ĐẸP</p><h2 id="teacher-posts-title">Bảng tin của lớp</h2></div><span className="teacher-section-note">Bản nháp chỉ dành cho người biên tập.</span></div><details className="teacher-post-create">
@@ -50,6 +53,24 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
             {posts.length ? posts.map((post) => <article className="teacher-content-card" key={post.id}><div className="teacher-content-badges"><span className={`badge ${post.status === "PUBLISHED" ? "badge-green" : "badge-amber"}`}>{post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}</span><span className="badge badge-neutral">{post.visibility === "PUBLIC" ? "Công khai" : "Trong lớp"}</span>{post.is_pinned === 1 && <span className="badge badge-amber">Đã ghim</span>}</div><p className="teacher-content-category">{kindLabels[post.kind]} · {categoryLabels[post.category]}</p><h3>{post.title}</h3><p className="teacher-content-excerpt">{post.body.slice(0, 220)}{post.body.length > 220 ? "…" : ""}</p>{post.cover_url && <p className="teacher-content-meta">Đã có ảnh bìa</p>}<details className="teacher-edit-details"><summary>Chỉnh sửa bài viết</summary><PostEditorForm key={`${post.id}-${post.updated_at}`} classId={selectedClass.id} post={post} /></details><ArchiveContentForm type="post" id={post.id} title={post.title} /></article>) : <div className="teacher-empty-content"><span className="teacher-empty-icon"><SunIcon /></span><h3>Câu chuyện đầu tiên đang chờ thầy cô</h3><p>Thêm một lời chào, một thông báo hoặc một hoạt động đáng nhớ của lớp.</p></div>}
           </div></section>
 
+          : tab === "hoc-tap" ? <section className="teacher-content-section" id="hoc-tap" aria-labelledby="teacher-lesson-title">
+            <div className="teacher-section-heading"><div><h2 id="teacher-lesson-title">Bài học của lớp</h2><p>Bài đã xuất bản hiển thị trong mục Học tập của học sinh.</p></div></div>
+            <details className="teacher-post-create">
+              <summary className="button button-primary"><span aria-hidden="true">＋</span> Thêm bài học</summary>
+              <div className="teacher-panel"><div className="teacher-panel-body"><LessonEditor key={selectedClass.id} classId={selectedClass.id} /></div></div>
+            </details>
+            <div className="teacher-items-column">
+              {posts.length ? posts.map(post => <article className="teacher-content-card" key={post.id}>
+                <div className="teacher-content-badges"><span className={post.status === "PUBLISHED" ? "badge badge-green" : "badge badge-amber"}>{post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}</span><span className="badge badge-neutral">{post.visibility === "PUBLIC" ? "Bài cũ công khai" : "Trong lớp"}</span></div>
+                <h3>{post.title}</h3><p className="teacher-content-excerpt">{post.body.slice(0, 180)}</p>
+                <details className="teacher-edit-details"><summary>Sửa bài học</summary>
+                  {post.visibility === "PUBLIC" ? <PostEditorForm key={post.updated_at} classId={selectedClass.id} post={post} />
+                    : <LessonEditor key={post.updated_at} classId={selectedClass.id} post={post} />}
+                </details>
+                <ArchiveContentForm type="post" id={post.id} title={post.title} />
+              </article>) : <p className="teacher-content-excerpt">Lớp chưa có bài học. Chọn Thêm bài học để bắt đầu.</p>}
+            </div>
+          </section>
           : <section className="teacher-content-section" id="tro-chuyen" aria-labelledby="teacher-chat-title"><div className="teacher-section-heading"><div><p className="eyebrow">LẮNG NGHE VÀ ĐỒNG HÀNH</p><h2 id="teacher-chat-title">Trò chuyện với lớp</h2><p>Cùng trao đổi trong phòng chung hoặc trả lời riêng từng học sinh.</p></div></div><ClassChat key={selectedClass.id} mode="teacher" classId={selectedClass.id} /></section>}
 
         </> : <section className="teacher-no-class"><span className="teacher-empty-icon"><SchoolIcon /></span><h2>Chưa có lớp để biên tập</h2><p>{actor.role === "SUPER_ADMIN" ? "Tạo lớp học trong trang quản trị để bắt đầu chia sẻ nội dung với học sinh và ba mẹ." : "Thầy cô hãy liên hệ quản trị viên để được phân công lớp. Nội dung của lớp sẽ xuất hiện tại đây sau khi được phân công."}</p>{actor.role === "SUPER_ADMIN" && <Link className="button button-primary" href="/admin">Mở trang quản trị</Link>}</section>}

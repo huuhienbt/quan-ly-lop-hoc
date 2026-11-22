@@ -53,6 +53,8 @@ Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 Menu trang chủ có bốn mục: **Tin lớp**, **Học tập**, **Đố vui** và **Trò chuyện**.
 Học sinh chọn **Học tập** để mở bài đọc trong lớp. **Học tập** và **Trò chuyện**
 yêu cầu đăng nhập; **Tin lớp** và **Đố vui** mở trực tiếp.
+Giáo viên đăng nội dung có định dạng, hình ảnh, PDF, video và âm thanh từ
+[trang Học tập](docs/bai-hoc.md). Triển khai cần migration D1 `0010_learning_posts.sql`.
 
 Đầu trang hiện chỉ có logo và nút **Đăng nhập/Tài khoản**; bỏ menu ngang,
 khối ngày/“Lời nhắn mới” và thu nhỏ banner thêm khoảng 20% trên cả ba giao diện.

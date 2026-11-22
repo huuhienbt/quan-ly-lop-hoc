@@ -1,0 +1,43 @@
+.lesson-content { display: grid; gap: 16px; min-width: 0; margin-block: 12px; color: #24495e; line-height: 1.65; }
+.lesson-content :is(p, figure), .lesson-preview :is(p, figure) { margin: 0; min-width: 0; }
+.lesson-paragraph { white-space: pre-wrap; overflow-wrap: anywhere; }
+.lesson-paragraph strong { font-weight: 850; }
+.lesson-fraction { display: inline-grid; vertical-align: middle; text-align: center; font-family: ui-serif, Georgia, serif; font-size: .88em; line-height: 1.1; margin-inline: .18em; max-width: 100%; }
+.lesson-fraction > span { padding: .1em .24em; overflow-wrap: anywhere; }
+.lesson-fraction > span:first-child { border-bottom: 1.5px solid currentColor; }
+.lesson-content .lesson-image, .lesson-preview .lesson-image { max-width: 100%; margin-inline: auto; }
+.lesson-image img { display: block; width: 100%; height: auto; border-radius: 10px; }
+.lesson-image figcaption { text-align: center; font-size: .9em; margin-top: 5px; overflow-wrap: anywhere; }
+.lesson-link { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; color: #155c81; text-decoration: underline; text-underline-offset: 3px; font-weight: 750; max-width: 100%; overflow-wrap: anywhere; }
+.lesson-media { padding: 12px; border: 1px solid #cee4ef; border-radius: 12px; background: #f4fbfd; }
+.lesson-media figcaption { margin-bottom: 8px; font-weight: 850; overflow-wrap: anywhere; }
+.lesson-media :is(iframe, audio, video) { display: block; width: 100%; max-width: 100%; border: 0; }
+.lesson-media iframe { border-radius: 8px; background: #e6edf0; }
+.lesson-media .lesson-pdf { height: clamp(280px, 62svh, 760px); border: 1px solid #cadce7; }
+.lesson-media .lesson-video { aspect-ratio: 16/9; max-height: 70vh; background: #152b39; border-radius: 8px; }
+.lesson-media iframe.lesson-video { min-height: 200px; }
+.lesson-play { display: block; border: 1px solid #bad8e9; border-radius: 9px; color: #184d70; background: #fff; min-height: 44px; padding: 8px 12px; font-weight: 800; cursor: pointer; }
+.lesson-editor label { display: grid; gap: 5px; font-weight: 750; }
+.lesson-editor .lesson-compact-label { display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.lesson-editor :is(input:not([type=hidden]), select, textarea) { min-width: 0; max-width: 100%; width: 100%; padding: 8px 10px; border: 1px solid #c9dce9; border-radius: 9px; background: #fff; color: #25495e; font: inherit; }
+.lesson-editor .lesson-compact-label select { width: auto; }
+.lesson-editor textarea { resize: vertical; }
+.lesson-editor .lesson-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.lesson-editor .lesson-tools button, .lesson-editor .lesson-fraction-tools button, .lesson-editor .lesson-upload button { min-height: 40px; border: 1px solid #c9dce9; border-radius: 8px; padding: 5px 9px; background: #fff; color: #184d70; cursor: pointer; }
+.lesson-editor button:disabled { opacity: .55; cursor: default; }
+.lesson-editor :is(.lesson-add, .lesson-rows, .lesson-title, .lesson-media-editor, .lesson-text-editor) { display: grid; gap: 9px; min-width: 0; }
+.lesson-editor :is(.lesson-add, .lesson-rows) { margin-block: 14px; }
+.lesson-editor .lesson-add > span { font-weight: 850; }
+.lesson-editor .lesson-row { padding: clamp(8px, 2vw, 14px); border: 1px solid #d6e4eb; border-radius: 12px; background: #f7fbfd; min-width: 0; }
+.lesson-editor .lesson-row-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 9px; }
+.lesson-editor .lesson-preview { margin: 1px 0; padding: 9px 12px; border: 1px dashed #c9dce9; border-radius: 9px; background: #fff; overflow-wrap: anywhere; }
+.lesson-editor .lesson-preview > span:first-child { display: block; color: #547486; font-size: .8em; font-weight: 800; margin-bottom: 4px; }
+.lesson-editor :is(.lesson-upload, .lesson-fraction-tools) { display: flex; align-items: end; flex-wrap: wrap; gap: 7px; min-width: 0; }
+.lesson-editor .lesson-upload label { min-width: min(100%, 240px); max-width: 100%; }
+.lesson-editor .lesson-fraction-tools label { max-width: 95px; }
+.lesson-editor [type=submit] { margin-top: 12px; }
+@media (max-width: 600px) {
+  .lesson-media { padding: 8px; }
+  .lesson-media .lesson-pdf { height: clamp(265px, 55svh, 500px); }
+  .lesson-editor :is(input:not([type=hidden]), select, textarea) { font-size: 16px; }
+}

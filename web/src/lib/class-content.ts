@@ -138,7 +138,7 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
   const students = await Promise.all(identities.map(async (identity): Promise<StudentClassSpace> => {
     const own = [accountId, sessionVersion, identity.enrollment_id];
     const [posts, events, taskRows, timetable] = await Promise.all([
-      query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
+      query<ContentPost>(`SELECT ${postFields}, p.lesson_content FROM posts p ${classJoins}
         WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${activeClass} AND ${studentAccess}
         ORDER BY ${postOrder} LIMIT 100`, [identity.class_id, ...own]),
       query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
@@ -168,7 +168,7 @@ export async function getTeacherContentOverview(
     query<ContentClass>(`SELECT c.id, c.name, c.slug, c.school_id, school.name AS school_name
       FROM classes c JOIN schools school ON school.id = c.school_id
       WHERE ${activeClass} AND ${staffAccess} ORDER BY c.grade, c.name, c.id`, [actorId]),
-    query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
+    query<ContentPost>(`SELECT ${postFields}, p.lesson_content FROM posts p ${classJoins}
       WHERE p.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
       ORDER BY ${postOrder} LIMIT 500`, [actorId]),
     includeLegacy ? query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
@@ -220,7 +220,7 @@ export async function savePost(actorId: string, input: PostInput, upload?: File)
     sql: `UPDATE posts SET title = ?, body = ?, kind = ?, category = ?, cover_url = ?,
         status = ?, visibility = ?, is_pinned = ?,
         published_at = CASE WHEN ? = 'PUBLISHED' THEN COALESCE(published_at, ?) ELSE NULL END, updated_at = ?
-      WHERE id = ? AND class_id = ? AND status <> 'ARCHIVED'
+      WHERE id = ? AND class_id = ? AND status <> 'ARCHIVED' AND lesson_content IS NULL
         AND EXISTS (SELECT 1 FROM classes c JOIN schools school ON school.id = c.school_id
           WHERE c.id = posts.class_id AND ${activeClass} AND ${staffAccess} ${imageGuard})`,
     params: [input.title, input.body, input.kind, input.category, coverUrl,

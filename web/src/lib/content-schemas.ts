@@ -80,6 +80,7 @@ export interface ContentClass { id: string; name: string; slug: string; school_i
 interface ClassContentFields { id: string; class_id: string; class_name: string; class_slug: string; title: string; created_at: string; updated_at: string }
 export interface ContentPost extends ClassContentFields {
   body: string;
+  lesson_content?: string | null;
   kind: "NEWS" | "ANNOUNCEMENT" | "ACTIVITY";
   category: PostCategory;
   cover_url: string | null;
