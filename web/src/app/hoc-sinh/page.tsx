@@ -7,6 +7,7 @@ import { LearningGameCard } from "@/components/learning-game-card";
 import { ClassChat } from "@/components/class-chat";
 import { LessonContent } from "@/components/lesson-render";
 import { decodeLesson, lessonKinds } from "@/lib/lessons";
+import { StudentLessonCard } from "@/components/student-lesson-card";
 import { StudentSectionTabs } from "@/components/student-section-tabs";
 import { getStudentClassContent } from "@/lib/class-content";
 import { getSiteTheme } from "@/lib/site-theme";
@@ -65,13 +66,13 @@ function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { spa
 
   const discoveryContent = <div className="student-discovery-layout">
     <section className="student-content-panel student-discovery-panel" id={`${prefix}-discovery`} aria-labelledby={`${prefix}-discovery-title`}>
-      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Bài học của lớp</h3><p className="student-content-panel-copy">Chọn bài để đọc và mở tài liệu.</p></div></div></div>
+      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Bài học của lớp</h3><p className="student-content-panel-copy">Chọn bài để xem nội dung và tài liệu.</p></div></div></div>
       {discovery.length ? <div className="student-article-list">{discovery.map((post) => {
         const blocks = decodeLesson(post.lesson_content);
-        return <details className="student-article-card" key={post.id}>
-          <summary><span className="student-content-kicker">{lessonKinds[post.kind]}</span><h4>{post.title}</h4>{post.published_at && <time dateTime={post.published_at}>{postDate(post.published_at)}</time>}<span className="student-news-more">Mở bài học <span aria-hidden="true">↗</span></span></summary>
-          <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} /> : <p className="student-content-body">{post.body}</p>}
-        </details>;
+        return <StudentLessonCard key={post.id} title={post.title} kind={lessonKinds[post.kind]}
+          publishedAt={post.published_at} dateLabel={postDate(post.published_at)}>
+          <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} inlinePdf /> : <p className="student-content-body">{post.body}</p>}
+        </StudentLessonCard>;
       })}</div> : <p className="student-content-empty">Bài học sẽ xuất hiện khi thầy cô đăng.</p>}
     </section>
       <section className="student-content-panel student-kindness-panel" aria-labelledby={`${prefix}-kindness-title`}>

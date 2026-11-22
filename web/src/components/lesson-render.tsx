@@ -38,12 +38,14 @@ function OpenLink({ url, children }: { url: string; children: ReactNode }) {
   return <a className="lesson-link" href={url} target="_blank" rel="noopener noreferrer">{children} <span aria-hidden="true">↗</span></a>;
 }
 
-function LessonPlayer({ title, url, player, isPdf, managed }: { title: string; url: string; player: string; isPdf: boolean; managed: boolean }) {
+function LessonPlayer({ title, url, player, isPdf, managed, inlinePdf }: { title: string; url: string; player: string; isPdf: boolean; managed: boolean; inlinePdf: boolean }) {
   const [open, setOpen] = useState(false);
-  return open ? <iframe
+  const showPdf = isPdf && inlinePdf;
+  return open || showPdf ? <iframe
     className={isPdf ? "lesson-pdf" : "lesson-video"}
     title={title}
     src={isPdf && player === "pdf" && !url.includes("#") ? `${url}#view=FitH` : url}
+    loading={showPdf ? "lazy" : undefined}
     sandbox={managed ? undefined : player === "pdf" ? "" : "allow-scripts allow-same-origin allow-presentation"}
     referrerPolicy={player === "youtube" ? "strict-origin-when-cross-origin" : "no-referrer"}
     allow={isPdf ? undefined : "fullscreen; encrypted-media; picture-in-picture"}
@@ -51,7 +53,7 @@ function LessonPlayer({ title, url, player, isPdf, managed }: { title: string; u
   /> : <button className="lesson-play" type="button" onClick={() => setOpen(true)}>{isPdf ? "Xem PDF tại đây" : "Mở trình phát"}</button>;
 }
 
-export function LessonRichBlock({ block, preview = false }: { block: LessonBlock; preview?: boolean }) {
+export function LessonRichBlock({ block, preview = false, inlinePdf = false }: { block: LessonBlock; preview?: boolean; inlinePdf?: boolean }) {
   if (block.type === "text") return <p className="lesson-paragraph" style={{ textAlign: block.align }}>{block.rich ? richInline(block.rich) : inline(lessonInline(block.text))}</p>;
   if (block.type === "link") {
     const url = httpsLessonUrl(block.url);
@@ -71,7 +73,7 @@ export function LessonRichBlock({ block, preview = false }: { block: LessonBlock
   return <figure className="lesson-media">
     <figcaption>{title}</figcaption>
     {!preview && (resolved.player !== "native"
-      ? <LessonPlayer key={resolved.src} title={title} url={resolved.src} player={resolved.player} isPdf={block.type === "pdf"} managed={!!asset} />
+      ? <LessonPlayer key={resolved.src} title={title} url={resolved.src} player={resolved.player} isPdf={block.type === "pdf"} managed={!!asset} inlinePdf={inlinePdf} />
       : block.type === "video"
         ? <video className="lesson-video" src={resolved.src} controls playsInline preload="none" aria-label={title} />
         : <audio className="lesson-audio" src={resolved.src} controls preload="none" aria-label={title} />)}
@@ -79,6 +81,6 @@ export function LessonRichBlock({ block, preview = false }: { block: LessonBlock
   </figure>;
 }
 
-export function LessonContent({ blocks }: { blocks: LessonBlock[] }) {
-  return <div className="lesson-content">{blocks.map((block, index) => <LessonRichBlock key={index} block={block} />)}</div>;
+export function LessonContent({ blocks, inlinePdf = false }: { blocks: LessonBlock[]; inlinePdf?: boolean }) {
+  return <div className="lesson-content">{blocks.map((block, index) => <LessonRichBlock key={index} block={block} inlinePdf={inlinePdf} />)}</div>;
 }
