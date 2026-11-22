@@ -18,7 +18,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const opensLearning = query.tiep === "hoc-tap";
   const wantsAdmin = query.tiep === "quan-tri";
   const studentDestination = opensChat ? "/hoc-sinh#tro-chuyen" : opensLearning ? "/hoc-sinh#kham-pha" : "/hoc-sinh";
-  const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : "/teacher";
+  const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : opensLearning ? "/teacher?tab=hoc-tap" : "/teacher";
   if (student) redirect(student.must_change_password ? "/hoc-sinh/doi-mat-khau" : studentDestination);
   if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/admin" : teacherDestination);
   if (user?.role === "TEACHER") redirect(teacherDestination);
@@ -27,7 +27,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const studentHref = opensChat ? "/dang-nhap?tiep=tro-chuyen" : opensLearning ? "/dang-nhap?tiep=hoc-tap" : "/dang-nhap";
   const nextSection = wantsAdmin ? "quan-tri" : opensChat ? "tro-chuyen" : opensLearning ? "hoc-tap" : null;
   const teacherHref = nextSection ? `/dang-nhap?vai=giaovien&tiep=${nextSection}` : "/dang-nhap?vai=giaovien";
-  const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : opensChat ? "/dang-nhap?tiep=tro-chuyen" : "/dang-nhap";
+  const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : studentHref;
 
   return <main id="noi-dung" className="unified-login page-width">
     <header className="unified-login-header"><Brand /><Link href="/" className="button button-outline button-small">Trang chủ</Link></header>

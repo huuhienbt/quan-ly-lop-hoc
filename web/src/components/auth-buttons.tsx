@@ -3,7 +3,7 @@
 import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 
-export function GoogleSignInButton({ enabled, compact = false, callbackUrl = "/dang-nhap" }: { enabled: boolean; compact?: boolean; callbackUrl?: "/dang-nhap" | "/dang-nhap?tiep=quan-tri" | "/dang-nhap?tiep=tro-chuyen" }) {
+export function GoogleSignInButton({ enabled, compact = false, callbackUrl = "/dang-nhap" }: { enabled: boolean; compact?: boolean; callbackUrl?: "/dang-nhap" | "/dang-nhap?tiep=quan-tri" | "/dang-nhap?tiep=tro-chuyen" | "/dang-nhap?tiep=hoc-tap" }) {
   const [pending, setPending] = useState(false);
   const [failed, setFailed] = useState(false);
 
