@@ -11,7 +11,8 @@
 4. Bấm **Lưu nháp** để soạn tiếp hoặc **Đăng lên hệ thống**. Khi mở
    **Chỉnh sửa bài viết** hoặc **Sửa bài học**, có thể đổi **Ngày đăng**
    về hôm nay hoặc một ngày trước đó. Bài đã đăng hiển thị và sắp xếp theo
-   ngày đã chọn; bài ghim vẫn nằm trên cùng. Ô ngày không hẹn giờ xuất bản.
+   ngày đã chọn, từ mới nhất đến cũ nhất. Bài ghim chỉ được ưu tiên trong cùng
+   ngày. Ô ngày không hẹn giờ xuất bản.
 
 Trong **Bài viết**, có thể chọn chuyên mục, ảnh bìa, ghim bài và phạm vi
 người xem. Khi chọn **Công khai trên trang chủ**, người ngoài lớp có thể xem

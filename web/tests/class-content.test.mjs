@@ -173,6 +173,29 @@ test("homepage lists public news and announcements while excluding private, draf
   assert.equal((await getPublicPost(parentGuide)).id, parentGuide);
 });
 
+test("publication day in Vietnam takes priority over a pin in the bulletin and learning lists", async () => {
+  const old = { post_date: "2026-10-14", is_pinned: true };
+  const recent = { post_date: "2026-10-15" };
+  const olderPost = await savePost(administrator.id, postInput(classA.id, old));
+  const newerPost = await savePost(administrator.id, postInput(classA.id, recent));
+  const pinnedToday = await savePost(administrator.id, postInput(classA.id, { ...recent, is_pinned: true }));
+  // UTC's Oct 14 evening is already Oct 15 in Vietnam.
+  fixture.database.prepare("UPDATE posts SET published_at = ? WHERE id = ?")
+    .run("2026-10-14T17:01:00.000Z", pinnedToday);
+  const lesson = { category: "DISCOVERY", visibility: "PRIVATE" };
+  const olderLesson = await savePost(administrator.id, postInput(classA.id, { ...lesson, ...old }));
+  const newerLesson = await savePost(administrator.id, postInput(classA.id, { ...lesson, ...recent }));
+  const account = seedFamily("family-test-a", [classA]);
+  const newsOrder = [pinnedToday, newerPost, olderPost];
+  assert.deepEqual((await getPublicPosts()).map(post => post.id), newsOrder);
+  const student = (await getStudentClassContent(account.id, account.version)).students[0];
+  const teacher = await getTeacherContentOverview(administrator.id, { includeLegacy: false });
+  for (const posts of [student.posts, teacher.posts]) {
+    assert.deepEqual(posts.filter(post => post.category !== "DISCOVERY").map(post => post.id), newsOrder);
+    assert.deepEqual(posts.filter(post => post.category === "DISCOVERY").map(post => post.id), [newerLesson, olderLesson]);
+  }
+});
+
 test("public event windows include Monday and Sunday and exclude surrounding weeks", async () => {
   const dates = ["2026-10-11", "2026-10-12", "2026-10-18", "2026-10-19"];
   const ids = [];

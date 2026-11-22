@@ -374,7 +374,7 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
           <PostImagePicker prefix={prefix} coverUrl={coverUrl} onCoverUrlChange={setCoverUrl} onFileChange={setCoverFile}
             onProcessingChange={setPreparingCover} disabled={pending || uploading} resetKey={coverReset} error={state.fieldErrors?.cover_url?.join(" ")} />
         </details>
-        <label className="lesson-pin"><input type="checkbox" name="is_pinned" checked={pinned} onChange={e => setPinned(e.target.checked)} /> Ghim lên đầu bảng tin</label>
+        <label className="lesson-pin"><input type="checkbox" name="is_pinned" checked={pinned} onChange={e => setPinned(e.target.checked)} /> Ghim lên đầu các bài cùng ngày</label>
       </div>}
       {(error || state.message) && <p className={`teacher-feedback ${!error && state.success ? "is-success" : "is-error"}`} role={!error && state.success ? "status" : "alert"}>{error || state.message}</p>}
       <div className="lesson-composer-actions">

@@ -78,7 +78,8 @@ const eventFields = `event.id, event.class_id, c.name AS class_name, c.slug AS c
 const taskFields = `task.id, task.class_id, c.name AS class_name, c.slug AS class_slug,
   task.title, task.details, task.kind, task.task_date, task.sort_order,
   task.status, task.created_at, task.updated_at`;
-const postOrder = "p.is_pinned DESC, p.published_at DESC, p.created_at DESC, p.id";
+// A pin only affects the order within a Vietnamese publication day.
+const postOrder = "date(p.published_at, '+07:00') DESC, p.is_pinned DESC, p.published_at DESC, p.created_at DESC, p.id";
 const eventOrder = "event.event_date, COALESCE(event.starts_at, '99:99'), event.id";
 const taskWindow = `((task.kind = 'TODO' AND (task.task_date IS NULL OR task.task_date = ?))
   OR (task.kind = 'PREPARATION' AND (task.task_date IS NULL OR task.task_date = ?)))`;

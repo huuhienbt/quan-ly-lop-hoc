@@ -23,13 +23,14 @@
   box-shadow: 0 5px 11px #39516d16;
 }
 .lesson-composer .lesson-meta, .lesson-composer .lesson-media-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.lesson-composer .lesson-meta { align-items: start; }
 .lesson-composer .lesson-name { grid-column: 1 / -1; }
-.lesson-composer label, .lesson-composer .lesson-display { display: grid; gap: 5px; min-width: 0; color: #526780; font-weight: 800; font-size: 13px; }
-.lesson-composer .lesson-editor-label, .lesson-composer .lesson-meta label, .lesson-composer .lesson-display > span {
-  color: #566b87; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .042em;
+.lesson-composer label { display: grid; gap: 5px; min-width: 0; color: #526780; font-weight: 800; font-size: 13px; }
+.lesson-composer .lesson-editor-label, .lesson-composer .lesson-meta label {
+  color: #566b87; font-size: 12px; line-height: 1.4; font-weight: 900; text-transform: uppercase; letter-spacing: .042em;
 }
 .lesson-composer .lesson-editor-label { margin: 14px 0 6px; }
-.lesson-composer :is(input:not([type=hidden]), select), .lesson-composer .lesson-display p {
+.lesson-composer :is(input:not([type=hidden]), select) {
   display: block;
   min-height: 42px;
   min-width: 0;
@@ -45,7 +46,7 @@
   font: inherit;
   font-size: 15px;
 }
-.lesson-composer .lesson-display p { display: flex; align-items: center; margin: 0; }
+.lesson-composer .lesson-meta :is(select, input) { box-sizing: border-box; block-size: 44px; }
 .lesson-composer .lesson-toolbar {
   display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
   padding: 8px; border: 1px solid var(--composer-border); border-radius: 12px;
