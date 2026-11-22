@@ -1,0 +1,112 @@
+.lesson-composer {
+  --composer-ink: #2b3f55;
+  --composer-border: #dae4ef;
+  --composer-subtle: #f4f7fb;
+  min-width: 0;
+  max-width: 980px;
+  margin: 14px 0 0;
+  padding: clamp(10px, 2.2vw, 23px);
+  background: linear-gradient(125deg, #d5fbf0 0%, #e3effb 53%, #f5eafa 100%);
+  color: var(--composer-ink);
+  border-radius: 24px;
+}
+.lesson-composer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.lesson-composer-head h3 { margin: 0; color: #ae3b00; font-size: clamp(17px, 3vw, 22px); font-weight: 900; text-transform: uppercase; letter-spacing: .025em; }
+.lesson-composer .lesson-close { min-width: 40px; min-height: 40px; border: 1px solid var(--composer-border); border-radius: 13px; color: #526781; background: #fff; font-size: 23px; line-height: 1; cursor: pointer; }
+.lesson-composer .lesson-composer-fields {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(13px, 2.4vw, 24px);
+  border: 1px solid #e2eaf1;
+  border-radius: 23px;
+  background: #fff;
+  box-shadow: 0 5px 11px #39516d16;
+}
+.lesson-composer .lesson-meta, .lesson-composer .lesson-media-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.lesson-composer .lesson-name { grid-column: 1 / -1; }
+.lesson-composer label, .lesson-composer .lesson-display { display: grid; gap: 5px; min-width: 0; color: #526780; font-weight: 800; font-size: 13px; }
+.lesson-composer .lesson-editor-label, .lesson-composer .lesson-meta label, .lesson-composer .lesson-display > span {
+  color: #566b87; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .042em;
+}
+.lesson-composer .lesson-editor-label { margin: 14px 0 6px; }
+.lesson-composer :is(input:not([type=hidden]), select), .lesson-composer .lesson-display p {
+  display: block;
+  min-height: 42px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--composer-border);
+  border-radius: 10px;
+  background: var(--composer-subtle);
+  color: var(--composer-ink);
+  text-transform: none;
+  letter-spacing: normal;
+  font: inherit;
+  font-size: 15px;
+}
+.lesson-composer .lesson-display p { display: flex; align-items: center; margin: 0; }
+.lesson-composer .lesson-toolbar {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  padding: 8px; border: 1px solid var(--composer-border); border-radius: 12px;
+  background: var(--composer-subtle);
+}
+.lesson-composer .lesson-tool-group { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; padding-inline-end: 7px; border-inline-end: 1px solid #cfdae8; }
+.lesson-composer :is(.lesson-toolbar button, .lesson-toolbar select, .lesson-insert-head button, .lesson-attachment-tools button) {
+  display: inline-flex; justify-content: center; align-items: center; gap: 4px; min-width: 35px; min-height: 35px;
+  padding: 4px 8px; border: 1px solid #dfe6ee; border-radius: 6px; background: #fff; color: #324860;
+  font-size: 13px; font-weight: 800; line-height: 1.3; cursor: pointer;
+}
+.lesson-composer .lesson-toolbar select { width: auto; }
+.lesson-composer .lesson-color-control { display: inline-flex; align-items: center; gap: 3px; }
+.lesson-composer .lesson-color-control > span { color: #263b50; font-size: 16px; }
+.lesson-composer .lesson-toolbar .tool-blank { background: #fff9e2; border-color: #f2d36d; color: #775007; }
+.lesson-composer .lesson-toolbar .tool-fraction { background: #ecfbff; border-color: #a6dff0; color: #075d7a; }
+.lesson-composer .lesson-toolbar .tool-link { background: #eef4ff; border-color: #bccff9; color: #2449ab; }
+.lesson-composer .lesson-toolbar .tool-image { background: #f1eeff; border-color: #d0c2f8; color: #593f9c; }
+.lesson-composer .lesson-toolbar .tool-video { background: #fff0f0; border-color: #f0c8c7; color: #a62925; }
+.lesson-composer .lesson-toolbar .tool-audio { background: #e9fbef; border-color: #bee8cc; color: #176137; }
+.lesson-composer .lesson-toolbar .tool-pdf { background: #fff2e5; border-color: #f4ceae; color: #963c0c; }
+.lesson-composer :is(button, select, input, .lesson-write):focus-visible { outline: 2px solid #236aa5; outline-offset: 2px; }
+.lesson-composer button:disabled { opacity: .56; cursor: default; }
+.lesson-sheet {
+  margin-top: 8px; min-height: 200px; min-width: 0; padding: 12px 13px;
+  border: 1px solid var(--composer-border); border-radius: 12px; background: #fff;
+}
+.lesson-sheet:focus-within { border-color: #5d9bc5; }
+.lesson-write {
+  min-height: 1.8em; padding: 3px 2px; white-space: pre-wrap;
+  overflow-wrap: anywhere; font-size: 16px; line-height: 1.65;
+}
+.lesson-sheet > .lesson-write:only-child { min-height: 173px; }
+.lesson-write[data-empty="true"]:only-child::before { content: "Nhập nội dung bài học…"; color: #687b91; pointer-events: none; }
+.lesson-write[contenteditable="true"] { cursor: text; }
+.lesson-attachment { margin-block: 7px; padding: 8px; border: 1px solid var(--composer-border); border-radius: 9px; background: #f8fbfe; min-width: 0; overflow-wrap: anywhere; }
+.lesson-attachment.is-active { outline: 2px solid #9276cf; }
+.lesson-attachment .lesson-image { max-width: 100%; margin: 6px auto 0; }
+.lesson-attachment .lesson-media { padding: 5px 8px; margin: 5px 0 0; }
+.lesson-attachment-tools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; }
+.lesson-attachment-tools strong { margin-inline-end: auto; }
+.lesson-insert-panel { margin-top: 9px; padding: 11px; border: 1px solid var(--composer-border); border-radius: 11px; background: #f8fbff; }
+.lesson-insert-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.lesson-fraction-fields { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+.lesson-fraction-fields label { width: 105px; }
+.lesson-composer .lesson-insert-confirm { border: 1px solid #adcee9; border-radius: 8px; min-height: 41px; padding: 6px 10px; font-weight: 800; background: #e9f4ff; color: #174b80; cursor: pointer; }
+.lesson-media-fields + .lesson-insert-confirm, .lesson-insert-panel .teacher-feedback + .lesson-insert-confirm { margin-top: 9px; }
+.lesson-composer-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: 13px; }
+.lesson-composer .lesson-publish {
+  width: 100%; min-height: 53px; padding: 11px 14px; border: 1px solid #b43b00;
+  border-radius: 13px; color: #fff; background: #bd4100;
+  box-shadow: 0 3px 0 #953300; font-size: 16px; font-weight: 900;
+  text-transform: uppercase; cursor: pointer;
+}
+.lesson-composer .lesson-publish:hover:not(:disabled) { background: #a93a00; }
+.lesson-composer .lesson-draft { min-height: 40px; padding: 4px 8px; border: 0; background: none; color: #285982; font-weight: 850; cursor: pointer; }
+.lesson-composer-actions span { color: #586f85; font-size: 13px; }
+@media (max-width: 600px) {
+  .lesson-composer { border-radius: 15px; }
+  .lesson-composer .lesson-composer-fields { border-radius: 15px; }
+  .lesson-composer .lesson-meta, .lesson-composer .lesson-media-fields { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .lesson-composer :is(input:not([type=hidden]), select) { font-size: 16px; }
+  .lesson-composer .lesson-toolbar :is(button, select) { min-height: 44px; }
+}

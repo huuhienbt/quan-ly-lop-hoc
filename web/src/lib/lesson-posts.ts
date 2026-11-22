@@ -3,7 +3,7 @@ import { batch, type D1Statement } from "@/lib/d1";
 import { decodeLesson, lessonSummary } from "@/lib/lessons";
 import { lessonClassActive, lessonStaffAccess } from "@/lib/lesson-access";
 
-export async function saveLearningPost(actorId: string, input: { id?: string; class_id: string; title: string; document: string; status: "DRAFT" | "PUBLISHED" }) {
+export async function saveLearningPost(actorId: string, input: { id?: string; class_id: string; title: string; document: string; kind?: "NEWS" | "ANNOUNCEMENT" | "ACTIVITY"; status: "DRAFT" | "PUBLISHED" }) {
   const blocks = decodeLesson(input.document);
   if (!blocks) return false;
   const document = JSON.stringify(blocks);
@@ -23,17 +23,17 @@ export async function saveLearningPost(actorId: string, input: { id?: string; cl
   const authParams = [input.class_id, actorId, document, id, actorId];
   const guard = `c.id = ? AND ${lessonClassActive} AND ${lessonStaffAccess} ${assetGuard}`;
   const post: D1Statement = input.id ? {
-    sql: `UPDATE posts SET title = ?, body = ?, lesson_content = ?, status = ?,
+    sql: `UPDATE posts SET title = ?, body = ?, lesson_content = ?, kind = COALESCE(?, kind), status = ?,
       published_at = CASE WHEN ? = 'PUBLISHED' THEN COALESCE(published_at, ?) ELSE NULL END, updated_at = ?
       WHERE id = ? AND class_id = ? AND category = 'DISCOVERY' AND visibility = 'PRIVATE' AND status <> 'ARCHIVED'
         AND EXISTS (SELECT 1 FROM classes c JOIN schools school ON school.id = c.school_id WHERE ${guard})`,
-    params: [input.title, body, document, input.status, input.status, now, now, id, input.class_id, ...authParams],
+    params: [input.title, body, document, input.kind ?? null, input.status, input.status, now, now, id, input.class_id, ...authParams],
   } : {
     sql: `INSERT INTO posts (id, class_id, author_id, title, body, lesson_content, kind, category, visibility,
       status, published_at, created_at, updated_at)
-      SELECT ?, c.id, ?, ?, ?, ?, 'NEWS', 'DISCOVERY', 'PRIVATE', ?, ?, ?, ?
+      SELECT ?, c.id, ?, ?, ?, ?, ?, 'DISCOVERY', 'PRIVATE', ?, ?, ?, ?
       FROM classes c JOIN schools school ON school.id = c.school_id WHERE ${guard}`,
-    params: [id, actorId, input.title, body, document, input.status, input.status === "PUBLISHED" ? now : null, now, now, ...authParams],
+    params: [id, actorId, input.title, body, document, input.kind ?? "NEWS", input.status, input.status === "PUBLISHED" ? now : null, now, now, ...authParams],
   };
   const results = await batch([
     post,

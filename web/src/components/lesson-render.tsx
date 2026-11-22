@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { httpsLessonUrl, lessonAssetId, lessonAssetUrl, lessonInline, resolveLessonMedia, type LessonBlock, type LessonInline } from "@/lib/lessons";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { httpsLessonUrl, lessonAssetId, lessonAssetUrl, lessonInline, resolveLessonMedia, type LessonBlock, type LessonInline, type LessonRun } from "@/lib/lessons";
 import "./lesson.css";
 
 function inline(nodes: LessonInline[]): ReactNode {
@@ -13,6 +13,24 @@ function inline(nodes: LessonInline[]): ReactNode {
     if (node.kind === "bold") return <strong key={index}>{inline(node.children)}</strong>;
     if (node.kind === "italic") return <em key={index}>{inline(node.children)}</em>;
     return <u key={index}>{inline(node.children)}</u>;
+  });
+}
+
+function richInline(runs: LessonRun[]) {
+  return runs.map((run, index) => {
+    const style: CSSProperties = {
+      color: run.marks?.color, fontWeight: run.marks?.bold ? 800 : undefined,
+      fontStyle: run.marks?.italic ? "italic" : undefined, textDecoration: run.marks?.underline ? "underline" : undefined,
+    };
+    if (run.kind === "blank") return <span key={index} className="lesson-blank" style={style} role="img" aria-label="Ô trống" />;
+    if (run.kind === "fraction") return <span key={index} className="lesson-fraction" style={style} role="math" aria-label={`${run.numerator} phần ${run.denominator}`}>
+      <span aria-hidden="true">{run.numerator}</span><span aria-hidden="true">{run.denominator}</span>
+    </span>;
+    let text: ReactNode = run.value;
+    if (run.marks?.bold) text = <strong>{text}</strong>;
+    if (run.marks?.italic) text = <em>{text}</em>;
+    if (run.marks?.underline) text = <u>{text}</u>;
+    return <span key={index} style={{color:run.marks?.color}}>{text}</span>;
   });
 }
 
@@ -34,7 +52,7 @@ function LessonPlayer({ title, url, player, isPdf, managed }: { title: string; u
 }
 
 export function LessonRichBlock({ block, preview = false }: { block: LessonBlock; preview?: boolean }) {
-  if (block.type === "text") return <p className="lesson-paragraph" style={{ textAlign: block.align }}>{inline(lessonInline(block.text))}</p>;
+  if (block.type === "text") return <p className="lesson-paragraph" style={{ textAlign: block.align }}>{block.rich ? richInline(block.rich) : inline(lessonInline(block.text))}</p>;
   if (block.type === "link") {
     const url = httpsLessonUrl(block.url);
     return url ? <p><OpenLink url={url.href}>{block.label || "Mở liên kết"}</OpenLink></p> : null;

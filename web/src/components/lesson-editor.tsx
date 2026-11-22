@@ -1,185 +1,350 @@
 "use client";
 
-import { useActionState, useId, useRef, useState } from "react";
+import { useActionState, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { saveLearningPostAction } from "@/app/teacher/lesson-actions";
-import type { ContentPost } from "@/lib/content-schemas";
-import { decodeLesson, lessonAssetId, MAX_LESSON_IMAGE, MAX_LESSON_PDF, type LessonBlock } from "@/lib/lessons";
+import { vietnamToday, type ContentPost } from "@/lib/content-schemas";
+import { decodeLesson, lessonAssetId, lessonColors, lessonDateLabel, lessonKinds, lessonWidths, MAX_LESSON_PDF, type LessonBlock, type LessonMarks, type LessonRun } from "@/lib/lessons";
+import { editableRuns, emptyText, focusRich, readRich, readSelection, runLength, snapshotText, splitRich, writeRich, type TextBlock } from "@/lib/lesson-editing";
 import { LessonRichBlock } from "./lesson-render";
+import "./lesson-composer.css";
 
-const labels = { text: "Văn bản", image: "Hình ảnh", link: "Liên kết", pdf: "PDF", video: "Video", audio: "Âm thanh / MP3" };
-const symbols = ["×", "÷", "−", "±", "≠", "≤", "≥", "°", "²", "³", "√", "π", "½", "¼", "¾"];
+type Media = Exclude<LessonBlock, TextBlock>;
+type MediaType = Media["type"];
 type Row = { key: number; block: LessonBlock };
+type SavedSelection = NonNullable<ReturnType<typeof readSelection>>;
+type Choice = { type: "media"; block: Media; key?: number } | { type: "fraction" } | null;
+const mediaTools = [
+  { type: "link", label: "Link", icon: "↗" }, { type: "image", label: "Ảnh", icon: "▧" },
+  { type: "video", label: "Video", icon: "▶" }, { type: "audio", label: "Nghe", icon: "♫" }, { type: "pdf", label: "PDF", icon: "▤" },
+] as const;
+const mediaLabels: Record<MediaType, string> = { link: "Liên kết", image: "Hình ảnh", video: "Video", audio: "Âm thanh / MP3", pdf: "PDF" };
+const symbols = ["×", "÷", "−", "±", "≠", "≤", "≥", "°", "²", "³", "√", "π", "½", "¼", "¾"];
 
-function newBlock(type: LessonBlock["type"]): LessonBlock {
-  if (type === "text") return { type, text: "", align: "left" };
-  if (type === "image") return { type, label: "", width: "60" };
+function createMedia(type: MediaType, width: typeof lessonWidths[number]): Media {
+  if (type === "image") return { type, label: "", width };
   if (type === "pdf") return { type, label: "" };
   return { type, label: "", url: "" };
 }
 
-function TextEditor({ block, change }: { block: Extract<LessonBlock, { type: "text" }>; change: (block: LessonBlock) => void }) {
-  const inputId = useId();
-  const field = useRef<HTMLTextAreaElement>(null);
-  const [fraction, setFraction] = useState(false);
-  const [numerator, setNumerator] = useState("");
-  const [denominator, setDenominator] = useState("");
-  const selection = useRef<[number, number]>([0, 0]);
-  function replace(value: string, retain?: [number, number]) {
-    const [start, end] = selection.current;
-    const next = block.text.slice(0, start) + value + block.text.slice(end);
-    if (next.length > 8000) return;
-    change({ ...block, text: next });
-    selection.current = retain ? [start + retain[0], start + retain[1]] : [start + value.length, start + value.length];
-    requestAnimationFrame(() => { field.current?.focus(); field.current?.setSelectionRange(...selection.current); });
-  }
-  function format(marker: string) {
-    const [start, end] = selection.current;
-    const selected = block.text.slice(start, end);
-    if (selected.startsWith(marker) && selected.endsWith(marker) && selected.length > marker.length * 2) {
-      replace(selected.slice(marker.length, -marker.length));
-    } else {
-      const content = selected || "văn bản";
-      replace(marker + content + marker, [marker.length, marker.length + content.length]);
-    }
-  }
-  const fractionValid = [numerator, denominator].every(value => /^[^|\]\n]{1,32}$/.test(value.trim()));
-  return <div className="lesson-text-editor">
-    <div className="lesson-tools" aria-label="Định dạng văn bản">
-      <button type="button" onClick={() => format("**")} aria-label="In đậm"><strong>Đậm</strong></button>
-      <button type="button" onClick={() => format("*")} aria-label="In nghiêng"><em>Nghiêng</em></button>
-      <button type="button" onClick={() => format("__")} aria-label="Gạch chân"><u>Gạch chân</u></button>
-      <button type="button" aria-expanded={fraction} onClick={() => setFraction(!fraction)}>Phân số</button>
-      <label className="lesson-compact-label">Căn chữ <select value={block.align} onChange={(e) => change({ ...block, align: e.target.value as typeof block.align })}><option value="left">Trái</option><option value="center">Giữa</option><option value="right">Phải</option></select></label>
-      <label className="lesson-compact-label">Ký hiệu <select value="" onChange={e => { if (e.target.value) replace(e.target.value); }}><option value="">Chọn ký hiệu</option>{symbols.map(symbol => <option key={symbol}>{symbol}</option>)}</select></label>
-    </div>
-    {fraction && <div className="lesson-fraction-tools">
-      <label>Tử số<input value={numerator} maxLength={32} onChange={e => setNumerator(e.target.value)} /></label>
-      <label>Mẫu số<input value={denominator} maxLength={32} onChange={e => setDenominator(e.target.value)} /></label>
-      <button type="button" disabled={!fractionValid} onClick={() => {
-        replace(`[[frac:${numerator.trim()}|${denominator.trim()}]]`);
-        setFraction(false); setNumerator(""); setDenominator("");
-      }}>Chèn phân số</button>
-    </div>}
-    <label className="sr-only" htmlFor={inputId}>Văn bản của khối</label>
-    <textarea id={inputId} ref={field} rows={4} maxLength={8000} value={block.text}
-      onSelect={e => { selection.current = [e.currentTarget.selectionStart, e.currentTarget.selectionEnd]; }}
-      onChange={e => {
-        selection.current = [e.currentTarget.selectionStart, e.currentTarget.selectionEnd];
-        change({ ...block, text: e.target.value });
-      }} placeholder="Nhập nội dung. Bôi đen chữ rồi chọn định dạng." />
-    {block.text.trim() && <div className="lesson-preview"><span>Xem trước</span><LessonRichBlock block={block} preview /></div>}
-  </div>;
+function startingBlocks(post?: ContentPost): LessonBlock[] {
+  return decodeLesson(post?.lesson_content) ?? (post?.body
+    ? (post.body.match(/[\s\S]{1,6000}/gu) ?? []).map(text => ({ type: "text", text, align: "left" }))
+    : [emptyText()]);
 }
 
-function MediaEditor({ block, classId, change, uploading, setUploading }: {
-  block: Exclude<LessonBlock, { type: "text" }>; classId: string; change: (block: LessonBlock) => void;
-  uploading: boolean; setUploading: (value: boolean) => void;
+function Writer({ block, rowKey, bind, onEdit, remember, onKey, paste, disabled }: {
+  block: TextBlock; rowKey: number; bind: (key: number, node: HTMLElement | null) => void;
+  onEdit: (node: HTMLElement) => void; remember: (node: HTMLElement) => void;
+  onKey: (event: KeyboardEvent<HTMLDivElement>) => void; paste: (text: string, node: HTMLElement) => void; disabled: boolean;
 }) {
-  const [error, setError] = useState("");
-  const canUpload = block.type === "image" || block.type === "pdf";
-  const local = canUpload && block.assetId;
-  async function upload(file: File) {
-    if (uploading || (block.type !== "image" && block.type !== "pdf")) return;
-    setError("");
-    if (file.size > (block.type === "pdf" ? MAX_LESSON_PDF : MAX_LESSON_IMAGE)) {
-      setError("Tệp lớn hơn 3 MB. Hãy dùng tệp nhỏ hơn hoặc chèn liên kết."); return;
-    }
-    setUploading(true);
-    try {
-      const data = new FormData();
-      data.set("class_id", classId);
-      data.set("kind", block.type);
-      data.set("file", file);
-      const response = await fetch("/api/lesson-assets", { method: "POST", body: data });
-      const result = await response.json().catch(() => null);
-      if (!response.ok || !lessonAssetId.safeParse(result?.id).success) {
-        setError(result?.message || "Chưa tải được tệp. Thầy cô thử lại nhé."); return;
-      }
-      change({ ...block, url: undefined, assetId: result.id, label: block.label || file.name.slice(0, 180) });
-    } catch { setError("Kết nối bị gián đoạn. Thầy cô hãy thử lại."); }
-    finally { setUploading(false); }
-  }
-  return <div className="lesson-media-editor">
-    <label>{block.type === "link" ? "Tên liên kết" : "Chú thích"}<input value={block.label} maxLength={180}
-      onChange={e => change({ ...block, label: e.target.value })} placeholder={block.type === "link" ? "Ví dụ: Xem bài tập" : "Tên tài liệu hoặc mô tả ảnh"} /></label>
-    <label>{local ? "Dùng đường dẫn thay cho tệp" : "Đường dẫn HTTPS"}<input type="url" value={block.url ?? ""} maxLength={2048}
-      onChange={e => change(canUpload ? { ...block, url: e.target.value || undefined, assetId: undefined } : { ...block, url: e.target.value })}
-      placeholder={block.type === "video" || block.type === "audio" ? "YouTube, Google Drive hoặc liên kết tệp GitHub" : "https://…"} /></label>
-    {canUpload && <div className="lesson-upload"><label>{local ? "Đã tải tệp · Chọn tệp khác" : "Chọn tệp từ máy (tối đa 3 MB)"}
-      <input type="file" accept={block.type === "pdf" ? ".pdf,application/pdf" : "image/jpeg,image/png,image/webp"} onChange={e => {
-        const file = e.target.files?.[0]; e.target.value = ""; if (file) void upload(file);
-      }} /></label>
-      {local && <button type="button" onClick={() => change({ ...block, assetId: undefined })}>Bỏ tệp</button>}
-    </div>}
-    {block.type === "image" && <label className="lesson-compact-label">Chiều rộng ảnh <select value={block.width} onChange={e => change({ ...block, width: e.target.value as typeof block.width })}>
-      {["25", "40", "60", "80", "100"].map(width => <option key={width} value={width}>{width}%</option>)}</select></label>}
-    {error && <p className="teacher-feedback is-error" role="alert">{error}</p>}
-    {(block.url || local) && <div className="lesson-preview"><span>Xem trước</span><LessonRichBlock block={block} preview /></div>}
-  </div>;
+  const node = useRef<HTMLDivElement>(null);
+  const first = useRef(block);
+  useLayoutEffect(() => {
+    if (node.current) writeRich(node.current, editableRuns(first.current));
+  }, []);
+  return <div ref={el => { node.current = el; bind(rowKey, el); }} contentEditable={!disabled} suppressContentEditableWarning
+    role="textbox" aria-label="Đoạn văn bản" aria-multiline="true" aria-disabled={disabled} className="lesson-write"
+    data-empty={block.text ? undefined : "true"} style={{ textAlign: block.align }}
+    onFocus={e => remember(e.currentTarget)} onPointerUp={e => remember(e.currentTarget)} onKeyUp={e => remember(e.currentTarget)}
+    onSelect={e => remember(e.currentTarget)} onInput={e => onEdit(e.currentTarget)}
+    onKeyDown={onKey}
+    onPaste={e => { e.preventDefault(); paste(e.clipboardData.getData("text/plain"), e.currentTarget); }}
+    onDrop={e => e.preventDefault()} />;
 }
 
-export function LessonEditor({ classId, post }: { classId: string; post?: ContentPost }) {
-  const loaded = decodeLesson(post?.lesson_content) ?? (post?.body ? [{ type: "text" as const, text: post.body, align: "left" as const }] : [newBlock("text")]);
-  const [rows, setRows] = useState<Row[]>(() => loaded.map((block, key) => ({ block, key })));
-  const nextKey = useRef(loaded.length);
+function FractionPanel({ onAdd, close }: { onAdd: (run: LessonRun) => void; close: () => void }) {
+  const id = useId();
+  const [top, setTop] = useState("");
+  const [bottom, setBottom] = useState("");
+  return <section className="lesson-insert-panel" aria-labelledby={id}>
+    <div className="lesson-insert-head"><strong id={id}>Chèn phân số</strong><button type="button" onClick={close} aria-label="Đóng công cụ phân số">×</button></div>
+    <div className="lesson-fraction-fields">
+      <label>Tử số<input value={top} maxLength={32} onChange={e => setTop(e.target.value)} /></label>
+      <label>Mẫu số<input value={bottom} maxLength={32} onChange={e => setBottom(e.target.value)} /></label>
+      <button type="button" className="lesson-insert-confirm" disabled={!top.trim() || !bottom.trim()} onClick={() => onAdd({ kind: "fraction", numerator: top.trim(), denominator: bottom.trim() })}>Chèn phân số</button>
+    </div>
+  </section>;
+}
+
+function MediaPanel({ initial, classId, onAdd, close, setUploading }: {
+  initial: Media; classId: string; onAdd: (block: Media) => void; close: () => void; setUploading: (pending: boolean) => void;
+}) {
+  const id = useId();
+  const [block, setBlock] = useState(initial);
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+  const isUpload = block.type === "image" || block.type === "pdf";
+  const existing = isUpload && block.assetId;
+  async function confirm() {
+    let result = block;
+    if (file && (block.type === "image" || block.type === "pdf")) {
+      if (!file.size || file.size > MAX_LESSON_PDF) { setError("Tệp không được vượt quá 3 MB."); return; }
+      setPending(true); setUploading(true); setError("");
+      const data = new FormData();
+      data.set("class_id", classId); data.set("kind", block.type); data.set("file", file);
+      try {
+        const response = await fetch("/api/lesson-assets", { method:"POST", body:data });
+        const body = await response.json().catch(() => null);
+        if (!response.ok || !lessonAssetId.safeParse(body?.id).success) { setError(body?.message || "Chưa tải được tệp."); return; }
+        result = { ...block, url: undefined, assetId: body.id, label: block.label || file.name.slice(0, 180) };
+      } catch { setError("Kết nối bị gián đoạn. Thầy cô hãy thử lại."); return; }
+      finally { setPending(false); setUploading(false); }
+    }
+    const parsed = decodeLesson(JSON.stringify([result]));
+    if (!parsed) { setError("Vui lòng kiểm tra tên liên kết, nguồn HTTPS hoặc tệp đã chọn."); return; }
+    onAdd(parsed[0] as Media);
+  }
+  return <section className="lesson-insert-panel" aria-labelledby={id}>
+    <div className="lesson-insert-head"><strong id={id}>Chèn / sửa {mediaLabels[block.type]}</strong><button type="button" onClick={close} disabled={pending} aria-label="Đóng công cụ chèn tệp">×</button></div>
+    <div className="lesson-media-fields">
+      <label>{block.type === "link" ? "Tên liên kết" : "Chú thích"}<input value={block.label} maxLength={180} onChange={e => setBlock({ ...block, label: e.target.value })} /></label>
+      <label>Đường dẫn HTTPS<input inputMode="url" value={block.url ?? ""} maxLength={2048} onChange={e => {
+        setFile(null);
+        setBlock(block.type === "image" || block.type === "pdf" ? { ...block, url: e.target.value || undefined, assetId: undefined } : { ...block, url: e.target.value });
+      }} placeholder={block.type === "video" || block.type === "audio" ? "YouTube, Google Drive hoặc link tệp GitHub" : "https://…"} /></label>
+      {isUpload && <label>{existing && !file ? "Đã có tệp · Chọn tệp mới" : "Hoặc chọn tệp từ máy (tối đa 3 MB)"}<input type="file"
+        accept={block.type === "pdf" ? ".pdf,application/pdf" : "image/jpeg,image/png,image/webp"} onChange={e => {
+          const picked = e.target.files?.[0]; if (!picked) return;
+          setFile(picked);
+          setBlock({ ...block, url: undefined, assetId: undefined });
+        }} /></label>}
+      {block.type === "image" && <label>Kích cỡ ảnh<select value={block.width} onChange={e => setBlock({ ...block, width: e.target.value as typeof block.width })}>
+        {lessonWidths.map(size => <option key={size} value={size}>{size}%</option>)}
+      </select></label>}
+    </div>
+    {error && <p className="teacher-feedback is-error" role="alert">{error}</p>}
+    <button className="lesson-insert-confirm" type="button" disabled={pending} onClick={() => void confirm()}>{pending ? "Đang tải tệp…" : "Chèn vào nội dung"}</button>
+  </section>;
+}
+
+export function LessonEditor({ classId, post, today }: { classId: string; post?: ContentPost; today: string }) {
+  const [initial] = useState(() => startingBlocks(post));
+  const [rows, setRows] = useState<Row[]>(() => initial.map((block, key) => ({ block, key })));
   const [title, setTitle] = useState(post?.title ?? "");
-  const [status, setStatus] = useState(post?.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT");
+  const [kind, setKind] = useState<ContentPost["kind"]>(post?.kind ?? "NEWS");
+  const [tool, setTool] = useState<Choice>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [activeKey, setActiveKey] = useState(0);
+  const [imageKey, setImageKey] = useState<number | null>(null);
+  const [imageWidth, setImageWidth] = useState<typeof lessonWidths[number]>("60");
+  const activeImage = rows.find(row => row.key === imageKey && row.block.type === "image")?.block;
+  const nextKey = useRef(initial.length);
+  const writers = useRef(new Map<number, HTMLElement>());
+  const saved = useRef(new Map<number, SavedSelection>());
+  const afterRenderFocus = useRef<number | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const prefix = useId();
   const [state, action, pending] = useActionState(async (previous: { success: boolean; message: string }, form: FormData) => {
     const result = await saveLearningPostAction(previous, form);
     if (result.success && !post) {
-      setRows([{ block: newBlock("text"), key: nextKey.current++ }]);
-      setTitle(""); setStatus("DRAFT");
+      const key = nextKey.current++;
+      setRows([{ key, block: emptyText() }]); setActiveKey(key);
+      setTitle(""); setKind("NEWS"); setTool(null); setImageKey(null); saved.current.clear();
     }
     return result;
   }, { success: false, message: "" });
-  const document = JSON.stringify(rows.map(row => row.block).filter(block => block.type !== "text" || block.text.trim()));
-  function move(index: number, delta: number) {
+
+  useLayoutEffect(() => {
+    if (afterRenderFocus.current === null) return;
+    const node = writers.current.get(afterRenderFocus.current);
+    if (node) focusRich(node, 0);
+    afterRenderFocus.current = null;
+  }, [rows]);
+
+  function remember(key: number, node: HTMLElement) {
+    setActiveKey(key); setImageKey(null);
+    const range = readSelection(node);
+    if (range) saved.current.set(key, range);
+  }
+  function setBlock(key: number, block: LessonBlock) {
+    setRows(previous => previous.map(row => row.key === key ? { ...row, block } : row));
+  }
+  function context(key = activeKey, el?: HTMLElement) {
+    const row = rows.find(row => row.key === key && row.block.type === "text") ?? rows.find(row => row.block.type === "text");
+    if (!row || row.block.type !== "text") return null;
+    const root = el ?? writers.current.get(row.key);
+    if (!root) return null;
+    const runs = readRich(root);
+    const length = runLength(runs);
+    const selection = readSelection(root) ?? saved.current.get(row.key) ?? { start:length, end:length, marks:{} };
+    return { ...selection, start:Math.min(selection.start,length), end:Math.min(selection.end,length), runs, block:row.block, key:row.key, root };
+  }
+  function replace(runs: LessonRun[], key = activeKey, root?: HTMLElement) {
+    const current = context(key, root);
+    if (!current) return;
+    const [before, rest] = splitRich(current.runs, current.start);
+    const [, after] = splitRich(rest, current.end - current.start);
+    const combined = [...before, ...runs.map(run => ({ ...run, marks: { ...current.marks, ...run.marks } })), ...after];
+    writeRich(current.root, combined);
+    setBlock(current.key, snapshotText(current.block, combined));
+    focusRich(current.root, current.start + runLength(runs));
+    remember(current.key, current.root);
+  }
+  function format(mark: keyof LessonMarks, color?: LessonMarks["color"], key = activeKey) {
+    const current = context(key);
+    if (!current) return;
+    const [before, rest] = splitRich(current.runs, current.start);
+    const [chosen, after] = splitRich(rest, current.end - current.start);
+    const value = mark === "color" ? color : !(chosen.length ? chosen.every(run => run.marks?.[mark]) : current.marks[mark]);
+    const marks = { ...current.marks, [mark]: value };
+    const combined = [...before, ...chosen.map(run => ({ ...run, marks: { ...run.marks, [mark]: value } })), ...after];
+    writeRich(current.root, combined);
+    setBlock(current.key, snapshotText(current.block, combined));
+    focusRich(current.root, current.start, current.end, current.start === current.end ? marks : undefined);
+    remember(current.key, current.root);
+  }
+  function splitParagraph(key: number, node: HTMLElement) {
+    const current = context(key, node);
+    if (!current) return;
+    if (rows.length >= 24) { replace([{ kind:"text", value:"\n" }], key, node); return; }
+    const [left, rest] = splitRich(current.runs, current.start);
+    const [, right] = splitRich(rest, current.end - current.start);
+    const newKey = nextKey.current++;
+    writeRich(node, left);
+    afterRenderFocus.current = newKey;
+    setRows(previous => previous.flatMap(row => row.key !== key ? [row] : [
+      { key, block: snapshotText(current.block, left) },
+      { key: newKey, block: snapshotText(current.block, right) },
+    ]));
+  }
+  function onKey(event: KeyboardEvent<HTMLDivElement>, key: number) {
+    if (event.nativeEvent.isComposing) return;
+    const marks = { b:"bold", i:"italic", u:"underline" } as const;
+    const shortcut = event.key.toLowerCase() as keyof typeof marks;
+    if ((event.ctrlKey || event.metaKey) && marks[shortcut]) {
+      event.preventDefault(); format(marks[shortcut], undefined, key); return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      if (event.shiftKey) replace([{ kind:"text", value:"\n" }], key, event.currentTarget);
+      else splitParagraph(key, event.currentTarget);
+    }
+  }
+  function saveMedia(block: Media, editKey?: number) {
+    if (editKey !== undefined) {
+      setBlock(editKey, block);
+      if (block.type === "image") { setImageKey(editKey); setImageWidth(block.width); }
+    } else {
+      const key = nextKey.current++, textKey = nextKey.current++;
+      const current = context();
+      if (current) {
+        const [left, right] = splitRich(current.runs, current.end);
+        writeRich(current.root, left);
+        setRows(previous => previous.flatMap(row => row.key !== current.key ? [row] : [
+          { key:current.key, block:snapshotText(current.block,left) }, { key, block }, { key:textKey, block:snapshotText(current.block,right) },
+        ]));
+      } else {
+        setRows(previous => [...previous, { key, block }, { key:textKey, block:emptyText() }]);
+      }
+      afterRenderFocus.current = textKey;
+    }
+    setTool(null);
+  }
+  function align(value: TextBlock["align"]) {
+    const current = context();
+    if (current) {
+      setBlock(current.key, { ...snapshotText(current.block,current.runs), align:value });
+      writeRich(current.root, current.runs); focusRich(current.root, current.start, current.end);
+    }
+  }
+  function close() {
+    const panel = formRef.current?.closest("details");
+    if (panel) { panel.open = false; panel.querySelector("summary")?.focus(); }
+  }
+  function moveAttachment(key: number, direction: number) {
     setRows(previous => {
-      const other = index + delta;
-      if (other < 0 || other >= previous.length) return previous;
-      const copy = [...previous];
-      [copy[index], copy[other]] = [copy[other], copy[index]];
-      return copy;
+      const index = previous.findIndex(row => row.key === key);
+      const other = index + direction;
+      if (index < 0 || other < 0 || other >= previous.length) return previous;
+      const next = [...previous];
+      [next[index], next[other]] = [next[other], next[index]];
+      return next;
     });
   }
-  return <form className="teacher-editor-form lesson-editor" action={action} onSubmit={event => {
-    if (uploading || !decodeLesson(document)) {
+
+  const payload = JSON.stringify(rows.map(row => row.block).filter(block => block.type !== "text" || block.text.trim()));
+  const mouse = (event: React.MouseEvent) => event.preventDefault();
+  return <form className="lesson-composer" action={action} ref={formRef} data-lesson-composer onSubmit={event => {
+    if (uploading || tool || !decodeLesson(payload)) {
       event.preventDefault();
-      setError(uploading ? "Vui lòng đợi tải tệp xong." : "Bài học cần có ít nhất một khối hợp lệ. Kiểm tra liên kết HTTPS và các khối chưa điền.");
+      setError(tool ? "Hãy chèn hoặc đóng công cụ đang mở trước khi lưu." : "Hãy nhập nội dung hợp lệ. Bài học tối đa 24 khối và 48.000 ký tự lưu trữ.");
     } else setError("");
   }}>
     <input type="hidden" name="class_id" value={classId} />
     {post && <input type="hidden" name="id" value={post.id} />}
-    <input type="hidden" name="document" value={document} />
-    <fieldset disabled={pending || uploading}>
+    <input type="hidden" name="document" value={payload} />
+    <div className="lesson-composer-head">
+      <button type="button" className="lesson-close" aria-label="Đóng khung soạn" onClick={close} disabled={pending || uploading}>×</button>
+      <h3>{post ? "Chỉnh sửa bài học" : "Tạo bài học mới"}</h3>
+    </div>
+    <fieldset className="lesson-composer-fields" disabled={pending || uploading}>
       <legend className="sr-only">Soạn bài học</legend>
-      <label className="lesson-title">Tiêu đề bài học<input name="title" required maxLength={200} value={title} onChange={e => setTitle(e.target.value)} placeholder="Ví dụ: Toán 4 – Luyện tập về phân số" /></label>
-      <div className="lesson-add"><span>Thêm nội dung</span><div className="lesson-tools">
-        {(Object.keys(labels) as LessonBlock["type"][]).map(type => <button key={type} type="button" disabled={rows.length >= 24} onClick={() => {
-          const key = nextKey.current++;
-          setRows(previous => [...previous, { key, block: newBlock(type) }]);
-        }}>＋ {labels[type]}</button>)}
-      </div></div>
-      <div className="lesson-rows">
-        {rows.map(({ key, block }, index) => {
-          const change = (next: LessonBlock) => setRows(previous => previous.map(row => row.key === key ? { ...row, block: next } : row));
-          return <section key={key} className="lesson-row" aria-label={`Khối ${index + 1}: ${labels[block.type]}`}>
-            <div className="lesson-row-head"><strong>{index + 1}. {labels[block.type]}</strong><div className="lesson-tools">
-              <button type="button" aria-label="Đưa khối lên" disabled={index === 0} onClick={() => move(index, -1)}>↑</button>
-              <button type="button" aria-label="Đưa khối xuống" disabled={index === rows.length - 1} onClick={() => move(index, 1)}>↓</button>
-              <button type="button" aria-label="Xóa khối nội dung" onClick={() => setRows(previous => previous.filter(row => row.key !== key))}>Bỏ</button>
-            </div></div>
-            {block.type === "text" ? <TextEditor block={block} change={change} />
-              : <MediaEditor block={block} change={change} classId={classId} uploading={uploading} setUploading={setUploading} />}
-          </section>;
-        })}
+      <div className="lesson-meta">
+        <label>Loại bài viết<select name="kind" value={kind} onChange={e => setKind(e.target.value as ContentPost["kind"])}>
+          {Object.entries(lessonKinds).map(([value,label]) => <option value={value} key={value}>{label}</option>)}
+        </select></label>
+        <div className="lesson-display"><span>Thời gian hiển thị</span><p>{lessonDateLabel(post?.published_at ? vietnamToday(new Date(post.published_at)) : today)}</p></div>
+        <label className="lesson-name">Tiêu đề<input name="title" required maxLength={200} value={title} onChange={e => setTitle(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" && !e.nativeEvent.isComposing) e.preventDefault(); }} placeholder="Nhập tiêu đề bài học" /></label>
       </div>
-      <label className="lesson-compact-label">Trạng thái <select name="status" value={status} onChange={e => setStatus(e.target.value)}><option value="DRAFT">Bản nháp</option><option value="PUBLISHED">Xuất bản cho lớp</option></select></label>
-      <p className="teacher-field-help">Chỉ học sinh của lớp xem được bài đã xuất bản. Liên kết bên ngoài cần có quyền xem phù hợp.</p>
+      <p className="lesson-editor-label" id={prefix}>Nội dung</p>
+      <div className="lesson-toolbar" role="group" aria-label="Công cụ soạn bài">
+        <div className="lesson-tool-group">
+          <button aria-label="In đậm" type="button" onMouseDown={mouse} onClick={() => format("bold")}><strong>B</strong></button>
+          <button aria-label="In nghiêng" type="button" onMouseDown={mouse} onClick={() => format("italic")}><em>I</em></button>
+          <button aria-label="Gạch chân" type="button" onMouseDown={mouse} onClick={() => format("underline")}><u>U</u></button>
+          <label className="lesson-color-control" aria-label="Màu chữ"><span aria-hidden="true">◼</span><select aria-label="Màu chữ" value="" onChange={e => { if (e.target.value) format("color",e.target.value as LessonMarks["color"]); }}>
+            <option value="">Màu chữ</option>{["Mặc định", "Đỏ", "Nâu", "Xanh lá", "Xanh dương", "Tím"].map((label,i) => <option key={label} value={lessonColors[i]}>{label}</option>)}
+          </select></label>
+        </div>
+        <div className="lesson-tool-group">
+          {(["left","center","right"] as const).map((side,i) => <button type="button" aria-label={["Căn trái","Căn giữa","Căn phải"][i]} key={side} onMouseDown={mouse} onClick={() => align(side)}>
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6"><path d={["M2 3h12M2 6h8M2 9h12M2 12h8","M2 3h12M4 6h8M2 9h12M4 12h8","M2 3h12M6 6h8M2 9h12M6 12h8"][i]} /></svg>
+          </button>)}
+        </div>
+        <button className="tool-blank" type="button" onMouseDown={mouse} onClick={() => replace([{ kind:"blank" }])}>□ Ô trống</button>
+        <button className="tool-fraction" type="button" aria-expanded={tool?.type === "fraction"} onMouseDown={mouse} onClick={() => setTool(tool?.type === "fraction" ? null : {type:"fraction"})}>÷ Phân số</button>
+        {mediaTools.map(({ type,label,icon }) => <button key={type} className={`tool-${type}`} type="button" disabled={rows.length > 22}
+          onMouseDown={mouse} onClick={() => { setError(""); setTool(tool?.type === "media" && tool.block.type === type && tool.key === undefined ? null : { type:"media", block:createMedia(type,imageWidth) }); }}><span aria-hidden="true">{icon}</span> {label}</button>)}
+        <select aria-label="Ký hiệu" value="" onChange={e => { if (e.target.value) replace([{ kind:"text", value:e.target.value }]); }}>
+          <option value="">Ký hiệu</option>{symbols.map(symbol => <option key={symbol}>{symbol}</option>)}
+        </select>
+        <select aria-label="Cỡ ảnh" value={activeImage?.type === "image" ? activeImage.width : ""} onChange={e => {
+          const width = e.target.value as typeof lessonWidths[number]; if (!width) return;
+          setImageWidth(width);
+          if (activeImage?.type === "image" && imageKey !== null) setBlock(imageKey, { ...activeImage,width });
+        }}>
+          <option value="">Cỡ ảnh</option>{lessonWidths.map(size => <option key={size} value={size}>{size}%</option>)}
+        </select>
+      </div>
+      {tool?.type === "fraction" && <FractionPanel onAdd={run => {replace([run]); setTool(null);}} close={() => setTool(null)} />}
+      {tool?.type === "media" && <MediaPanel key={`${tool.block.type}-${tool.key}`} initial={tool.block} classId={classId} onAdd={block => saveMedia(block,tool.key)} close={() => setTool(null)} setUploading={setUploading} />}
+      <div className="lesson-sheet" role="group" aria-labelledby={prefix}>
+        {rows.map(({key,block}, index) => block.type === "text"
+          ? <Writer key={key} rowKey={key} block={block} disabled={pending || uploading} bind={(key,node) => { if (node) writers.current.set(key,node); else writers.current.delete(key); }}
+              remember={node => remember(key,node)} onKey={event => onKey(event,key)}
+              onEdit={node => { setBlock(key,snapshotText(block,readRich(node))); remember(key,node); }}
+              paste={(text,node) => { if (text) replace([{ kind:"text", value:text }],key,node); }} />
+          : <section className={`lesson-attachment${imageKey === key ? " is-active" : ""}`} key={key} aria-label={mediaLabels[block.type]}>
+              <div className="lesson-attachment-tools">
+                <strong>{mediaLabels[block.type]}</strong>
+                {block.type === "image" && <button type="button" aria-pressed={imageKey === key} onClick={() => setImageKey(key)}>Chọn ảnh · {block.width}%</button>}
+                <button type="button" onClick={() => setTool({ type:"media", block,key })}>Sửa</button>
+                <button type="button" aria-label="Đưa tệp lên" disabled={!index} onClick={() => moveAttachment(key,-1)}>↑</button>
+                <button type="button" aria-label="Đưa tệp xuống" disabled={index === rows.length - 1} onClick={() => moveAttachment(key,1)}>↓</button>
+                <button type="button" aria-label={`Bỏ ${mediaLabels[block.type]}`} onClick={() => { if (tool?.type === "media" && tool.key === key) setTool(null); setRows(previous => previous.filter(row => row.key !== key)); }}>Bỏ</button>
+              </div>
+              <LessonRichBlock block={block} preview />
+            </section>)}
+      </div>
       {(error || state.message) && <p className={`teacher-feedback ${!error && state.success ? "is-success" : "is-error"}`} role={!error && state.success ? "status" : "alert"}>{error || state.message}</p>}
-      <button type="submit" className="button button-primary full-width">{uploading ? "Đang tải tệp…" : pending ? "Đang lưu…" : "Lưu bài học"}</button>
+      <div className="lesson-composer-actions">
+        <button type="submit" name="status" value="PUBLISHED" className="lesson-publish" disabled={!!tool}>{uploading ? "Đang tải tệp…" : pending ? "Đang lưu…" : "Đăng lên hệ thống"}</button>
+        <button type="submit" name="status" value="DRAFT" className="lesson-draft" disabled={!!tool}>Lưu nháp</button>
+        <span>Chỉ học sinh của lớp xem được bài đã đăng.</span>
+      </div>
     </fieldset>
   </form>;
 }

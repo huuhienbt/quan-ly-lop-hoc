@@ -47,10 +47,31 @@ export function resolveLessonMedia(type: MediaKind, raw: string): LessonMedia | 
 
 const href = z.string().trim().min(1).max(2048).refine((value) => !!httpsLessonUrl(value), "Cần dùng đường dẫn HTTPS hợp lệ.");
 const caption = z.string().trim().max(180);
-const width = z.enum(["25", "40", "60", "80", "100"]);
+export const lessonWidths = ["25", "40", "60", "80", "100"] as const;
+export const lessonColors = ["#263b50", "#9b2625", "#8a460d", "#14695a", "#164e9f", "#663b8f"] as const;
+const width = z.enum(lessonWidths);
+const marks = z.object({ bold: z.boolean().optional(), italic: z.boolean().optional(), underline: z.boolean().optional(), color: z.enum(lessonColors).optional() }).strict();
+const richRun = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("text"), value: z.string().min(1).max(8000), marks: marks.optional() }).strict(),
+  z.object({ kind: z.literal("fraction"), numerator: z.string().min(1).max(32), denominator: z.string().min(1).max(32), marks: marks.optional() }).strict(),
+  z.object({ kind: z.literal("blank"), marks: marks.optional() }).strict(),
+]);
+export type LessonRun = z.infer<typeof richRun>;
+export type LessonMarks = z.infer<typeof marks>;
+export function runsPlainText(runs: LessonRun[]) {
+  return runs.map((run) => run.kind === "text" ? run.value : run.kind === "fraction" ? `${run.numerator}/${run.denominator}` : "________").join("");
+}
+export const lessonKinds = { NEWS: "Bài học", ANNOUNCEMENT: "Thông báo học tập", ACTIVITY: "Hoạt động học tập" } as const;
+export function lessonDateLabel(iso: string) {
+  const utc = new Date(`${iso}T00:00:00Z`);
+  const thursday = new Date(utc);
+  thursday.setUTCDate(thursday.getUTCDate() + 4 - (thursday.getUTCDay() || 7));
+  const week = Math.ceil(((+thursday - Date.UTC(thursday.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+  return `Ngày ${iso.split("-").reverse().join("/")} · Tuần ${week}`;
+}
 const source = z.object({ url: href.optional(), assetId: lessonAssetId.optional() });
 const block = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("text"), text: z.string().max(8000), align: z.enum(["left", "center", "right"]) }).strict(),
+  z.object({ type: z.literal("text"), text: z.string().max(8000), align: z.enum(["left", "center", "right"]), rich: z.array(richRun).max(240).optional() }).strict(),
   z.object({ type: z.literal("link"), label: caption.min(1), url: href }).strict(),
   source.extend({ type: z.literal("image"), label: caption, width }).strict(),
   source.extend({ type: z.literal("pdf"), label: caption }).strict(),
@@ -61,6 +82,7 @@ const block = z.discriminatedUnion("type", [
 export const lessonBlocksSchema = z.array(block).min(1).max(24).superRefine((items, context) => {
   items.forEach((item, index) => {
     if (item.type === "text" && !item.text.trim()) context.addIssue({ code: "custom", path: [index], message: "Khối văn bản đang trống." });
+    if (item.type === "text" && item.rich && runsPlainText(item.rich) !== item.text) context.addIssue({ code: "custom", path: [index], message: "Nội dung văn bản không khớp." });
     if (item.type === "image" || item.type === "pdf") {
       if (Boolean(item.url) === Boolean(item.assetId)) context.addIssue({ code: "custom", path: [index], message: "Chọn tệp hoặc nhập một đường dẫn." });
     }
@@ -109,6 +131,6 @@ export function lessonSummary(blocks: LessonBlock[]) {
       : node.kind === "fraction" ? `${node.numerator}/${node.denominator}` : plain(node.children)).join("");
   }
   return blocks.filter((block) => block.type === "text" || block.label)
-    .map((block) => block.type === "text" ? plain(lessonInline(block.text)) : block.label)
+    .map((block) => block.type === "text" ? block.rich ? block.text : plain(lessonInline(block.text)) : block.label)
     .join("\n").trim().slice(0, 20000) || "Bài học có tài liệu đính kèm.";
 }

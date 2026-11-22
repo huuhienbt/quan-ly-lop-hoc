@@ -13,6 +13,7 @@ const schema = z.object({
   class_id: rowId,
   title: z.string().trim().min(1).max(200),
   document: z.string().min(2).max(48000),
+  kind: z.enum(["NEWS", "ANNOUNCEMENT", "ACTIVITY"]).optional(),
   status: z.enum(["DRAFT", "PUBLISHED"]),
 }).strict();
 

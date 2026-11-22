@@ -2,7 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { hashPassword } from "../src/lib/password.ts";
 import { createD1Fixture, insertUser } from "./d1-fixture.mjs";
-import { decodeLesson, lessonInline, lessonSummary, resolveLessonMedia } from "../src/lib/lessons.ts";
+import { decodeLesson, lessonDateLabel, lessonInline, lessonSummary, resolveLessonMedia } from "../src/lib/lessons.ts";
+import { editableRuns, runLength, snapshotText, splitRich } from "../src/lib/lesson-editing.ts";
 import { readLessonAsset, stageLessonAsset } from "../src/lib/lesson-assets.ts";
 import { saveLearningPost } from "../src/lib/lesson-posts.ts";
 import { archiveContent, getPublicPosts, getStudentClassContent, getTeacherContentOverview } from "../src/lib/class-content.ts";
@@ -21,6 +22,22 @@ test("lesson documents accept configured media and safe text without injecting r
   assert.equal(resolveLessonMedia("audio", "https://github.com/classroom/example/blob/main/lesson.mp3").src, "https://raw.githubusercontent.com/classroom/example/main/lesson.mp3");
   assert.equal(resolveLessonMedia("video", "https://youtube.com.evil.example/watch?v=abcdefghijk"), null);
   assert.equal(decodeLesson(JSON.stringify([{ type:"image", width:"200", label:"", url:"https://example.com/a.jpg" }])), null);
+});
+
+test("a rich lesson preserves old marks and keeps a fraction or blank intact when splitting at the cursor", () => {
+  const old = { type: "text", text: "**Toán** [[frac:3|4]]", align: "center" };
+  const rich = [...editableRuns(old), { kind: "blank" }, { kind: "text", value: "  Tiếp theo", marks: { color: "#9b2625", underline: true } }];
+  const [left,right] = splitRich(rich,7);
+  assert.equal(left.at(-1).kind,"blank");
+  assert.equal(right[0].marks.underline,true);
+  assert.equal(runLength(left),7);
+  const saved = snapshotText(old,rich);
+  assert.equal(saved.text,"Toán 3/4________  Tiếp theo");
+  assert.deepEqual(decodeLesson(JSON.stringify([saved])),[saved]);
+  assert.equal(decodeLesson(JSON.stringify([{ ...saved, text:"mismatch" }])),null);
+  rich.at(-1).marks.color = "url(https://example.com)";
+  assert.equal(decodeLesson(JSON.stringify([saved])),null);
+  assert.equal(lessonDateLabel("2027-01-01"),"Ngày 01/01/2027 · Tuần 53");
 });
 
 test("published lesson files are assembled, private to the right class, and revoked on archive", async () => {
@@ -50,8 +67,10 @@ test("published lesson files are assembled, private to the right class, and revo
     await assert.rejects(stageLessonAsset(other.id, "lesson-a", "pdf", file));
     const { id } = await stageLessonAsset(teacher.id, "lesson-a", "pdf", file);
     assert.equal(db.prepare("SELECT count(*) AS count FROM lesson_asset_parts WHERE asset_id=?").get(id).count,2);
-    const blocks = [{ type:"text",text:"Bài tập [[frac:2|3]]",align:"center" }, { type:"pdf",label:"Phiếu",assetId:id }];
-    const input = { title:"Toán 4", class_id:"lesson-a", document:JSON.stringify(blocks), status:"DRAFT" };
+    const blocks = [snapshotText({ type:"text",text:"",align:"center" }, [
+      { kind:"text",value:"Bài tập ",marks:{bold:true,color:"#164e9f"} }, { kind:"fraction",numerator:"2",denominator:"3" }, { kind:"blank" },
+    ]), { type:"pdf",label:"Phiếu",assetId:id }];
+    const input = { title:"Toán 4", class_id:"lesson-a", document:JSON.stringify(blocks), status:"DRAFT",kind:"ACTIVITY" };
     assert.equal(await saveLearningPost(other.id, input), false);
     assert.equal(await saveLearningPost(other.id, { ...input,class_id:"lesson-b" }), false);
     assert.equal(await readLessonAsset(id,{studentId:"family-a",version:1}), null);
@@ -59,10 +78,14 @@ test("published lesson files are assembled, private to the right class, and revo
     assert.equal(await saveLearningPost(teacher.id,input), true);
     const post = (await getTeacherContentOverview(teacher.id, {includeLegacy:false})).posts[0];
     assert.deepEqual(decodeLesson(post.lesson_content), blocks);
+    assert.equal(post.kind,"ACTIVITY");
     assert.equal(await readLessonAsset(id,{studentId:"family-a",version:1}), null);
-    assert.equal(await saveLearningPost(teacher.id,{...input,id:post.id,status:"PUBLISHED"}),true);
+    assert.equal(await saveLearningPost(teacher.id,{...input,id:post.id,status:"PUBLISHED",kind:"ANNOUNCEMENT"}),true);
     assert.deepEqual(await getPublicPosts(), []);
-    assert.equal((await getStudentClassContent("family-a",1)).students[0].posts[0].id, post.id);
+    const studentPost = (await getStudentClassContent("family-a",1)).students[0].posts[0];
+    assert.equal(studentPost.id, post.id);
+    assert.equal(studentPost.kind,"ANNOUNCEMENT");
+    assert.deepEqual(decodeLesson(studentPost.lesson_content),blocks);
     assert.deepEqual((await readLessonAsset(id,{studentId:"family-a",version:1})).bytes, sample);
     for (const viewer of [{},{studentId:"family-b",version:1},{studentId:"family-a",version:2},{staffId:other.id}]) {
       assert.equal(await readLessonAsset(id,viewer),null);

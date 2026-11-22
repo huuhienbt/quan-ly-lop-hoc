@@ -57,7 +57,7 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
             <div className="teacher-section-heading"><div><h2 id="teacher-lesson-title">Bài học của lớp</h2><p>Bài đã xuất bản hiển thị trong mục Học tập của học sinh.</p></div></div>
             <details className="teacher-post-create">
               <summary className="button button-primary"><span aria-hidden="true">＋</span> Thêm bài học</summary>
-              <div className="teacher-panel"><div className="teacher-panel-body"><LessonEditor key={selectedClass.id} classId={selectedClass.id} /></div></div>
+              <LessonEditor key={selectedClass.id} classId={selectedClass.id} today={overview.today} />
             </details>
             <div className="teacher-items-column">
               {posts.length ? posts.map(post => <article className="teacher-content-card" key={post.id}>
@@ -65,7 +65,7 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
                 <h3>{post.title}</h3><p className="teacher-content-excerpt">{post.body.slice(0, 180)}</p>
                 <details className="teacher-edit-details"><summary>Sửa bài học</summary>
                   {post.visibility === "PUBLIC" ? <PostEditorForm key={post.updated_at} classId={selectedClass.id} post={post} />
-                    : <LessonEditor key={post.updated_at} classId={selectedClass.id} post={post} />}
+                    : <LessonEditor key={post.updated_at} classId={selectedClass.id} today={overview.today} post={post} />}
                 </details>
                 <ArchiveContentForm type="post" id={post.id} title={post.title} />
               </article>) : <p className="teacher-content-excerpt">Lớp chưa có bài học. Chọn Thêm bài học để bắt đầu.</p>}
