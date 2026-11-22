@@ -6,6 +6,7 @@ import {
   getPublicPost,
   getPublicPosts,
   getStudentClassContent,
+  getStudentHomePosts,
   getTeacherContentOverview,
   saveEvent,
   savePost,
@@ -18,6 +19,7 @@ import {
 } from "../src/lib/content-schemas.ts";
 import { createD1Fixture, insertUser } from "./d1-fixture.mjs";
 import { hashPassword } from "../src/lib/password.ts";
+import { saveLearningPost } from "../src/lib/lesson-posts.ts";
 
 const fixedTime = new Date("2026-10-14T17:30:00.000Z");
 const fixturePasswordHash = await hashPassword("Only-For-Content-Fixtures-2026!");
@@ -250,6 +252,27 @@ test("student content checks the current account status, session version and man
   assert.deepEqual((await getStudentClassContent(family.id, 1)).students, []);
   fixture.database.prepare("UPDATE student_accounts SET must_change_password = 0, status = 'SUSPENDED' WHERE id = ?").run(family.id);
   assert.deepEqual((await getStudentClassContent(family.id, 1)).students, []);
+});
+
+test("the homepage section reads only published content of its kind for the signed-in enrollment", async () => {
+  const family = seedFamily("family-test-a", [classA]);
+  const other = seedFamily("family-test-b", [classB]);
+  const ownEnrollment = family.pupils[0].enrollment_id;
+  const otherEnrollment = other.pupils[0].enrollment_id;
+  const privateNote = await savePost(administrator.id, postInput(classA.id, { title: "Tin nội bộ giả lập", visibility: "PRIVATE" }));
+  await savePost(administrator.id, postInput(classA.id, { title: "Bản nháp giả lập", status: "DRAFT" }));
+  await savePost(administrator.id, postInput(classB.id, { title: "Tin lớp khác giả lập", visibility: "PRIVATE" }));
+  const document = JSON.stringify([{ type: "text", text: "Nội dung của bài học giả lập", align: "left" }]);
+  assert.equal(await saveLearningPost(administrator.id, { class_id: classA.id, title: "Bài học giả lập", document, status: "PUBLISHED" }), true);
+  assert.equal(await saveLearningPost(administrator.id, { class_id: classB.id, title: "Bài học lớp khác giả lập", document, status: "PUBLISHED" }), true);
+
+  assert.deepEqual((await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "tin-lop")).map((post) => post.id), [privateNote]);
+  const lessons = await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "hoc-tap");
+  assert.deepEqual(lessons.map((post) => [post.title, post.lesson_content]), [["Bài học giả lập", document]]);
+  assert.deepEqual(await getStudentHomePosts(family.id, 1, otherEnrollment, classB.id, "hoc-tap"), []);
+  assert.deepEqual(await getStudentHomePosts(family.id, 2, ownEnrollment, classA.id, "tin-lop"), []);
+  fixture.database.prepare("UPDATE student_accounts SET must_change_password = 1 WHERE id = ?").run(family.id);
+  assert.deepEqual(await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "hoc-tap"), []);
 });
 
 test("archived pupils and ended enrollment cannot keep reading an old class feed", async () => {

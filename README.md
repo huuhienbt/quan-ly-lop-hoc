@@ -18,10 +18,9 @@ Các tính năng sao, cảm xúc, hòm thư và tiện ích trợ giảng chưa 
 
 ## Đăng nhập học sinh
 
-- `/dang-nhap`: lối đăng nhập chung từ đầu trang; học sinh dùng số điện thoại, giáo viên/quản trị dùng Google. Phiên đã đăng nhập được chuyển tới không gian đúng vai trò.
-- `/dang-nhap`: trang đăng nhập chung. Học sinh dùng số điện thoại và mật khẩu; giáo viên và quản trị viên chọn **Giáo viên** để đăng nhập Google.
+- `/dang-nhap`: lối đăng nhập chung; học sinh dùng số điện thoại và mật khẩu, giáo viên và quản trị viên chọn **Giáo viên** để đăng nhập Google. Học sinh trở lại đúng mục đã chọn trên trang chủ.
 - `/hoc-sinh/doi-mat-khau`: bắt buộc đổi mật khẩu ban đầu; đổi xong phải đăng nhập lại.
-- `/hoc-sinh`: chỉ hiển thị học sinh được liên kết với tài khoản đang đăng nhập.
+- Bấm tên tài khoản ở đầu trang để xem hồ sơ liên kết, đổi mật khẩu hoặc đăng xuất tại `/hoc-sinh/thong-tin`.
 
 Mật khẩu được băm scrypt với salt riêng. Tài khoản học sinh tách khỏi tài khoản
 Google của giáo viên/quản trị viên. Đăng nhập học sinh không cần cấu hình Google,
@@ -30,10 +29,10 @@ Xem [hướng dẫn đăng nhập học sinh](docs/dang-nhap-hoc-sinh.md).
 
 ## Bảng tin và nội dung lớp
 
-- `/`: bản tin công khai; mỗi bài có ảnh chiếm khoảng hai phần ba chiều ngang trên máy tính.
+- `/`: một menu chung **Tin lớp**, **Học tập**, **Đố vui**, **Trò chuyện**. Giữ banner khi đổi mục; tải nội dung của mục đang mở. Khách xem tin công khai và đố vui; học sinh đăng nhập xem tin nội bộ, bài học và trò chuyện của lớp được liên kết.
 - `/ban-tin/[id]`: đọc bài đã xuất bản công khai; bài riêng tư/bản nháp không có trang công khai.
-- `/teacher`: giáo viên và Super Admin dùng hai tab riêng: **Bài viết** và **Trò chuyện**. Chọn **Thêm bài viết mới** để soạn bài và thêm ảnh bìa.
-- `/hoc-sinh`: tin lớp, khám phá, trò chuyện, trò chơi học tập và hồ sơ riêng.
+- `/teacher`: giáo viên và Super Admin có các mục **Bài viết**, **Học tập** và **Trò chuyện**. Chọn **Thêm bài viết mới** để soạn bài và thêm ảnh bìa.
+- Đường dẫn `/hoc-sinh` và lối tắt cũ của ứng dụng sẽ mở mục tương ứng trên trang chủ.
 
 Dữ liệu lịch, nhắc việc và dấu hoàn thành đã lưu vẫn nằm trong D1. Có thể dùng `scripts/seed-class-content.mjs`
 để thêm nội dung khởi đầu cho một lớp một cách chủ động; script giữ nguyên bài/việc
@@ -87,10 +86,9 @@ hoặc thư mục public.
 
 ## Giao diện
 
-Mục **Vui học mỗi ngày** có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md)
-tại `/tro-choi/ca-dao-tuc-ngu`: 30 câu hỏi, 5 câu mỗi lượt, có đáp án và lời giải.
-Trò chơi xuất hiện trên trang chủ và trong góc học sinh; kết quả luyện tập không
-ghi vào điểm hay sao của tài khoản.
+Mục **Đố vui** ở ngay trang chủ (`/?muc=do-vui`) có trò [Đố vui ca dao, tục ngữ Việt Nam](docs/tro-choi-ca-dao-tuc-ngu.md):
+30 câu hỏi, 5 câu mỗi lượt, có đáp án và lời giải. Kết quả luyện tập không ghi vào
+điểm hay sao của tài khoản.
 
 Ba giao diện có thể chuyển qua lại tại `/admin?muc=giao-dien#cai-dat`: **Giao diện 1 –
 Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá** và **Giao diện 3 –

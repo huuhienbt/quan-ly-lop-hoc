@@ -50,7 +50,6 @@ async function runContentAction<T extends z.ZodType>(
   }
   revalidatePath("/");
   revalidatePath("/ban-tin/[id]", "page");
-  revalidatePath("/hoc-sinh");
   revalidatePath("/teacher");
   return { success: true, message };
 }

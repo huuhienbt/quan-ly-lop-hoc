@@ -1,0 +1,4 @@
+.student-account-page { max-inline-size: 900px; }
+.student-account-page .student-profile-heading { flex-wrap: wrap; }
+.student-account-page h1 { color: #175d9b; font-size: clamp(23px, 4vw, 30px); font-weight: 900; }
+.student-account-page :is(.student-profile-top h3, .student-profile-details dd) { overflow-wrap: anywhere; }

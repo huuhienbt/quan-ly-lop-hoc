@@ -11,6 +11,7 @@ export interface StudentLinkedProfile {
   gender: "MALE" | "FEMALE" | "OTHER" | "UNSPECIFIED";
   date_of_birth: string | null;
   student_code: string | null;
+  enrollment_id: string;
   class_id: string;
   class_name: string;
   class_slug: string;
@@ -47,7 +48,7 @@ export async function getCurrentStudentAccount(): Promise<StudentAccountSession 
   if (!account) return null;
   // Default-password sessions reach the password-change page without receiving pupil records.
   const students = account.must_change_password ? [] : await query<StudentLinkedProfile>(
-    `SELECT s.id, s.full_name, s.display_name, s.gender, s.date_of_birth, s.student_code,
+    `SELECT s.id, s.full_name, s.display_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
       c.id AS class_id, c.name AS class_name, c.slug AS class_slug,
       school.name AS school_name, y.name AS academic_year_name
      FROM student_account_students link
@@ -55,10 +56,11 @@ export async function getCurrentStudentAccount(): Promise<StudentAccountSession 
        AND login.session_version = ? AND login.must_change_password = 0
      JOIN students s ON s.id = link.student_id AND s.archived_at IS NULL
      JOIN student_enrollments e ON e.student_id = s.id AND e.school_id = s.school_id AND e.status = 'ACTIVE'
-     JOIN classes c ON c.id = e.class_id AND c.archived_at IS NULL
+     JOIN classes c ON c.id = e.class_id AND c.school_id = e.school_id
+       AND c.academic_year_id = e.academic_year_id AND c.archived_at IS NULL
      JOIN schools school ON school.id = s.school_id AND school.archived_at IS NULL
      JOIN academic_years y ON y.id = c.academic_year_id
-     WHERE link.account_id = ? ORDER BY y.starts_on DESC, c.name, s.full_name, s.id`, [account.session_version, account.id],
+     WHERE link.account_id = ? ORDER BY y.starts_on DESC, c.name, s.full_name, e.id`, [account.session_version, account.id],
   );
   return { ...account, must_change_password: account.must_change_password === 1, students };
 }

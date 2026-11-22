@@ -14,7 +14,7 @@ export function StudentLessonCard({ title, kind, publishedAt, dateLabel, childre
   return <details className="student-article-card" onToggle={(event) => setOpen(event.currentTarget.open)}>
     <summary>
       <span className="student-content-kicker">{kind}</span>
-      <h4>{title}</h4>
+      <h3>{title}</h3>
       {publishedAt && <time dateTime={publishedAt}>{dateLabel}</time>}
       <span className="student-news-more">{open ? "Thu gọn bài học" : "Mở bài học"}</span>
     </summary>

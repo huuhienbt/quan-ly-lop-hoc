@@ -2,11 +2,9 @@
 .discovery-home .class-home-footer { background: var(--discovery-cream); }
 .bulletin-home .class-home-footer { background: #087bc1; border-top-color: #ffffff35; color: #fff; }
 .class-home-footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding-block: 26px; }
-.class-home-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 18px; }
-.class-home-footer nav a, .class-home-footer-top { display: inline-flex; align-items: center; min-height: 44px; color: inherit; font-size: 14px; font-weight: 800; }
-.class-home-footer nav a:hover, .class-home-footer-top:hover { text-decoration: underline; }
+.class-home-footer-top { display: inline-flex; align-items: center; min-height: 44px; color: inherit; font-size: 14px; font-weight: 800; }
+.class-home-footer-top:hover { text-decoration: underline; }
 .class-home-footer-top span { margin-left: 6px; }
 @media (max-width: 680px) {
   .class-home-footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; padding-block: 20px; }
-  .class-home-footer nav { gap: 0 16px; }
 }

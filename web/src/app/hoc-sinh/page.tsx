@@ -1,112 +1,22 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
-import { SignOutButton } from "@/components/auth-buttons";
-import { SchoolIcon, ShieldIcon } from "@/components/icons";
-import { LearningGameCard } from "@/components/learning-game-card";
-import { ClassChat } from "@/components/class-chat";
-import { LessonContent } from "@/components/lesson-render";
-import { decodeLesson, lessonKinds } from "@/lib/lessons";
-import { StudentLessonCard } from "@/components/student-lesson-card";
-import { StudentSectionTabs } from "@/components/student-section-tabs";
-import { getStudentClassContent } from "@/lib/class-content";
-import { getSiteTheme } from "@/lib/site-theme";
-import type { ContentPost, StudentClassSpace } from "@/lib/content-schemas";
-import { requireStudentPageAccount } from "./student-access";
-import "./content.css";
+import { useEffect } from "react";
+import { classHomeLinks, type ClassHomeSection } from "@/lib/student-home";
 
-export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Góc học sinh" };
-
-const genderLabels: Record<string, string> = { MALE: "Nam", FEMALE: "Nữ", OTHER: "Khác", UNSPECIFIED: "Chưa cập nhật" };
-
-function dateOfBirth(value: string | null) {
-  if (!value) return "Chưa cập nhật";
-  const [year, month, day] = value.split("-");
-  return `${day}/${month}/${year}`;
+function oldSection(hash: string): ClassHomeSection {
+  if (hash === "#kham-pha" || /^#lop-[\w-]+-discovery$/.test(hash)) return "hoc-tap";
+  if (hash === "#tro-chuyen" || /^#lop-[\w-]+-chat$/.test(hash)) return "tro-chuyen";
+  if (hash === "#tro-choi") return "do-vui";
+  return "tin-lop";
 }
 
-function postDate(value: string | null) {
-  return value ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value)) : "";
-}
-
-function PostCover({ post }: { post: ContentPost }) {
-  return post.cover_url ? <Image className="student-post-cover" src={post.cover_url} alt={post.title} width={960} height={540} unoptimized /> : null;
-}
-
-function BulletinBody({ post }: { post: ContentPost }) {
-  const blocks = decodeLesson(post.bulletin_content);
-  return blocks ? <LessonContent blocks={blocks} /> : <p className="student-content-body">{post.body}</p>;
-}
-
-function ClassNews({ posts }: { posts: ContentPost[] }) {
-  return <div className="student-news-list">{posts.map((post) => <details className="student-news-item" key={post.id}>
-    <summary><span className="student-content-kicker">{post.kind === "ANNOUNCEMENT" ? "Thông báo" : post.category === "PARENT_GUIDE" ? "Gửi ba mẹ" : post.category === "CLASS_STORY" ? "Câu chuyện lớp" : "Tin lớp"}{post.is_pinned ? " · Được ghim" : ""}</span><h4>{post.title}</h4>{post.published_at && <time dateTime={post.published_at}>{postDate(post.published_at)}</time>}<span className="student-news-more">Đọc nội dung <span aria-hidden="true">↗</span></span></summary>
-    <PostCover post={post} /><BulletinBody post={post} />
-  </details>)}</div>;
-}
-
-function StudentLearningSpace({ space, firstStudent, showIdentity }: { space: StudentClassSpace; firstStudent: boolean; showIdentity: boolean }) {
-  const prefix = `lop-${space.enrollment_id}`;
-  const news = space.posts.filter((post) => post.category !== "DISCOVERY" && post.category !== "KINDNESS");
-  const discovery = space.posts.filter((post) => post.category === "DISCOVERY");
-  const newsContent = <section className="student-content-panel student-news-panel" id={`${prefix}-news`} aria-labelledby={`${prefix}-news-title`}>
-    <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-peach"><SchoolIcon /></span><div><h3 id={`${prefix}-news-title`}>Tin từ lớp em</h3><p className="student-content-panel-copy">Lời nhắn và những câu chuyện mới của lớp.</p></div></div></div>
-    {news.length ? <ClassNews posts={news} /> : <p className="student-content-empty">Khi thầy cô có thông báo mới, em sẽ đọc được tại đây.</p>}
-  </section>;
-
-  const discoveryContent = <section className="student-content-panel student-discovery-panel" id={`${prefix}-discovery`} aria-labelledby={`${prefix}-discovery-title`}>
-      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Bài học của lớp</h3><p className="student-content-panel-copy">Chọn bài để xem nội dung và tài liệu.</p></div></div></div>
-      {discovery.length ? <div className="student-article-list">{discovery.map((post) => {
-        const blocks = decodeLesson(post.lesson_content);
-        return <StudentLessonCard key={post.id} title={post.title} kind={lessonKinds[post.kind]}
-          publishedAt={post.published_at} dateLabel={postDate(post.published_at)}>
-          <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} inlinePdf /> : <p className="student-content-body">{post.body}</p>}
-        </StudentLessonCard>;
-      })}</div> : <p className="student-content-empty">Bài học sẽ xuất hiện khi thầy cô đăng.</p>}
-    </section>;
-
-  const chatContent = <section className="student-content-panel student-chat-panel" id={`${prefix}-chat`} aria-labelledby={`${prefix}-chat-title`}>
-      <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-green"><ChatIcon /></span><div><h3 id={`${prefix}-chat-title`}>Trò chuyện cùng thầy cô và các bạn</h3><p className="student-content-panel-copy">Chia sẻ điều hay với lớp, hoặc gửi lời nhắn riêng cho thầy cô.</p></div></div></div>
-      <ClassChat mode="student" classId={space.class_id} enrollmentId={space.enrollment_id} />
-    </section>;
-
-  return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
-    <h2 id={`${prefix}-title`} className={showIdentity ? "student-learning-heading" : "sr-only"}>{space.student_name} · {space.class_name}</h2>
-    <StudentSectionTabs prefix={prefix} studentName={space.student_name} firstStudent={firstStudent} news={newsContent} discovery={discoveryContent} chat={chatContent} />
-  </section>;
-}
-
-function ChatIcon() {
-  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 18.5 3 21v-5.5A7 7 0 0 1 2 12C2 7.6 6.5 4 12 4s10 3.6 10 8-4.5 8-10 8c-2.6 0-5-.6-7-1.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /><path d="M7.5 12h.01M12 12h.01M16.5 12h.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" /></svg>;
-}
-
-function DiscoveryIcon() {
-  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5c3-1 5.7-.5 8 1.2 2.3-1.7 5-2.2 8-1.2V19c-3-1-5.7-.5-8 1.2C9.7 18.5 7 18 4 19V5.5Zm8 1.2v13.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-}
-
-export default async function StudentHomePage() {
-  const account = await requireStudentPageAccount();
-  const theme = await getSiteTheme();
-  const content = await getStudentClassContent(account.id, account.session_version);
-  const firstStudent = account.students[0];
-  const greeting = account.students.length === 1 && firstStudent ? `Chào ${firstStudent.display_name || firstStudent.full_name}!` : "Chào mừng đến với góc học sinh!";
-
-  return (
-    <main id="noi-dung" className="student-dashboard-main student-content-page page-width">
-      <div className="student-page-toolbar"><SignOutButton /></div>
-      <section className="student-dashboard-welcome student-dashboard-welcome-compact" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><h1 id="student-dashboard-title">{greeting}</h1><p>Đọc tin lớp, khám phá điều hay và trò chuyện với lớp.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={(theme === "discovery" || theme === "harmony") ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 180px" /></div></section>
-      {!content.students.length && <section className="student-content-panel student-empty-profile"><h2>Chưa có không gian lớp học</h2><p>Em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm để kiểm tra thông tin liên kết tài khoản nhé.</p></section>}
-      {content.students.map((space, index) => <StudentLearningSpace key={space.enrollment_id} space={space} firstStudent={index === 0} showIdentity={content.students.length > 1} />)}
-      {!content.students.length && <div className="student-learning-games"><LearningGameCard compact /></div>}
-      <details className="student-profile-disclosure"><summary>Thông tin học sinh và tài khoản</summary><section className="student-profiles-section" aria-labelledby="student-profiles-title">
-        <div className="student-profile-heading"><h2 id="student-profiles-title">Thông tin học sinh</h2><Link className="button button-outline button-small" href="/hoc-sinh/doi-mat-khau"><ShieldIcon /> Đổi mật khẩu</Link></div>
-        {account.students.length ? <div className="student-profiles-grid">{account.students.map((student) => <article className="student-profile-card" key={`${student.id}-${student.class_id}`}>
-          <div className="student-profile-top"><span className="student-profile-avatar" aria-hidden="true">{student.full_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><h3>{student.full_name}</h3><p>{student.school_name}</p></div></div>
-          <dl className="student-profile-details"><div><dt>Lớp học</dt><dd>{student.class_name}</dd></div><div><dt>Năm học</dt><dd>{student.academic_year_name}</dd></div><div><dt>Ngày sinh</dt><dd>{dateOfBirth(student.date_of_birth)}</dd></div><div><dt>Giới tính</dt><dd>{genderLabels[student.gender] ?? "Chưa cập nhật"}</dd></div></dl>
-        </article>)}</div> : <div className="student-empty-profile"><h3>Chưa có thông tin lớp học</h3><p>Em hãy liên hệ giáo viên chủ nhiệm để kiểm tra thông tin tài khoản nhé.</p></div>}
-        <p className="student-profile-privacy"><ShieldIcon /> Nếu thông tin cần điều chỉnh, em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm.</p>
-      </section></details>
-    </main>
-  );
+export default function LegacyStudentHomePage() {
+  useEffect(() => {
+    // A URL fragment is only available in the browser. Keep older app shortcuts and bookmarks working.
+    window.location.replace(classHomeLinks[oldSection(window.location.hash)]);
+  }, []);
+  return <main id="noi-dung" className="student-password-main page-width">
+    <Link className="button button-outline" href="/">Về menu lớp học</Link>
+  </main>;
 }

@@ -1,19 +1,23 @@
 import Link from "next/link";
+import { classHomeLinks, studentHomeLoginLink, type ClassHomeSection } from "@/lib/student-home";
 import "./home-shortcuts.css";
 
-export function HomeShortcuts({ studentSignedIn }: { studentSignedIn: boolean }) {
+export function HomeShortcuts({ activeSection, studentSignedIn }: { activeSection: ClassHomeSection; studentSignedIn: boolean }) {
   const items = [
-    { icon: "📰", title: "Tin lớp", href: "/#bang-tin", color: "blue" },
-    { icon: "📘", title: "Học tập", href: studentSignedIn ? "/hoc-sinh#kham-pha" : "/dang-nhap?tiep=hoc-tap", color: "mint" },
-    { icon: "🧩", title: "Đố vui", href: "/tro-choi/ca-dao-tuc-ngu", color: "peach" },
-    { icon: "💬", title: "Trò chuyện", href: studentSignedIn ? "/hoc-sinh#tro-chuyen" : "/dang-nhap?tiep=tro-chuyen", color: "pink" },
-  ];
+    { icon: "📰", title: "Tin lớp", section: "tin-lop", color: "blue" },
+    { icon: "📘", title: "Học tập", section: "hoc-tap", color: "mint" },
+    { icon: "🧩", title: "Đố vui", section: "do-vui", color: "peach" },
+    { icon: "💬", title: "Trò chuyện", section: "tro-chuyen", color: "pink" },
+  ] as const;
 
   return <nav className="home-shortcuts" id="loi-tat" aria-label="Menu lớp học">
-    {items.map(({ icon, title, href, color }) => (
-      <Link key={title} className={`home-shortcut home-shortcut-${color}`} href={href}>
+    {items.map(({ icon, title, section, color }) => {
+      const needsLogin = !studentSignedIn && (section === "hoc-tap" || section === "tro-chuyen");
+      const href = needsLogin ? studentHomeLoginLink(section) : classHomeLinks[section];
+      return <Link key={section} className={`home-shortcut home-shortcut-${color}`} href={href} prefetch={false}
+        scroll={needsLogin} aria-current={activeSection === section ? "location" : undefined}>
         <span className="home-shortcut-icon" aria-hidden="true">{icon}</span><span>{title}</span>
-      </Link>
-    ))}
+      </Link>;
+    })}
   </nav>;
 }

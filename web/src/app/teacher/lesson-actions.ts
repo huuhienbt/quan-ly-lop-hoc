@@ -35,7 +35,7 @@ export async function saveLearningPostAction(_previous: ContentActionState, form
       return { success: false, message: "Không thể lưu. Kiểm tra quyền của lớp và tải lại tệp chưa gắn được vào bài." };
     }
     revalidatePath("/teacher");
-    revalidatePath("/hoc-sinh");
+    revalidatePath("/");
     return { success: true, message: parsed.data.status === "PUBLISHED" ? "Đã đăng bài học cho lớp." : "Đã lưu bản nháp bài học." };
   } catch {
     return { success: false, message: "Chưa thể lưu bài học. Thầy cô hãy thử lại." };

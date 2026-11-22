@@ -7,6 +7,7 @@ import { StudentLoginForm } from "@/components/student-auth-forms";
 import { getSetupState } from "@/lib/config";
 import { getCurrentUser } from "@/lib/rbac";
 import { getCurrentStudentAccount } from "@/lib/student-session";
+import { classHomeLinks, studentHomeLoginLink, studentHomeSection, studentPasswordLink } from "@/lib/student-home";
 import "./login.css";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +18,15 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const opensChat = query.tiep === "tro-chuyen";
   const opensLearning = query.tiep === "hoc-tap";
   const wantsAdmin = query.tiep === "quan-tri";
-  const studentDestination = opensChat ? "/hoc-sinh#tro-chuyen" : opensLearning ? "/hoc-sinh#kham-pha" : "/hoc-sinh";
+  const section = studentHomeSection(query.tiep);
+  const studentDestination = classHomeLinks[section];
   const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : opensLearning ? "/teacher?tab=hoc-tap" : "/teacher";
-  if (student) redirect(student.must_change_password ? "/hoc-sinh/doi-mat-khau" : studentDestination);
+  if (student) redirect(student.must_change_password ? studentPasswordLink(section) : studentDestination);
   if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/admin" : teacherDestination);
   if (user?.role === "TEACHER") redirect(teacherDestination);
   const setup = getSetupState();
   const teacherMode = query.vai === "giaovien" || typeof query.error === "string";
-  const studentHref = opensChat ? "/dang-nhap?tiep=tro-chuyen" : opensLearning ? "/dang-nhap?tiep=hoc-tap" : "/dang-nhap";
+  const studentHref = studentHomeLoginLink(section);
   const nextSection = wantsAdmin ? "quan-tri" : opensChat ? "tro-chuyen" : opensLearning ? "hoc-tap" : null;
   const teacherHref = nextSection ? `/dang-nhap?vai=giaovien&tiep=${nextSection}` : "/dang-nhap?vai=giaovien";
   const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : studentHref;

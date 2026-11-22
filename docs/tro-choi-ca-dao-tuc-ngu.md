@@ -1,6 +1,6 @@
 # Đố vui ca dao, tục ngữ Việt Nam
 
-Trò chơi tại `/tro-choi/ca-dao-tuc-ngu` phù hợp học sinh lớp 4 và có thể chơi
+Trò chơi trong mục **Đố vui** trên trang chủ (`/?muc=do-vui`) phù hợp học sinh lớp 4 và có thể chơi
 trực tiếp, không cần đăng nhập. Nội dung chung không chứa dữ liệu học sinh.
 
 ## Mở trò chơi
@@ -34,7 +34,7 @@ vào tài khoản, không có bảng xếp hạng và không thay đổi dữ li
 
 - `web/src/lib/proverb-quiz.ts`: nội dung và cách tạo lượt chơi.
 - `web/src/components/proverb-quiz.tsx`: tương tác, lời giải và tổng kết.
-- `web/src/app/tro-choi/ca-dao-tuc-ngu`: trang và CSS riêng.
+- `web/src/components/home-quiz.tsx` và `web/src/components/proverb-quiz.css`: tải và trình bày trò chơi dưới menu trang chủ.
 - `web/src/components/learning-game-card.tsx`: thẻ mở trò chơi dùng chung.
 
 Khi bổ sung câu hỏi, dùng mã riêng, bốn đáp án khác nhau, một đáp án đúng rõ ràng

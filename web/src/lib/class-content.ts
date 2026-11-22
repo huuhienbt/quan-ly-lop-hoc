@@ -6,6 +6,7 @@ import { attachPostAssets, postAssetGuard } from "@/lib/post-attachments";
 import { postDateUpdate, postDateUpdateParams, publicationValues } from "@/lib/post-dates";
 import { decodeLesson, lessonSummary } from "@/lib/lessons";
 import { getStudentTimetablePlan } from "@/lib/class-timetable";
+import type { StudentHomeSection } from "@/lib/student-home";
 import {
   archiveContentSchema,
   eventSchema,
@@ -121,6 +122,20 @@ interface StudentTaskRow extends ClassTask { completed: number }
 function validStudentIdentity(accountId: string, version: number) {
   return typeof accountId === "string" && /^[a-zA-Z0-9_-]{1,100}$/.test(accountId)
     && Number.isSafeInteger(version) && version > 0;
+}
+
+export async function getStudentHomePosts(
+  accountId: string, sessionVersion: number, enrollmentId: string, classId: string,
+  section: Exclude<StudentHomeSection, "tro-chuyen">,
+): Promise<ContentPost[]> {
+  if (!validStudentIdentity(accountId, sessionVersion)) return [];
+  const lesson = section === "hoc-tap";
+  const detailField = lesson ? "p.lesson_content" : "p.bulletin_content";
+  const categories = lesson ? "p.category = 'DISCOVERY'" : "p.category NOT IN ('DISCOVERY', 'KINDNESS')";
+  return query<ContentPost>(`SELECT ${postFields}, ${detailField} FROM posts p ${classJoins}
+    WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${categories}
+      AND ${activeClass} AND ${studentAccess}
+    ORDER BY ${postOrder} LIMIT 100`, [classId, accountId, sessionVersion, enrollmentId]);
 }
 
 export async function getStudentClassContent(accountId: string, sessionVersion: number): Promise<StudentClassContent> {

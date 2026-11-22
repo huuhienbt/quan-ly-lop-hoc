@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn, signOut } from "next-auth/react";
 import { useActionState, useEffect, useState, type FormEvent } from "react";
 import { updateStudentPassword, type StudentPasswordState } from "@/app/hoc-sinh/doi-mat-khau/actions";
+import { classHomeLinks, studentAccountLink, type StudentHomeDestination, type StudentHomeSection } from "@/lib/student-home";
 import { ArrowIcon } from "./icons";
 
-export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabled: boolean; destination?: "/hoc-sinh" | "/hoc-sinh#kham-pha" | "/hoc-sinh#tro-chuyen" }) {
-  const router = useRouter();
+export function StudentLoginForm({ enabled, destination = classHomeLinks["tin-lop"] }: { enabled: boolean; destination?: StudentHomeDestination }) {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [pending, setPending] = useState(false);
@@ -20,10 +19,9 @@ export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabl
     setPending(true);
     setError("");
     try {
-      const response = await signIn("student", { phone, password, redirect: false, callbackUrl: "/hoc-sinh" });
+      const response = await signIn("student", { phone, password, redirect: false, callbackUrl: destination });
       if (response?.ok && !response.error) {
-        router.replace(destination);
-        router.refresh();
+        window.location.replace(destination);
         return;
       }
       setError("Số điện thoại hoặc mật khẩu chưa đúng. Em hãy kiểm tra lại nhé.");
@@ -49,21 +47,22 @@ export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabl
 
 const initialPasswordState: StudentPasswordState = { success: false, message: "" };
 
-export function StudentPasswordForm({ forced = false }: { forced?: boolean }) {
+export function StudentPasswordForm({ forced = false, next = "tin-lop" }: { forced?: boolean; next?: StudentHomeSection }) {
   const [passwords, setPasswords] = useState<Record<string, string>>({ current_password: "", new_password: "", confirm_password: "" });
   const [state, action, pending] = useActionState(updateStudentPassword, initialPasswordState);
   const [signOutFailed, setSignOutFailed] = useState(false);
+  const loginAgain = next === "tin-lop" ? "/dang-nhap?changed=1" : `/dang-nhap?changed=1&tiep=${next}`;
 
   async function finishPasswordChange() {
-    try { await signOut({ callbackUrl: "/dang-nhap?changed=1" }); }
+    try { await signOut({ callbackUrl: loginAgain }); }
     catch { setSignOutFailed(true); }
   }
 
   useEffect(() => {
     if (state.success) {
-      signOut({ callbackUrl: "/dang-nhap?changed=1" }).catch(() => setSignOutFailed(true));
+      signOut({ callbackUrl: loginAgain }).catch(() => setSignOutFailed(true));
     }
-  }, [state.success]);
+  }, [state.success, loginAgain]);
 
   if (state.success) return <div className="student-password-success"><p className="form-message is-success" role="status">{state.message}</p>{signOutFailed && <button className="button button-primary full-width" type="button" onClick={finishPasswordChange}>Đăng nhập lại</button>}</div>;
 
@@ -79,6 +78,6 @@ export function StudentPasswordForm({ forced = false }: { forced?: boolean }) {
       {state.message && <p className="form-message is-error" role="alert">{state.message}</p>}
       <button className="button button-primary full-width student-submit" type="submit">{pending ? "Đang đổi mật khẩu…" : "Lưu mật khẩu mới"}</button>
     </fieldset>
-    {!forced && <Link className="student-relogin-link" href="/hoc-sinh">Về góc học sinh</Link>}
+    {!forced && <Link className="student-relogin-link" href={studentAccountLink}>Về trang tài khoản</Link>}
   </form>;
 }

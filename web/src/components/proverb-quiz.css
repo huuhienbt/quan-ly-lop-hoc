@@ -4,8 +4,9 @@
   --quiz-green: #206553;
   --quiz-line: #d6e3d9;
   --quiz-soft: #eef7ef;
-  min-height: 100vh;
-  background: #faf7ed;
+  max-inline-size: 720px;
+  margin-inline: auto;
+  padding-block: 14px 18px;
   color: var(--quiz-ink);
   font-size: 16px;
   line-height: 1.55;
@@ -17,42 +18,10 @@
   outline-offset: 3px;
 }
 
-.proverb-quiz-page :is(h1, h2, .proverb-quiz-feedback):focus { outline: none; }
+.proverb-quiz-page :is(h2, .proverb-quiz-feedback):focus { outline: none; }
 .proverb-quiz-page button { font: inherit; cursor: pointer; }
 .proverb-quiz-page button:disabled { cursor: default; }
 
-.proverb-quiz-page .proverb-quiz-header,
-.proverb-quiz-page .proverb-quiz-main,
-.proverb-quiz-page .proverb-quiz-footer {
-  width: min(100% - 32px, 720px);
-  margin-inline: auto;
-}
-
-.proverb-quiz-page .proverb-quiz-header {
-  min-height: 72px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid #e5e4d9;
-}
-
-.proverb-quiz-page .proverb-quiz-header .brand { min-height: 44px; gap: 8px; }
-.proverb-quiz-page .proverb-quiz-header .brand-symbol { width: 36px; height: 36px; flex: 0 0 36px; }
-.proverb-quiz-page .proverb-quiz-header .brand-symbol svg { width: 32px; height: 32px; }
-.proverb-quiz-page .proverb-quiz-header .brand-copy strong { color: var(--quiz-ink); font-size: 15px; }
-.proverb-quiz-page .proverb-quiz-header nav a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  color: var(--quiz-green);
-  font-size: 14px;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
-.proverb-quiz-page .proverb-quiz-main { margin-block-start: clamp(18px, 4vw, 36px); }
 .proverb-quiz-page .proverb-quiz-game {
   border: 1px solid var(--quiz-line);
   border-radius: 24px;
@@ -74,7 +43,7 @@
   margin-bottom: 20px;
 }
 
-.proverb-quiz-page h1 {
+.proverb-quiz-page h2.proverb-quiz-title {
   margin: 0;
   font-size: clamp(26px, 5.8vw, 42px);
   line-height: 1.15;
@@ -212,12 +181,8 @@
 .proverb-quiz-page .proverb-quiz-review li { padding: 12px 0 8px; border-top: 1px solid var(--quiz-line); }
 .proverb-quiz-page .proverb-quiz-review .proverb-quiz-review-label { margin: 0 0 4px; color: var(--quiz-green); font-size: 13px; font-weight: 850; }
 .proverb-quiz-page .proverb-quiz-noscript { padding: 0 16px 16px; }
-.proverb-quiz-page .proverb-quiz-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0 12px; padding-block: 12px 18px; color: var(--quiz-muted); font-size: 13px; }
-.proverb-quiz-page .proverb-quiz-footer a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: var(--quiz-green); font-weight: 800; }
 
 @media (max-width: 540px) {
-  .proverb-quiz-page .proverb-quiz-header { min-height: 58px; }
-  .proverb-quiz-page .proverb-quiz-header .brand-copy strong { font-size: 13px; }
   .proverb-quiz-page .proverb-quiz-kind { padding-inline: 8px; font-size: 14px; }
   .proverb-quiz-page .proverb-quiz-primary { width: 100%; }
 }

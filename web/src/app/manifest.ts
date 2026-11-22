@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { classHomeLinks } from "@/lib/student-home";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -18,8 +19,8 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/app-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
     ],
     shortcuts: [
-      { name: "Trò chuyện với lớp", url: "/hoc-sinh#tro-chuyen" },
-      { name: "Trò chơi học tập", url: "/tro-choi/ca-dao-tuc-ngu" },
+      { name: "Trò chuyện với lớp", url: classHomeLinks["tro-chuyen"] },
+      { name: "Trò chơi học tập", url: classHomeLinks["do-vui"] },
     ],
   };
 }

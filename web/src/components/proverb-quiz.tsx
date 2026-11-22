@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createProverbRound, type ProverbQuestion } from "@/lib/proverb-quiz";
+import "./proverb-quiz.css";
 
 type PracticeKind = "all" | ProverbQuestion["kind"];
 type Answer = { selectedIndex: number; correct: boolean };
@@ -78,12 +79,12 @@ export function ProverbQuiz() {
 
   return (
     <section className="proverb-quiz-game" aria-labelledby="proverb-page-title">
-      {phase !== "start" && <h1 className="sr-only" id="proverb-page-title">{title}</h1>}
+      {phase !== "start" && <h2 className="sr-only" id="proverb-page-title">{title}</h2>}
       {phase === "start" && (
         <div className="proverb-quiz-start">
           <div className="proverb-quiz-intro">
             <div>
-              <h1 id="proverb-page-title" ref={startHeading} tabIndex={-1}>{title}</h1>
+              <h2 className="proverb-quiz-title" id="proverb-page-title" ref={startHeading} tabIndex={-1}>{title}</h2>
               <p>Tiếng Việt lớp 4 · {roundSize} câu mỗi lượt · Không tính giờ</p>
             </div>
             <svg className="proverb-quiz-book" viewBox="0 0 80 80" aria-hidden="true" fill="none">

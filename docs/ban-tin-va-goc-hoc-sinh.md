@@ -6,10 +6,11 @@ hòm thư, album hay tiện ích của các giai đoạn sau.
 
 ## Trang chủ dễ theo dõi
 
-Cả ba giao diện có lời chào và tranh thu gọn, tiếp theo là ba lối vào:
-**Tin lớp**, **Trò chơi học tập**, **Trò chuyện**. Bản tin hiển thị trực tiếp các
-bài công khai; thư viện ảnh ở bên dưới. Học sinh và giáo viên dùng chung
-trang **Đăng nhập**.
+Cả ba giao diện giữ lời chào và banner ở phía trên một menu chung:
+**Tin lớp**, **Học tập**, **Đố vui**, **Trò chuyện**. Khi chọn mục, nội dung bên
+dưới thay đổi. Khách xem tin công khai và đố vui; sau khi đăng nhập, học sinh xem
+thêm tin nội bộ, bài học và phòng trò chuyện của lớp được liên kết. Học sinh và
+giáo viên dùng chung trang **Đăng nhập**.
 
 Đã bỏ khối **Ba mẹ cùng con khám phá / Ba mẹ đồng hành**, các liên kết tới khối
 này và chủ đề ba mẹ trong danh sách bài ở trang chủ. Bài thuộc `PARENT_GUIDE`
@@ -31,8 +32,6 @@ của học sinh vẫn nằm trong khu vực đăng nhập.
 Chọn **Thêm bài viết mới** để mở biểu mẫu. Thầy cô có thể ghim thông báo,
 chỉnh sửa bài và lưu trữ nội dung không còn dùng.
 Lưu trữ ẩn nội dung khỏi người đọc nhưng giữ lịch sử trong cơ sở dữ liệu.
-Góc điều tử tế ưu tiên bài đăng trong tuần; nếu chưa có bài mới, lời nhắn gần
-nhất tiếp tục hiển thị cho đến khi thầy cô thay thế hoặc lưu trữ.
 
 ## Chọn ảnh từ thiết bị
 
@@ -66,8 +65,8 @@ Dữ liệu sự kiện, thời khóa biểu và nhắc việc đã lưu vẫn �
 
 ## Trò chuyện
 
-Góc học sinh còn có **Trò chuyện**: phòng chung với lớp và kênh riêng với thầy
-cô. Giáo viên trả lời tại `/teacher#tro-chuyen`. Xem
+Mục **Trò chuyện** trên trang chủ có phòng chung với lớp và kênh riêng với thầy
+cô. Giáo viên trả lời tại `/teacher?tab=tro-chuyen`. Xem
 [hướng dẫn trò chuyện trong lớp](tro-chuyen-lop.md).
 
 ## Nội dung khởi đầu

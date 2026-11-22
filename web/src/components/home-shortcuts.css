@@ -5,6 +5,7 @@
   max-inline-size: 600px;
   margin-inline: auto;
   padding-block: 18px 8px;
+  scroll-margin-top: 12px;
 }
 
 .home-shortcuts .home-shortcut {
@@ -26,6 +27,7 @@
 }
 
 .home-shortcuts .home-shortcut:hover { border-color: #5a8eaa; }
+.home-shortcuts .home-shortcut[aria-current="location"] { border-color: #568e83; box-shadow: inset 0 -3px 0 #568e83; color: #175a4e; }
 .home-shortcuts .home-shortcut:focus-visible { outline: 3px solid #205d96; outline-offset: 3px; }
 .home-shortcut-icon { font-size: 17px; line-height: 1; flex-shrink: 0; }
 .home-shortcut-blue { --shortcut-bg: #e9f6ff; --shortcut-line: #cee5f5; }
