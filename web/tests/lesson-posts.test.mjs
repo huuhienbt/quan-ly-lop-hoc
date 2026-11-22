@@ -6,7 +6,19 @@ import { decodeLesson, lessonDateLabel, lessonInline, lessonSummary, resolveLess
 import { editableRuns, runLength, snapshotText, splitRich } from "../src/lib/lesson-editing.ts";
 import { readLessonAsset, stageLessonAsset } from "../src/lib/lesson-assets.ts";
 import { saveLearningPost } from "../src/lib/lesson-posts.ts";
-import { archiveContent, getPublicPosts, getStudentClassContent, getTeacherContentOverview } from "../src/lib/class-content.ts";
+import { archiveContent, getPublicPost, getPublicPosts, getStudentClassContent, getTeacherContentOverview, savePost } from "../src/lib/class-content.ts";
+import { publicationValues } from "../src/lib/post-dates.ts";
+
+test("posting dates follow Vietnam time and never act as a schedule", () => {
+  const vnMidnight = new Date("2026-11-21T17:00:00.000Z");
+  assert.deepEqual(publicationValues("PUBLISHED", "2026-11-22", vnMidnight),
+    { date: "2026-11-22", published: "2026-11-21T17:00:00.000Z" });
+  assert.deepEqual(publicationValues("PUBLISHED", "2026-11-19", vnMidnight),
+    { date: "2026-11-19", published: "2026-11-19T05:00:00.000Z" });
+  assert.deepEqual(publicationValues("DRAFT", "2026-11-19", vnMidnight), { date: "2026-11-19", published: null });
+  assert.equal(publicationValues("PUBLISHED", "2026-11-23", vnMidnight), null);
+  assert.equal(publicationValues("DRAFT", "2026-02-30", vnMidnight), null);
+});
 
 test("lesson documents accept configured media and safe text without injecting raw markup", () => {
   const text = "**Toán** *luyện tập* __câu 1__ [[frac:3|4]] <b>ví dụ</b>";
@@ -70,7 +82,7 @@ test("published lesson files are assembled, private to the right class, and revo
     const blocks = [snapshotText({ type:"text",text:"",align:"center" }, [
       { kind:"text",value:"Bài tập ",marks:{bold:true,color:"#164e9f"} }, { kind:"fraction",numerator:"2",denominator:"3" }, { kind:"blank" },
     ]), { type:"pdf",label:"Phiếu",assetId:id }];
-    const input = { title:"Toán 4", class_id:"lesson-a", document:JSON.stringify(blocks), status:"DRAFT",kind:"ACTIVITY" };
+    const input = { title:"Toán 4", class_id:"lesson-a", document:JSON.stringify(blocks), status:"DRAFT",kind:"ACTIVITY", post_date:"2024-10-14" };
     assert.equal(await saveLearningPost(other.id, input), false);
     assert.equal(await saveLearningPost(other.id, { ...input,class_id:"lesson-b" }), false);
     assert.equal(await readLessonAsset(id,{studentId:"family-a",version:1}), null);
@@ -79,12 +91,15 @@ test("published lesson files are assembled, private to the right class, and revo
     const post = (await getTeacherContentOverview(teacher.id, {includeLegacy:false})).posts[0];
     assert.deepEqual(decodeLesson(post.lesson_content), blocks);
     assert.equal(post.kind,"ACTIVITY");
+    assert.equal(post.post_date,"2024-10-14");
+    assert.equal(post.published_at,null);
     assert.equal(await readLessonAsset(id,{studentId:"family-a",version:1}), null);
     assert.equal(await saveLearningPost(teacher.id,{...input,id:post.id,status:"PUBLISHED",kind:"ANNOUNCEMENT"}),true);
     assert.deepEqual(await getPublicPosts(), []);
     const studentPost = (await getStudentClassContent("family-a",1)).students[0].posts[0];
     assert.equal(studentPost.id, post.id);
     assert.equal(studentPost.kind,"ANNOUNCEMENT");
+    assert.equal(studentPost.published_at,"2024-10-14T05:00:00.000Z");
     assert.deepEqual(decodeLesson(studentPost.lesson_content),blocks);
     assert.deepEqual((await readLessonAsset(id,{studentId:"family-a",version:1})).bytes, sample);
     for (const viewer of [{},{studentId:"family-b",version:1},{studentId:"family-a",version:2},{staffId:other.id}]) {
@@ -93,5 +108,30 @@ test("published lesson files are assembled, private to the right class, and revo
     assert.equal(await saveLearningPost(teacher.id,{...input,status:"PUBLISHED"}),false); // A file cannot be attached to a second post.
     await archiveContent(teacher.id,{type:"post",id:post.id});
     assert.equal(await readLessonAsset(id,{studentId:"family-a",version:1}),null);
+
+    const bullet = { class_id:"lesson-a", title:"Hoạt động giả lập", body:"Bản tin",
+      kind:"ACTIVITY", category:"CLASS_STORY", status:"DRAFT", visibility:"PUBLIC", is_pinned:false, post_date:"2024-10-13" };
+    const privateLessonDocument = JSON.stringify(blocks);
+    await assert.rejects(savePost(teacher.id,{...bullet,bulletin_content:privateLessonDocument}));
+    const { id: pdfId } = await stageLessonAsset(teacher.id,"lesson-a","pdf",file);
+    const bulletinBlocks = [blocks[0],{...blocks[1],assetId:pdfId}];
+    const document = JSON.stringify(bulletinBlocks);
+    const draft = await savePost(teacher.id,{...bullet,bulletin_content:document});
+    assert.equal(await getPublicPost(draft),null);
+    assert.equal(await readLessonAsset(pdfId,{}),null);
+    const recent = await savePost(teacher.id,{...bullet,title:"Bản tin cũ không định dạng",status:"PUBLISHED",post_date:"2024-10-14"});
+    await savePost(teacher.id,{...bullet,id:draft,status:"PUBLISHED",bulletin_content:document});
+    assert.deepEqual((await getPublicPosts()).map(p=>p.id),[recent,draft]);
+    assert.deepEqual(decodeLesson((await getPublicPost(draft)).bulletin_content),bulletinBlocks);
+    assert.deepEqual((await readLessonAsset(pdfId,{})).bytes,sample);
+    await savePost(teacher.id,{...bullet,id:draft,status:"PUBLISHED",bulletin_content:document,post_date:"2024-10-15"});
+    assert.deepEqual((await getPublicPosts()).map(p=>p.id),[draft,recent]);
+    assert.equal((await getPublicPost(draft)).published_at,"2024-10-15T05:00:00.000Z");
+    await assert.rejects(savePost(teacher.id,{...bullet,id:draft,status:"PUBLISHED",bulletin_content:document,post_date:"2999-10-15"}));
+    await savePost(teacher.id,{...bullet,id:draft,status:"PUBLISHED",bulletin_content:document,visibility:"PRIVATE"});
+    assert.equal(await getPublicPost(draft),null);
+    assert.equal(await readLessonAsset(pdfId,{}),null);
+    assert.deepEqual((await readLessonAsset(pdfId,{studentId:"family-a",version:1})).bytes,sample);
+    assert.equal(await readLessonAsset(pdfId,{studentId:"family-b",version:1}),null);
   } finally { fixture.restore(); }
 });

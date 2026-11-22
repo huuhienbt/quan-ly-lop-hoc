@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/rbac";
 import { decodeLesson } from "@/lib/lessons";
 import { saveLearningPost } from "@/lib/lesson-posts";
 import type { ContentActionState } from "./actions";
+import { postDateSchema, vietnamToday } from "@/lib/content-schemas";
 
 const rowId = z.string().regex(/^[A-Za-z0-9_-]{1,100}$/);
 const schema = z.object({
@@ -15,6 +16,7 @@ const schema = z.object({
   document: z.string().min(2).max(48000),
   kind: z.enum(["NEWS", "ANNOUNCEMENT", "ACTIVITY"]).optional(),
   status: z.enum(["DRAFT", "PUBLISHED"]),
+  post_date: postDateSchema.optional(),
 }).strict();
 
 export async function saveLearningPostAction(_previous: ContentActionState, form: FormData): Promise<ContentActionState> {
@@ -25,6 +27,9 @@ export async function saveLearningPostAction(_previous: ContentActionState, form
     const parsed = schema.safeParse(Object.fromEntries(entries));
     if (entries.length !== new Set(entries.map(([key]) => key)).size || !parsed.success || !decodeLesson(parsed.data.document)) {
       return { success: false, message: "Vui lòng nhập tiêu đề và kiểm tra văn bản, tệp hoặc đường dẫn trong bài." };
+    }
+    if (parsed.data.post_date && parsed.data.post_date > vietnamToday()) {
+      return { success: false, message: "Ngày đăng không được sau ngày hôm nay." };
     }
     if (!await saveLearningPost(actor.id, parsed.data)) {
       return { success: false, message: "Không thể lưu. Kiểm tra quyền của lớp và tải lại tệp chưa gắn được vào bài." };

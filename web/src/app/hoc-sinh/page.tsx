@@ -38,10 +38,15 @@ function PostCover({ post }: { post: ContentPost }) {
   return post.cover_url ? <Image className="student-post-cover" src={post.cover_url} alt={post.title} width={960} height={540} unoptimized /> : null;
 }
 
+function BulletinBody({ post }: { post: ContentPost }) {
+  const blocks = decodeLesson(post.bulletin_content);
+  return blocks ? <LessonContent blocks={blocks} /> : <p className="student-content-body">{post.body}</p>;
+}
+
 function ClassNews({ posts }: { posts: ContentPost[] }) {
   return <div className="student-news-list">{posts.map((post) => <details className="student-news-item" key={post.id}>
     <summary><span className="student-content-kicker">{post.kind === "ANNOUNCEMENT" ? "Thông báo" : post.category === "PARENT_GUIDE" ? "Gửi ba mẹ" : post.category === "CLASS_STORY" ? "Câu chuyện lớp" : "Tin lớp"}{post.is_pinned ? " · Được ghim" : ""}</span><h4>{post.title}</h4>{post.published_at && <time dateTime={post.published_at}>{postDate(post.published_at)}</time>}<span className="student-news-more">Đọc nội dung <span aria-hidden="true">↗</span></span></summary>
-    <PostCover post={post} /><p className="student-content-body">{post.body}</p>
+    <PostCover post={post} /><BulletinBody post={post} />
   </details>)}</div>;
 }
 
@@ -64,14 +69,14 @@ function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { spa
       {discovery.length ? <div className="student-article-list">{discovery.map((post) => {
         const blocks = decodeLesson(post.lesson_content);
         return <details className="student-article-card" key={post.id}>
-          <summary><span className="student-content-kicker">{lessonKinds[post.kind]}</span><h4>{post.title}</h4><span className="student-news-more">Mở bài học <span aria-hidden="true">↗</span></span></summary>
+          <summary><span className="student-content-kicker">{lessonKinds[post.kind]}</span><h4>{post.title}</h4>{post.published_at && <time dateTime={post.published_at}>{postDate(post.published_at)}</time>}<span className="student-news-more">Mở bài học <span aria-hidden="true">↗</span></span></summary>
           <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} /> : <p className="student-content-body">{post.body}</p>}
         </details>;
       })}</div> : <p className="student-content-empty">Bài học sẽ xuất hiện khi thầy cô đăng.</p>}
     </section>
       <section className="student-content-panel student-kindness-panel" aria-labelledby={`${prefix}-kindness-title`}>
         <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><HeartIcon /></span><div><h3 id={`${prefix}-kindness-title`}>Một điều tử tế tuần này</h3><p className="student-content-panel-copy">Việc nhỏ hôm nay, niềm vui ngày mai.</p></div></div></div>
-        {kindness.length ? kindness.map((post) => <article className="student-kindness-body" key={post.id}><h4>{post.title}</h4><PostCover post={post} /><p className="student-content-body">{post.body}</p></article>) : <p className="student-content-empty">Lời nhắn tử tế của tuần sẽ được thầy cô gửi tới em tại đây.</p>}
+        {kindness.length ? kindness.map((post) => <article className="student-kindness-body" key={post.id}><h4>{post.title}</h4><PostCover post={post} /><BulletinBody post={post} /></article>) : <p className="student-content-empty">Lời nhắn tử tế của tuần sẽ được thầy cô gửi tới em tại đây.</p>}
       </section>
   </div>;
 

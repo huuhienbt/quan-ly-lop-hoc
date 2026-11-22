@@ -110,3 +110,17 @@
   .lesson-composer :is(input:not([type=hidden]), select) { font-size: 16px; }
   .lesson-composer .lesson-toolbar :is(button, select) { min-height: 44px; }
 }
+
+.lesson-composer .lesson-date-note {
+  color: #586f85;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.lesson-composer .lesson-bulletin-options { display: grid; gap: 9px; margin-block: 12px; }
+.lesson-composer .lesson-cover { border: 1px solid var(--composer-border); border-radius: 10px; padding: 7px 11px; }
+.lesson-composer .lesson-cover summary { min-height: 32px; line-height: 32px; cursor: pointer; font-weight: 800; }
+.lesson-composer .lesson-cover .post-image-picker { margin: 6px 0 0; }
+.lesson-composer .lesson-pin { display: flex; align-items: center; gap: 8px; }
+.lesson-composer .lesson-pin input[type="checkbox"] { appearance: auto; width: 17px; min-height: 17px; padding: 0; accent-color: #a93a00; }

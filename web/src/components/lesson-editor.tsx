@@ -2,10 +2,12 @@
 
 import { useActionState, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { saveLearningPostAction } from "@/app/teacher/lesson-actions";
+import { saveRichBulletinAction } from "@/app/teacher/actions";
 import { vietnamToday, type ContentPost } from "@/lib/content-schemas";
 import { decodeLesson, lessonAssetId, lessonColors, lessonDateLabel, lessonKinds, lessonWidths, MAX_LESSON_PDF, type LessonBlock, type LessonMarks, type LessonRun } from "@/lib/lessons";
 import { editableRuns, emptyText, focusRich, readRich, readSelection, runLength, snapshotText, splitRich, writeRich, type TextBlock } from "@/lib/lesson-editing";
 import { LessonRichBlock } from "./lesson-render";
+import { PostImagePicker } from "./post-image-picker";
 import "./lesson-composer.css";
 
 type Media = Exclude<LessonBlock, TextBlock>;
@@ -19,6 +21,8 @@ const mediaTools = [
 ] as const;
 const mediaLabels: Record<MediaType, string> = { link: "Liên kết", image: "Hình ảnh", video: "Video", audio: "Âm thanh / MP3", pdf: "PDF" };
 const symbols = ["×", "÷", "−", "±", "≠", "≤", "≥", "°", "²", "³", "√", "π", "½", "¼", "¾"];
+const bulletinKinds = { NEWS: "Bản tin", ANNOUNCEMENT: "Thông báo", ACTIVITY: "Hoạt động" };
+const bulletinCategories = { GENERAL: "Tin chung", CLASS_STORY: "Chuyện lớp mình", KINDNESS: "Điều tử tế", PARENT_GUIDE: "Đồng hành cùng con" };
 
 function createMedia(type: MediaType, width: typeof lessonWidths[number]): Media {
   if (type === "image") return { type, label: "", width };
@@ -26,9 +30,11 @@ function createMedia(type: MediaType, width: typeof lessonWidths[number]): Media
   return { type, label: "", url: "" };
 }
 
-function startingBlocks(post?: ContentPost): LessonBlock[] {
-  return decodeLesson(post?.lesson_content) ?? (post?.body
-    ? (post.body.match(/[\s\S]{1,6000}/gu) ?? []).map(text => ({ type: "text", text, align: "left" }))
+function startingBlocks(post: ContentPost | undefined, bulletin: boolean): LessonBlock[] {
+  return decodeLesson(bulletin ? post?.bulletin_content : post?.lesson_content) ?? (post?.body
+    ? (post.body.match(/[\s\S]{1,4000}/gu) ?? []).map(text => ({
+      type: "text", text, align: "left", ...(bulletin ? { rich: [{ kind: "text", value: text }] } : {}),
+    }))
     : [emptyText()]);
 }
 
@@ -118,11 +124,21 @@ function MediaPanel({ initial, classId, onAdd, close, setUploading }: {
   </section>;
 }
 
-export function LessonEditor({ classId, post, today }: { classId: string; post?: ContentPost; today: string }) {
-  const [initial] = useState(() => startingBlocks(post));
+export function LessonEditor({ classId, post, today, mode = "lesson" }: { classId: string; post?: ContentPost; today: string; mode?: "lesson" | "bulletin" }) {
+  const bulletin = mode === "bulletin";
+  const noun = bulletin ? "bài viết" : "bài học";
+  const [initial] = useState(() => startingBlocks(post, bulletin));
   const [rows, setRows] = useState<Row[]>(() => initial.map((block, key) => ({ block, key })));
   const [title, setTitle] = useState(post?.title ?? "");
   const [kind, setKind] = useState<ContentPost["kind"]>(post?.kind ?? "NEWS");
+  const [postDate, setPostDate] = useState(post?.post_date ?? (post?.published_at ? vietnamToday(new Date(post.published_at)) : today));
+  const [category, setCategory] = useState(post?.category === "DISCOVERY" ? "GENERAL" : post?.category ?? "GENERAL");
+  const [visibility, setVisibility] = useState(post?.visibility ?? "PRIVATE");
+  const [pinned, setPinned] = useState(post?.is_pinned === 1);
+  const [coverUrl, setCoverUrl] = useState(post?.cover_url ?? "");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverReset, setCoverReset] = useState(0);
+  const [preparingCover, setPreparingCover] = useState(false);
   const [tool, setTool] = useState<Choice>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -136,12 +152,15 @@ export function LessonEditor({ classId, post, today }: { classId: string; post?:
   const afterRenderFocus = useRef<number | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const prefix = useId();
-  const [state, action, pending] = useActionState(async (previous: { success: boolean; message: string }, form: FormData) => {
-    const result = await saveLearningPostAction(previous, form);
+  const [state, action, pending] = useActionState(async (previous: { success: boolean; message: string; fieldErrors?: Record<string, string[]> }, form: FormData) => {
+    if (bulletin && coverFile) form.set("cover_image", coverFile);
+    const result = await (bulletin ? saveRichBulletinAction : saveLearningPostAction)(previous, form);
     if (result.success && !post) {
       const key = nextKey.current++;
       setRows([{ key, block: emptyText() }]); setActiveKey(key);
       setTitle(""); setKind("NEWS"); setTool(null); setImageKey(null); saved.current.clear();
+      setPostDate(today); setCategory("GENERAL"); setVisibility("PRIVATE"); setPinned(false);
+      setCoverFile(null); setCoverUrl(""); setCoverReset(value => value + 1);
     }
     return result;
   }, { success: false, message: "" });
@@ -267,27 +286,38 @@ export function LessonEditor({ classId, post, today }: { classId: string; post?:
   const payload = JSON.stringify(rows.map(row => row.block).filter(block => block.type !== "text" || block.text.trim()));
   const mouse = (event: React.MouseEvent) => event.preventDefault();
   return <form className="lesson-composer" action={action} ref={formRef} data-lesson-composer onSubmit={event => {
-    if (uploading || tool || !decodeLesson(payload)) {
+    if (uploading || preparingCover || tool || !decodeLesson(payload)) {
       event.preventDefault();
-      setError(tool ? "Hãy chèn hoặc đóng công cụ đang mở trước khi lưu." : "Hãy nhập nội dung hợp lệ. Bài học tối đa 24 khối và 48.000 ký tự lưu trữ.");
+      setError(tool ? "Hãy chèn hoặc đóng công cụ đang mở trước khi lưu." : "Hãy nhập nội dung hợp lệ, tối đa 24 khối và 48.000 ký tự lưu trữ.");
     } else setError("");
   }}>
     <input type="hidden" name="class_id" value={classId} />
     {post && <input type="hidden" name="id" value={post.id} />}
-    <input type="hidden" name="document" value={payload} />
+    <input type="hidden" name={bulletin ? "bulletin_content" : "document"} value={payload} />
     <div className="lesson-composer-head">
-      <button type="button" className="lesson-close" aria-label="Đóng khung soạn" onClick={close} disabled={pending || uploading}>×</button>
-      <h3>{post ? "Chỉnh sửa bài học" : "Tạo bài học mới"}</h3>
+      <button type="button" className="lesson-close" aria-label="Đóng khung soạn" onClick={close} disabled={pending || uploading || preparingCover}>×</button>
+      <h3>{post ? `Chỉnh sửa ${noun}` : `Tạo ${noun} mới`}</h3>
     </div>
     <fieldset className="lesson-composer-fields" disabled={pending || uploading}>
-      <legend className="sr-only">Soạn bài học</legend>
+      <legend className="sr-only">Soạn {noun}</legend>
       <div className="lesson-meta">
         <label>Loại bài viết<select name="kind" value={kind} onChange={e => setKind(e.target.value as ContentPost["kind"])}>
-          {Object.entries(lessonKinds).map(([value,label]) => <option value={value} key={value}>{label}</option>)}
+          {Object.entries(bulletin ? bulletinKinds : lessonKinds).map(([value,label]) => <option value={value} key={value}>{label}</option>)}
         </select></label>
-        <div className="lesson-display"><span>Thời gian hiển thị</span><p>{lessonDateLabel(post?.published_at ? vietnamToday(new Date(post.published_at)) : today)}</p></div>
+        <label>Ngày đăng<input type="date" name="post_date" required max={today} value={postDate} onChange={e => setPostDate(e.target.value)}
+          aria-describedby={`${prefix}-post-date-note`} />
+          <small className="lesson-date-note" id={`${prefix}-post-date-note`}>{postDate ? lessonDateLabel(postDate) : "Chọn ngày hiển thị trên bài."}</small>
+        </label>
         <label className="lesson-name">Tiêu đề<input name="title" required maxLength={200} value={title} onChange={e => setTitle(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter" && !e.nativeEvent.isComposing) e.preventDefault(); }} placeholder="Nhập tiêu đề bài học" /></label>
+          onKeyDown={e => { if (e.key === "Enter" && !e.nativeEvent.isComposing) e.preventDefault(); }} placeholder={`Nhập tiêu đề ${noun}`} /></label>
+        {bulletin && <>
+          <label>Chuyên mục<select name="category" value={category} onChange={e => setCategory(e.target.value as typeof category)}>
+            {Object.entries(bulletinCategories).map(([value,label]) => <option value={value} key={value}>{label}</option>)}
+          </select></label>
+          <label>Ai được xem<select name="visibility" value={visibility} onChange={e => setVisibility(e.target.value as typeof visibility)}>
+            <option value="PRIVATE">Chỉ trong lớp</option><option value="PUBLIC">Công khai trên trang chủ</option>
+          </select></label>
+        </>}
       </div>
       <p className="lesson-editor-label" id={prefix}>Nội dung</p>
       <div className="lesson-toolbar" role="group" aria-label="Công cụ soạn bài">
@@ -339,11 +369,18 @@ export function LessonEditor({ classId, post, today }: { classId: string; post?:
               <LessonRichBlock block={block} preview />
             </section>)}
       </div>
+      {bulletin && <div className="lesson-bulletin-options">
+        <details className="lesson-cover"><summary>Ảnh bìa bản tin{coverUrl || coverFile ? " · Đã chọn" : " (không bắt buộc)"}</summary>
+          <PostImagePicker prefix={prefix} coverUrl={coverUrl} onCoverUrlChange={setCoverUrl} onFileChange={setCoverFile}
+            onProcessingChange={setPreparingCover} disabled={pending || uploading} resetKey={coverReset} error={state.fieldErrors?.cover_url?.join(" ")} />
+        </details>
+        <label className="lesson-pin"><input type="checkbox" name="is_pinned" checked={pinned} onChange={e => setPinned(e.target.checked)} /> Ghim lên đầu bảng tin</label>
+      </div>}
       {(error || state.message) && <p className={`teacher-feedback ${!error && state.success ? "is-success" : "is-error"}`} role={!error && state.success ? "status" : "alert"}>{error || state.message}</p>}
       <div className="lesson-composer-actions">
-        <button type="submit" name="status" value="PUBLISHED" className="lesson-publish" disabled={!!tool}>{uploading ? "Đang tải tệp…" : pending ? "Đang lưu…" : "Đăng lên hệ thống"}</button>
-        <button type="submit" name="status" value="DRAFT" className="lesson-draft" disabled={!!tool}>Lưu nháp</button>
-        <span>Chỉ học sinh của lớp xem được bài đã đăng.</span>
+        <button type="submit" name="status" value="PUBLISHED" className="lesson-publish" disabled={!!tool || preparingCover}>{uploading ? "Đang tải tệp…" : preparingCover ? "Đang chuẩn bị ảnh bìa…" : pending ? "Đang lưu…" : "Đăng lên hệ thống"}</button>
+        <button type="submit" name="status" value="DRAFT" className="lesson-draft" disabled={!!tool || preparingCover}>Lưu nháp</button>
+        <span>{bulletin && visibility === "PUBLIC" ? "Mọi người có thể xem bài và tệp chèn trong bài sau khi đăng." : "Chỉ học sinh của lớp xem được bài đã đăng."}</span>
       </div>
     </fieldset>
   </form>;

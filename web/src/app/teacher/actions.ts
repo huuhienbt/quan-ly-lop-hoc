@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/rbac";
 import { archiveContent, ContentActionError, saveEvent, savePost, saveTask } from "@/lib/class-content";
 import { archiveContentSchema, eventSchema, postSchema, taskSchema } from "@/lib/content-schemas";
 import { PostImageValidationError } from "@/lib/post-images";
+import { decodeLesson, lessonSummary } from "@/lib/lessons";
 
 export interface ContentActionState {
   success: boolean;
@@ -56,6 +57,20 @@ async function runContentAction<T extends z.ZodType>(
 
 export async function savePostAction(_previous: ContentActionState, formData: FormData): Promise<ContentActionState> {
   return runContentAction(formData, postSchema, savePost, "Đã lưu bài viết.", true);
+}
+
+const bulletinSchema = postSchema.omit({ body: true }).required({ bulletin_content: true }).transform((input, context) => {
+  const blocks = decodeLesson(input.bulletin_content);
+  if (!blocks || input.category === "DISCOVERY") {
+    context.addIssue({ code: "custom", path: ["bulletin_content"], message: "Nội dung bản tin không hợp lệ." });
+    return z.NEVER;
+  }
+  return { ...input, body: lessonSummary(blocks) };
+});
+
+export async function saveRichBulletinAction(_previous: ContentActionState, formData: FormData): Promise<ContentActionState> {
+  return runContentAction(formData, bulletinSchema, savePost,
+    formData.get("status") === "PUBLISHED" ? "Đã đăng bài lên bảng tin." : "Đã lưu bản nháp bản tin.", true);
 }
 
 export async function saveEventAction(_previous: ContentActionState, formData: FormData): Promise<ContentActionState> {

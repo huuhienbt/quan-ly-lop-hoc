@@ -10,6 +10,8 @@ const calendarDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày cần có đ
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
   }, "Ngày không tồn tại.");
 
+export const postDateSchema = calendarDate.refine((value) => !value.startsWith("0000-"), "Ngày đăng không hợp lệ.");
+
 export const postCategories = ["GENERAL", "CLASS_STORY", "KINDNESS", "PARENT_GUIDE", "DISCOVERY"] as const;
 export type PostCategory = typeof postCategories[number];
 export type ContentVisibility = "PUBLIC" | "PRIVATE";
@@ -22,6 +24,8 @@ export const postSchema = z.object({
   class_id: id,
   title,
   body: z.string().trim().min(1, "Vui lòng nhập nội dung.").max(20_000, "Nội dung không quá 20.000 ký tự."),
+  bulletin_content: z.string().min(2).max(48000).optional(),
+  post_date: postDateSchema.optional(),
   kind: z.enum(["NEWS", "ANNOUNCEMENT", "ACTIVITY"]),
   category: z.enum(postCategories),
   cover_url: z.union([
@@ -81,6 +85,8 @@ interface ClassContentFields { id: string; class_id: string; class_name: string;
 export interface ContentPost extends ClassContentFields {
   body: string;
   lesson_content?: string | null;
+  bulletin_content?: string | null;
+  post_date?: string | null;
   kind: "NEWS" | "ANNOUNCEMENT" | "ACTIVITY";
   category: PostCategory;
   cover_url: string | null;

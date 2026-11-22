@@ -2,6 +2,9 @@ import "server-only";
 
 import { batch, query, type D1Statement } from "@/lib/d1";
 import { normalizePostImage, postImageUrl } from "@/lib/post-images";
+import { attachPostAssets, postAssetGuard } from "@/lib/post-attachments";
+import { postDateUpdate, postDateUpdateParams, publicationValues } from "@/lib/post-dates";
+import { decodeLesson, lessonSummary } from "@/lib/lessons";
 import { getStudentTimetablePlan } from "@/lib/class-timetable";
 import {
   archiveContentSchema,
@@ -68,6 +71,7 @@ const taskJoins = "JOIN classes c ON c.id = task.class_id JOIN schools school ON
 const postFields = `p.id, p.class_id, c.name AS class_name, c.slug AS class_slug,
   p.title, p.body, p.kind, p.category, p.cover_url, p.status, p.visibility,
   p.is_pinned, p.published_at, p.created_at, p.updated_at`;
+const richPostFields = `${postFields}, p.lesson_content, p.bulletin_content, p.post_date`;
 const eventFields = `event.id, event.class_id, c.name AS class_name, c.slug AS class_slug,
   event.title, event.body, event.event_date, event.starts_at, event.visibility,
   event.status, event.created_at, event.updated_at`;
@@ -106,7 +110,7 @@ export async function getPublicBulletin(): Promise<PublicBulletin> {
 
 export async function getPublicPost(id: string): Promise<ContentPost | null> {
   if (!archiveContentSchema.shape.id.safeParse(id).success) return null;
-  return (await query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
+  return (await query<ContentPost>(`SELECT ${postFields}, p.bulletin_content FROM posts p ${classJoins}
     WHERE p.id = ? AND p.status = 'PUBLISHED' AND p.visibility = 'PUBLIC' AND ${activeClass}`, [id]))[0] ?? null;
 }
 
@@ -138,7 +142,7 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
   const students = await Promise.all(identities.map(async (identity): Promise<StudentClassSpace> => {
     const own = [accountId, sessionVersion, identity.enrollment_id];
     const [posts, events, taskRows, timetable] = await Promise.all([
-      query<ContentPost>(`SELECT ${postFields}, p.lesson_content FROM posts p ${classJoins}
+      query<ContentPost>(`SELECT ${richPostFields} FROM posts p ${classJoins}
         WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${activeClass} AND ${studentAccess}
         ORDER BY ${postOrder} LIMIT 100`, [identity.class_id, ...own]),
       query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
@@ -168,7 +172,7 @@ export async function getTeacherContentOverview(
     query<ContentClass>(`SELECT c.id, c.name, c.slug, c.school_id, school.name AS school_name
       FROM classes c JOIN schools school ON school.id = c.school_id
       WHERE ${activeClass} AND ${staffAccess} ORDER BY c.grade, c.name, c.id`, [actorId]),
-    query<ContentPost>(`SELECT ${postFields}, p.lesson_content FROM posts p ${classJoins}
+    query<ContentPost>(`SELECT ${richPostFields} FROM posts p ${classJoins}
       WHERE p.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
       ORDER BY ${postOrder} LIMIT 500`, [actorId]),
     includeLegacy ? query<ClassEvent>(`SELECT ${eventFields} FROM class_events event ${eventJoins}
@@ -200,7 +204,18 @@ export async function savePost(actorId: string, input: PostInput, upload?: File)
   if (!parsed.success) throw new ContentActionError("Nội dung bài viết không hợp lệ.");
   input = parsed.data;
   const id = input.id ?? crypto.randomUUID();
-  const now = new Date().toISOString();
+  const current = new Date();
+  const now = current.toISOString();
+  const publication = publicationValues(input.status, input.post_date, current);
+  if (!publication) throw new ContentActionError("Ngày đăng không được sau ngày hôm nay.");
+  const blocks = decodeLesson(input.bulletin_content);
+  if (input.bulletin_content && (!blocks || input.category === "DISCOVERY")) throw new ContentActionError("Nội dung bản tin không hợp lệ.");
+  const document = blocks ? JSON.stringify(blocks) : null;
+  if (document && document.length > 48000) throw new ContentActionError("Nội dung bản tin quá dài.");
+  const body = blocks ? lessonSummary(blocks) : input.body;
+  const assetGuard = document ? postAssetGuard : "";
+  const assetParams = document ? [document, id, actorId] : [];
+  const editShape = document ? "AND category <> 'DISCOVERY'" : "AND bulletin_content IS NULL";
   // Avoid decoding files for an unassigned or revoked account. The batch below
   // repeats the authorization check to handle permissions changing meanwhile.
   if (upload && !(await query<{ id: string }>(`SELECT c.id FROM classes c
@@ -217,23 +232,23 @@ export async function savePost(actorId: string, input: PostInput, upload?: File)
     ? "AND EXISTS (SELECT 1 FROM post_images image WHERE image.id = ? AND image.class_id = c.id)" : "";
   const imageGuardParams = existingImage ? [coverUrl!.split("/").at(-1)!] : [];
   const statement: D1Statement = input.id ? {
-    sql: `UPDATE posts SET title = ?, body = ?, kind = ?, category = ?, cover_url = ?,
+    sql: `UPDATE posts SET title = ?, body = ?, bulletin_content = ?, kind = ?, category = ?, cover_url = ?,
         status = ?, visibility = ?, is_pinned = ?,
-        published_at = CASE WHEN ? = 'PUBLISHED' THEN COALESCE(published_at, ?) ELSE NULL END, updated_at = ?
-      WHERE id = ? AND class_id = ? AND status <> 'ARCHIVED' AND lesson_content IS NULL
+        ${postDateUpdate}, updated_at = ?
+      WHERE id = ? AND class_id = ? AND status <> 'ARCHIVED' AND lesson_content IS NULL ${editShape}
         AND EXISTS (SELECT 1 FROM classes c JOIN schools school ON school.id = c.school_id
-          WHERE c.id = posts.class_id AND ${activeClass} AND ${staffAccess} ${imageGuard})`,
-    params: [input.title, input.body, input.kind, input.category, coverUrl,
-      input.status, input.visibility, Number(input.is_pinned), input.status, now, now, id, input.class_id, actorId, ...imageGuardParams],
+          WHERE c.id = posts.class_id AND ${activeClass} AND ${staffAccess} ${imageGuard} ${assetGuard})`,
+    params: [input.title, body, document, input.kind, input.category, coverUrl,
+      input.status, input.visibility, Number(input.is_pinned), ...postDateUpdateParams(publication), now, id, input.class_id, actorId, ...imageGuardParams, ...assetParams],
   } : {
     sql: `INSERT INTO posts
-        (id, class_id, author_id, title, body, kind, category, cover_url, status, visibility, is_pinned, published_at, created_at, updated_at)
-      SELECT ?, c.id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM classes c
+        (id, class_id, author_id, title, body, bulletin_content, kind, category, cover_url, status, visibility, is_pinned, published_at, post_date, created_at, updated_at)
+      SELECT ?, c.id, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM classes c
       JOIN schools school ON school.id = c.school_id
-      WHERE c.id = ? AND ${activeClass} AND ${staffAccess} ${imageGuard}`,
-    params: [id, actorId, input.title, input.body, input.kind, input.category, coverUrl,
-      input.status, input.visibility, Number(input.is_pinned), input.status === "PUBLISHED" ? now : null, now, now,
-      input.class_id, actorId, ...imageGuardParams],
+      WHERE c.id = ? AND ${activeClass} AND ${staffAccess} ${imageGuard} ${assetGuard}`,
+    params: [id, actorId, input.title, body, document, input.kind, input.category, coverUrl,
+      input.status, input.visibility, Number(input.is_pinned), publication.published, publication.date, now, now,
+      input.class_id, actorId, ...imageGuardParams, ...assetParams],
   };
   const statements: D1Statement[] = [statement];
   if (image && imageId) statements.push({
@@ -248,7 +263,8 @@ export async function savePost(actorId: string, input: PostInput, upload?: File)
   });
   statements.push(staffAudit(actorId, input.class_id,
     input.id ? "POST_UPDATED" : "POST_CREATED", "post", id,
-    { category: input.category, status: input.status, visibility: input.visibility, image_uploaded: !!image }));
+    { category: input.category, status: input.status, visibility: input.visibility, image_uploaded: !!image, post_date: publication.date }));
+  if (document) statements.push(attachPostAssets(id, input.class_id, actorId, document));
   const results = await batch(statements);
   if (!results[0]?.meta.changes) throw new ContentActionError("Bài viết/lớp không còn khả dụng hoặc bạn không có quyền biên tập lớp này.");
   return id;

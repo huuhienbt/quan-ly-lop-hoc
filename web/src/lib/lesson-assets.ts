@@ -53,16 +53,15 @@ export async function readLessonAsset(id: string, viewer: { staffId?: string; st
   const staff = viewer.staffId && validId.test(viewer.staffId) ? viewer.staffId : "";
   const student = viewer.studentId && validId.test(viewer.studentId) ? viewer.studentId : "";
   const version = Number.isSafeInteger(viewer.version) && (viewer.version ?? 0) > 0 ? viewer.version! : 0;
-  if (!staff && (!student || !version)) return null;
   const rows = await query<{ mime: string; byte_size: number; data_base64: string }>(`SELECT a.mime, a.byte_size, part.data_base64
     FROM lesson_assets a JOIN lesson_asset_parts part ON part.asset_id = a.id
     JOIN classes c ON c.id = a.class_id JOIN schools school ON school.id = c.school_id
     WHERE a.id = ? AND a.ready = 1 AND ${lessonClassActive} AND (
       (${lessonStaffAccess} AND (a.post_id IS NOT NULL OR a.uploaded_by = ?))
-      OR (EXISTS (SELECT 1 FROM posts p, json_each(p.lesson_content) block
+      OR EXISTS (SELECT 1 FROM posts p, json_each(COALESCE(p.lesson_content, p.bulletin_content)) block
         WHERE p.id = a.post_id AND p.class_id = c.id AND p.status = 'PUBLISHED'
-          AND json_extract(block.value, '$.assetId') = a.id)
-        AND ${lessonStudentAccess})
+          AND json_extract(block.value, '$.assetId') = a.id
+          AND ((p.visibility = 'PUBLIC' AND p.bulletin_content IS NOT NULL) OR ${lessonStudentAccess}))
     ) ORDER BY part.part`, [id, staff, staff, student, version]);
   if (!rows.length) return null;
   const bytes = Buffer.concat(rows.map((row) => Buffer.from(row.data_base64, "base64")));

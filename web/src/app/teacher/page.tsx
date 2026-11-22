@@ -8,6 +8,7 @@ import { SchoolIcon, ShieldIcon, SunIcon } from "@/components/icons";
 import { getCurrentUser } from "@/lib/rbac";
 import { getTeacherContentOverview } from "@/lib/class-content";
 import type { PostCategory } from "@/lib/content-schemas";
+import { formatContentDate } from "@/components/bulletin";
 import { LessonEditor } from "@/components/lesson-editor";
 import { ClassChat } from "@/components/class-chat";
 
@@ -47,10 +48,10 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
           </nav>
           {tab === "bai-viet" ? <section className="teacher-content-section" id="bai-viet" aria-labelledby="teacher-posts-title"><div className="teacher-section-heading"><div><p className="eyebrow">GỬI GẮM NHỮNG ĐIỀU TỐT ĐẸP</p><h2 id="teacher-posts-title">Bảng tin của lớp</h2></div><span className="teacher-section-note">Bản nháp chỉ dành cho người biên tập.</span></div><details className="teacher-post-create">
             <summary className="button button-primary"><span className="teacher-post-create-icon" aria-hidden="true">+</span> Thêm bài viết mới</summary>
-            <div className="teacher-panel"><div className="teacher-panel-body"><PostEditorForm key={selectedClass.id} classId={selectedClass.id} /></div></div>
+            <LessonEditor key={selectedClass.id} classId={selectedClass.id} today={overview.today} mode="bulletin" />
           </details>
           <div className="teacher-items-column">
-            {posts.length ? posts.map((post) => <article className="teacher-content-card" key={post.id}><div className="teacher-content-badges"><span className={`badge ${post.status === "PUBLISHED" ? "badge-green" : "badge-amber"}`}>{post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}</span><span className="badge badge-neutral">{post.visibility === "PUBLIC" ? "Công khai" : "Trong lớp"}</span>{post.is_pinned === 1 && <span className="badge badge-amber">Đã ghim</span>}</div><p className="teacher-content-category">{kindLabels[post.kind]} · {categoryLabels[post.category]}</p><h3>{post.title}</h3><p className="teacher-content-excerpt">{post.body.slice(0, 220)}{post.body.length > 220 ? "…" : ""}</p>{post.cover_url && <p className="teacher-content-meta">Đã có ảnh bìa</p>}<details className="teacher-edit-details"><summary>Chỉnh sửa bài viết</summary><PostEditorForm key={`${post.id}-${post.updated_at}`} classId={selectedClass.id} post={post} /></details><ArchiveContentForm type="post" id={post.id} title={post.title} /></article>) : <div className="teacher-empty-content"><span className="teacher-empty-icon"><SunIcon /></span><h3>Câu chuyện đầu tiên đang chờ thầy cô</h3><p>Thêm một lời chào, một thông báo hoặc một hoạt động đáng nhớ của lớp.</p></div>}
+            {posts.length ? posts.map((post) => <article className="teacher-content-card" key={post.id}><div className="teacher-content-badges"><span className={`badge ${post.status === "PUBLISHED" ? "badge-green" : "badge-amber"}`}>{post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}</span><span className="badge badge-neutral">{post.visibility === "PUBLIC" ? "Công khai" : "Trong lớp"}</span>{post.is_pinned === 1 && <span className="badge badge-amber">Đã ghim</span>}</div><p className="teacher-content-category">{kindLabels[post.kind]} · {categoryLabels[post.category]}</p><h3>{post.title}</h3>{post.published_at && <p className="teacher-content-meta">Ngày đăng: <time dateTime={post.published_at}>{formatContentDate(post.published_at)}</time></p>}<p className="teacher-content-excerpt">{post.body.slice(0, 220)}{post.body.length > 220 ? "…" : ""}</p>{post.cover_url && <p className="teacher-content-meta">Đã có ảnh bìa</p>}<details className="teacher-edit-details"><summary>Chỉnh sửa bài viết</summary><LessonEditor key={`${post.id}-${post.updated_at}`} classId={selectedClass.id} today={overview.today} post={post} mode="bulletin" /></details><ArchiveContentForm type="post" id={post.id} title={post.title} /></article>) : <div className="teacher-empty-content"><span className="teacher-empty-icon"><SunIcon /></span><h3>Câu chuyện đầu tiên đang chờ thầy cô</h3><p>Thêm một lời chào, một thông báo hoặc một hoạt động đáng nhớ của lớp.</p></div>}
           </div></section>
 
           : tab === "hoc-tap" ? <section className="teacher-content-section" id="hoc-tap" aria-labelledby="teacher-lesson-title">
@@ -62,9 +63,9 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
             <div className="teacher-items-column">
               {posts.length ? posts.map(post => <article className="teacher-content-card" key={post.id}>
                 <div className="teacher-content-badges"><span className={post.status === "PUBLISHED" ? "badge badge-green" : "badge badge-amber"}>{post.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}</span><span className="badge badge-neutral">{post.visibility === "PUBLIC" ? "Bài cũ công khai" : "Trong lớp"}</span></div>
-                <h3>{post.title}</h3><p className="teacher-content-excerpt">{post.body.slice(0, 180)}</p>
+                <h3>{post.title}</h3>{post.published_at && <p className="teacher-content-meta">Ngày đăng: <time dateTime={post.published_at}>{formatContentDate(post.published_at)}</time></p>}<p className="teacher-content-excerpt">{post.body.slice(0, 180)}</p>
                 <details className="teacher-edit-details"><summary>Sửa bài học</summary>
-                  {post.visibility === "PUBLIC" ? <PostEditorForm key={post.updated_at} classId={selectedClass.id} post={post} />
+                  {post.visibility === "PUBLIC" ? <PostEditorForm key={post.updated_at} classId={selectedClass.id} post={post} today={overview.today} />
                     : <LessonEditor key={post.updated_at} classId={selectedClass.id} today={overview.today} post={post} />}
                 </details>
                 <ArchiveContentForm type="post" id={post.id} title={post.title} />
