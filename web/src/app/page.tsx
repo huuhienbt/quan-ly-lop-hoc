@@ -36,7 +36,7 @@ export default async function Home() {
   }
 
   return <div className="site-shell bulletin-home">
-    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand /><div className="header-actions"><Link className="button button-primary bulletin-student-link" href="/dang-nhap">{user || student ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></header></div>
+    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand classHomepage /><div className="header-actions"><Link className="button button-primary bulletin-student-link" href="/dang-nhap">{user || student ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></header></div>
     <main id="noi-dung">
       <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><div className="bulletin-hero-actions"><Link className="button button-primary" href={student ? "/hoc-sinh" : "/dang-nhap"}>Vào lớp học <ArrowIcon /></Link><a className="button bulletin-hero-secondary" href="#bang-tin">Xem tin lớp</a></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 

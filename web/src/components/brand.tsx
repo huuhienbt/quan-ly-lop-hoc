@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { getSiteTheme } from "@/lib/site-theme";
 
-export async function Brand({ compact = false }: { compact?: boolean }) {
+export async function Brand({ compact = false, classHomepage = false }: { compact?: boolean; classHomepage?: boolean }) {
   const theme = await getSiteTheme();
   const storybook = theme === "discovery" || theme === "harmony";
   return (
-    <Link href="/" className="brand" aria-label="Lớp học hạnh phúc — Trang chủ">
+    <Link href="/" className={classHomepage ? "brand class-home-brand" : "brand"} aria-label="Lớp học hạnh phúc — Trang chủ">
       <span className="brand-symbol" aria-hidden="true">
         {storybook ? <svg viewBox="0 0 64 64" fill="none">
           <path d="M7 20c9-3 18-2 25 3 7-5 16-6 25-3v31c-9-3-18-2-25 3-7-5-16-6-25-3V20Z" fill="#FFFDF5" stroke="#18558B" strokeWidth="2.7" strokeLinejoin="round" />
@@ -22,7 +22,8 @@ export async function Brand({ compact = false }: { compact?: boolean }) {
       </span>
       <span className="brand-copy">
         <strong>Lớp học hạnh phúc</strong>
-        {!compact && <span>TRƯỜNG TIỂU HỌC BẾN TRE</span>}
+        {classHomepage ? <span className="class-home-brand-detail">Bốn 12 · Trường Tiểu học Bến Tre</span>
+          : !compact && <span>TRƯỜNG TIỂU HỌC BẾN TRE</span>}
       </span>
     </Link>
   );

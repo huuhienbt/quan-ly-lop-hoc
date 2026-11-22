@@ -42,7 +42,7 @@ export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: H
     <div className="harmony-home">
       <header className="harmony-header">
         <div className="harmony-container harmony-header-inner">
-          <Brand />
+          <Brand classHomepage />
           <div className="harmony-header-actions"><Link className="harmony-button harmony-button-yellow" href="/dang-nhap">{signedIn ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div>
         </div>
       </header>
@@ -76,7 +76,7 @@ export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: H
         </div>
 
       </main>
-      <HomeFooter />
+      <HomeFooter container="harmony-container" />
     </div>
   );
 }
