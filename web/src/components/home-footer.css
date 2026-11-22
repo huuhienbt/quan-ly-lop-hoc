@@ -2,24 +2,6 @@
 .discovery-home .class-home-footer { background: var(--discovery-cream); }
 .bulletin-home .class-home-footer { background: #087bc1; border-top-color: #ffffff35; color: #fff; }
 .class-home-footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding-block: 26px; }
-.brand.class-home-brand { min-width: 0; flex-shrink: 1; color: #175d9b; }
-.class-home-brand .brand-symbol { flex-shrink: 0; }
-.class-home-brand .brand-copy { min-width: 0; }
-.brand.class-home-brand .brand-copy strong,
-.bulletin-home .brand.class-home-brand .brand-copy strong {
-  color: inherit;
-  font-size: clamp(14px, 2.8vw, 20px);
-  letter-spacing: -.45px;
-}
-.class-home-brand .brand-copy > .class-home-brand-detail {
-  color: #385f73;
-  font-size: clamp(9px, 1.65vw, 12px);
-  font-weight: 750;
-  letter-spacing: 0;
-  line-height: 1.35;
-}
-.bulletin-home .class-home-brand, .bulletin-home .class-home-brand .brand-copy > .class-home-brand-detail { color: #fff; opacity: 1; }
-.bulletin-home .class-home-footer .brand-symbol { background: #ffffff1a; color: #ffdc4d; box-shadow: none; }
 .class-home-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 18px; }
 .class-home-footer nav a, .class-home-footer-top { display: inline-flex; align-items: center; min-height: 44px; color: inherit; font-size: 14px; font-weight: 800; }
 .class-home-footer nav a:hover, .class-home-footer-top:hover { text-decoration: underline; }

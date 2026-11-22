@@ -77,7 +77,7 @@ export function LessonRichBlock({ block, preview = false, inlinePdf = false }: {
       : block.type === "video"
         ? <video className="lesson-video" src={resolved.src} controls playsInline preload="none" aria-label={title} />
         : <audio className="lesson-audio" src={resolved.src} controls preload="none" aria-label={title} />)}
-    <OpenLink url={resolved.open}>{block.type === "pdf" ? "Mở PDF trong tab mới" : "Mở nguồn"}</OpenLink>
+    {!(block.type === "pdf" && inlinePdf) && <OpenLink url={resolved.open}>{block.type === "pdf" ? "Mở PDF trong tab mới" : "Mở nguồn"}</OpenLink>}
   </figure>;
 }
 

@@ -43,7 +43,7 @@ export function HarmonyHome({ posts, unavailable, accountName, studentSignedIn }
     <div className="harmony-home">
       <header className="harmony-header">
         <div className="harmony-container harmony-header-inner">
-          <Brand classHomepage />
+          <Brand />
           <div className="harmony-header-actions"><HomeAccountLink className="harmony-button harmony-button-yellow" accountName={accountName} /></div>
         </div>
       </header>

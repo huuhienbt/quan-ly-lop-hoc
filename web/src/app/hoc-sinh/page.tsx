@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { SignOutButton } from "@/components/auth-buttons";
-import { HeartIcon, SchoolIcon, ShieldIcon } from "@/components/icons";
+import { SchoolIcon, ShieldIcon } from "@/components/icons";
 import { LearningGameCard } from "@/components/learning-game-card";
 import { ClassChat } from "@/components/class-chat";
 import { LessonContent } from "@/components/lesson-render";
@@ -26,11 +26,6 @@ function dateOfBirth(value: string | null) {
   return `${day}/${month}/${year}`;
 }
 
-function vietnamDate(value: string) {
-  const parts = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).formatToParts(new Date(value));
-  return ["year", "month", "day"].map((key) => parts.find((part) => part.type === key)?.value).join("-");
-}
-
 function postDate(value: string | null) {
   return value ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(value)) : "";
 }
@@ -51,21 +46,16 @@ function ClassNews({ posts }: { posts: ContentPost[] }) {
   </details>)}</div>;
 }
 
-function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { space: StudentClassSpace; weekStart: string; weekEnd: string; firstStudent: boolean }) {
+function StudentLearningSpace({ space, firstStudent, showIdentity }: { space: StudentClassSpace; firstStudent: boolean; showIdentity: boolean }) {
   const prefix = `lop-${space.enrollment_id}`;
   const news = space.posts.filter((post) => post.category !== "DISCOVERY" && post.category !== "KINDNESS");
   const discovery = space.posts.filter((post) => post.category === "DISCOVERY");
-  const kindnessPosts = space.posts.filter((post) => post.category === "KINDNESS");
-  const thisWeekKindness = kindnessPosts.filter((post) =>
-    vietnamDate(post.published_at || post.created_at) >= weekStart && vietnamDate(post.published_at || post.created_at) <= weekEnd);
-  const kindness = thisWeekKindness.length ? thisWeekKindness : kindnessPosts.slice(0, 1);
   const newsContent = <section className="student-content-panel student-news-panel" id={`${prefix}-news`} aria-labelledby={`${prefix}-news-title`}>
     <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-peach"><SchoolIcon /></span><div><h3 id={`${prefix}-news-title`}>Tin từ lớp em</h3><p className="student-content-panel-copy">Lời nhắn và những câu chuyện mới của lớp.</p></div></div></div>
     {news.length ? <ClassNews posts={news} /> : <p className="student-content-empty">Khi thầy cô có thông báo mới, em sẽ đọc được tại đây.</p>}
   </section>;
 
-  const discoveryContent = <div className="student-discovery-layout">
-    <section className="student-content-panel student-discovery-panel" id={`${prefix}-discovery`} aria-labelledby={`${prefix}-discovery-title`}>
+  const discoveryContent = <section className="student-content-panel student-discovery-panel" id={`${prefix}-discovery`} aria-labelledby={`${prefix}-discovery-title`}>
       <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-blue"><DiscoveryIcon /></span><div><h3 id={`${prefix}-discovery-title`}>Bài học của lớp</h3><p className="student-content-panel-copy">Chọn bài để xem nội dung và tài liệu.</p></div></div></div>
       {discovery.length ? <div className="student-article-list">{discovery.map((post) => {
         const blocks = decodeLesson(post.lesson_content);
@@ -74,12 +64,7 @@ function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { spa
           <PostCover post={post} />{blocks ? <LessonContent blocks={blocks} inlinePdf /> : <p className="student-content-body">{post.body}</p>}
         </StudentLessonCard>;
       })}</div> : <p className="student-content-empty">Bài học sẽ xuất hiện khi thầy cô đăng.</p>}
-    </section>
-      <section className="student-content-panel student-kindness-panel" aria-labelledby={`${prefix}-kindness-title`}>
-        <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-gold"><HeartIcon /></span><div><h3 id={`${prefix}-kindness-title`}>Một điều tử tế tuần này</h3><p className="student-content-panel-copy">Việc nhỏ hôm nay, niềm vui ngày mai.</p></div></div></div>
-        {kindness.length ? kindness.map((post) => <article className="student-kindness-body" key={post.id}><h4>{post.title}</h4><PostCover post={post} /><BulletinBody post={post} /></article>) : <p className="student-content-empty">Lời nhắn tử tế của tuần sẽ được thầy cô gửi tới em tại đây.</p>}
-      </section>
-  </div>;
+    </section>;
 
   const chatContent = <section className="student-content-panel student-chat-panel" id={`${prefix}-chat`} aria-labelledby={`${prefix}-chat-title`}>
       <div className="student-content-panel-heading"><div className="student-content-heading-group"><span className="student-content-icon tone-green"><ChatIcon /></span><div><h3 id={`${prefix}-chat-title`}>Trò chuyện cùng thầy cô và các bạn</h3><p className="student-content-panel-copy">Chia sẻ điều hay với lớp, hoặc gửi lời nhắn riêng cho thầy cô.</p></div></div></div>
@@ -87,7 +72,7 @@ function StudentLearningSpace({ space, weekStart, weekEnd, firstStudent }: { spa
     </section>;
 
   return <section className="student-learning-space" aria-labelledby={`${prefix}-title`}>
-    <div className="student-learning-heading"><span className="student-profile-avatar" aria-hidden="true">{space.student_name.slice(0, 1).toLocaleUpperCase("vi")}</span><div><p className="student-learning-label">KHÔNG GIAN CỦA EM</p><h2 id={`${prefix}-title`}>{space.student_name}</h2><p>{space.class_name} · {space.school_name}</p></div></div>
+    <h2 id={`${prefix}-title`} className={showIdentity ? "student-learning-heading" : "sr-only"}>{space.student_name} · {space.class_name}</h2>
     <StudentSectionTabs prefix={prefix} studentName={space.student_name} firstStudent={firstStudent} news={newsContent} discovery={discoveryContent} chat={chatContent} />
   </section>;
 }
@@ -109,11 +94,11 @@ export default async function StudentHomePage() {
 
   return (
     <main id="noi-dung" className="student-dashboard-main student-content-page page-width">
-      <div className="student-page-toolbar"><p className="eyebrow">LỚP HỌC HẠNH PHÚC · GÓC HỌC SINH</p><SignOutButton /></div>
+      <div className="student-page-toolbar"><SignOutButton /></div>
       <section className="student-dashboard-welcome student-dashboard-welcome-compact" aria-labelledby="student-dashboard-title"><div className="student-welcome-copy"><h1 id="student-dashboard-title">{greeting}</h1><p>Đọc tin lớp, khám phá điều hay và trò chuyện với lớp.</p><p className="student-content-intro"><time dateTime={content.today}>{new Intl.DateTimeFormat("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Ho_Chi_Minh" }).format(new Date(`${content.today}T12:00:00+07:00`))}</time></p></div><div className="student-welcome-art" aria-hidden="true"><Image className="student-welcome-illustration" src={(theme === "discovery" || theme === "harmony") ? "/images/discovery-hero-3d.webp" : "/images/happy-school-3d.webp"} alt="" width={1536} height={1024} sizes="(max-width: 760px) 1px, 180px" /></div></section>
       {!content.students.length && <section className="student-content-panel student-empty-profile"><h2>Chưa có không gian lớp học</h2><p>Em hãy nhờ ba mẹ liên hệ giáo viên chủ nhiệm để kiểm tra thông tin liên kết tài khoản nhé.</p></section>}
-      {content.students.map((space, index) => <StudentLearningSpace key={space.enrollment_id} space={space} weekStart={content.weekStart} weekEnd={content.weekEnd} firstStudent={index === 0} />)}
-      <div className="student-learning-games" id="tro-choi"><LearningGameCard compact /></div>
+      {content.students.map((space, index) => <StudentLearningSpace key={space.enrollment_id} space={space} firstStudent={index === 0} showIdentity={content.students.length > 1} />)}
+      {!content.students.length && <div className="student-learning-games"><LearningGameCard compact /></div>}
       <details className="student-profile-disclosure"><summary>Thông tin học sinh và tài khoản</summary><section className="student-profiles-section" aria-labelledby="student-profiles-title">
         <div className="student-profile-heading"><h2 id="student-profiles-title">Thông tin học sinh</h2><Link className="button button-outline button-small" href="/hoc-sinh/doi-mat-khau"><ShieldIcon /> Đổi mật khẩu</Link></div>
         {account.students.length ? <div className="student-profiles-grid">{account.students.map((student) => <article className="student-profile-card" key={`${student.id}-${student.class_id}`}>

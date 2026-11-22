@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 
 type SectionKey = "news" | "discovery" | "chat";
 type Section = { key: SectionKey; label: string; hint: string; symbol: string };
@@ -32,7 +32,6 @@ export function StudentSectionTabs({ prefix, studentName, firstStudent = false, 
 }) {
   const [active, setActive] = useState<SectionKey>("news");
   const root = useRef<HTMLDivElement>(null);
-  const buttons = useRef<Array<HTMLButtonElement | null>>([]);
   const contents = { news, discovery, chat };
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export function StudentSectionTabs({ prefix, studentName, firstStudent = false, 
         const focusedPanel = document.activeElement?.closest(".student-section-view");
         const movesFocus = !!focusedPanel && !!root.current?.contains(focusedPanel) && focusedPanel.id !== `${prefix}-view-${next}`;
         setActive(next);
-        if (movesFocus) buttons.current[sections.findIndex((item) => item.key === next)]?.focus({ preventScroll: true });
+        if (movesFocus) document.getElementById(`${prefix}-tab-${next}`)?.focus({ preventScroll: true });
         if (matched) scrollFrame = requestAnimationFrame(() => document.getElementById(matched.target)?.scrollIntoView({ block: "start" }));
       });
     };
@@ -63,24 +62,6 @@ export function StudentSectionTabs({ prefix, studentName, firstStudent = false, 
     };
   }, [prefix, firstStudent]);
 
-  function select(section: SectionKey) {
-    setActive(section);
-    buttons.current[sections.findIndex((item) => item.key === section)]?.focus({ preventScroll: true });
-    const hash = `#${prefix}-${section}`;
-    if (window.location.hash !== hash) window.history.pushState(window.history.state, "", hash);
-  }
-
-  function navigateKeys(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next: number;
-    if (event.key === "ArrowRight") next = (index + 1) % sections.length;
-    else if (event.key === "ArrowLeft") next = (index - 1 + sections.length) % sections.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = sections.length - 1;
-    else return;
-    event.preventDefault();
-    select(sections[next].key);
-  }
-
   function followSectionLink(event: MouseEvent<HTMLDivElement>) {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const link = event.target instanceof Element ? event.target.closest("a[href^='#']") : null;
@@ -90,16 +71,29 @@ export function StudentSectionTabs({ prefix, studentName, firstStudent = false, 
     if (!matched) return;
     event.preventDefault();
     setActive(matched.section);
-    if (matched.section !== active) buttons.current[sections.findIndex((item) => item.key === matched.section)]?.focus({ preventScroll: true });
+    const menuLink = document.getElementById(`${prefix}-tab-${matched.section}`);
+    if (matched.section !== active) menuLink?.focus({ preventScroll: true });
     if (window.location.hash !== href) window.history.pushState(window.history.state, "", href);
-    requestAnimationFrame(() => document.getElementById(matched.target)?.scrollIntoView({ block: "start" }));
+    if (link !== menuLink) requestAnimationFrame(() => document.getElementById(matched.target)?.scrollIntoView({ block: "start" }));
+  }
+
+  function sectionLink(section: Section) {
+    return <a key={section.key} href={`#${prefix}-${section.key}`} id={`${prefix}-tab-${section.key}`}
+      aria-current={active === section.key ? "location" : undefined}>
+      <span className="student-section-tab-icon" aria-hidden="true">{section.symbol}</span>
+      <span>{section.label}<small>{section.hint}</small></span>
+    </a>;
   }
 
   return <div className="student-section-workspace" ref={root} onClickCapture={followSectionLink}>
-    <div className="student-section-toolbar"><p>Em muốn xem mục nào?</p><Link className="student-game-shortcut" href="/tro-choi/ca-dao-tuc-ngu"><span aria-hidden="true">★</span> Chơi đố vui</Link></div>
-    <div className="student-section-tabs" role="tablist" aria-label={`Các mục của ${studentName}`}>
-      {sections.map((section, index) => <button type="button" key={section.key} ref={(node) => { buttons.current[index] = node; }} id={`${prefix}-tab-${section.key}`} role="tab" aria-selected={active === section.key} aria-controls={`${prefix}-view-${section.key}`} tabIndex={active === section.key ? 0 : -1} onClick={() => select(section.key)} onKeyDown={(event) => navigateKeys(event, index)}><span className="student-section-tab-icon" aria-hidden="true">{section.symbol}</span><span>{section.label}<small>{section.hint}</small></span></button>)}
-    </div>
-    {sections.map((section) => <div className="student-section-view" key={section.key} id={`${prefix}-view-${section.key}`} role="tabpanel" aria-labelledby={`${prefix}-tab-${section.key}`} tabIndex={0} hidden={active !== section.key}>{contents[section.key]}</div>)}
+    <nav className="student-section-tabs" aria-label={`Các mục của ${studentName}`}>
+      {sections.slice(0, 2).map(sectionLink)}
+      <Link className="student-section-quiz" href="/tro-choi/ca-dao-tuc-ngu">
+        <span className="student-section-tab-icon" aria-hidden="true">★</span>
+        <span>Đố vui<small>Ca dao, tục ngữ</small></span>
+      </Link>
+      {sectionLink(sections[2])}
+    </nav>
+    {sections.map((section) => <div className="student-section-view" key={section.key} id={`${prefix}-view-${section.key}`} hidden={active !== section.key}>{contents[section.key]}</div>)}
   </div>;
 }

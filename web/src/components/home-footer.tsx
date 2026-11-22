@@ -6,7 +6,7 @@ export function HomeFooter({ container = "page-width" }: { container?: "page-wid
   return (
     <footer className="class-home-footer">
       <div className={`${container} class-home-footer-inner`}>
-        <Brand classHomepage />
+        <Brand />
         <nav aria-label="Liên kết cuối trang">
           <a href="#bang-tin">Tin lớp</a>
           <Link href="/tro-choi/ca-dao-tuc-ngu">Đố vui</Link>

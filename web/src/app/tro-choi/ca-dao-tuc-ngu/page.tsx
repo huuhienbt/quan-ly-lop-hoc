@@ -13,7 +13,7 @@ export default function ProverbQuizPage() {
   return (
     <div className="proverb-quiz-page">
       <header className="proverb-quiz-header">
-        <Brand compact />
+        <Brand />
         <nav aria-label="Điều hướng trò chơi">
           <Link href="/"><span aria-hidden="true">←</span> Trang chủ</Link>
         </nav>

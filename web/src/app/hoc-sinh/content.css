@@ -11,8 +11,7 @@
   padding-block: 28px 64px;
 }
 
-.student-content-page .student-page-toolbar { gap: 16px; }
-.student-content-page .student-page-toolbar > .eyebrow { color: var(--student-deep-blue); font-size: 12px; letter-spacing: 1px; line-height: 1.7; }
+.student-content-page .student-page-toolbar { justify-content: flex-end; }
 .student-content-page .student-page-toolbar .button { min-height: 44px; }
 
 .student-content-page .student-dashboard-welcome {
@@ -53,12 +52,8 @@
 .student-content-page .student-welcome-spark { position: absolute; color: #ffcf35; font-size: 33px; line-height: 1; text-shadow: 0 3px 0 #dba720; }
 .student-content-page .student-welcome-spark-one { left: 4px; top: 11px; transform: rotate(-12deg); }
 .student-content-page .student-welcome-spark-two { right: 5px; bottom: 14px; font-size: 25px; color: #ffb4dc; text-shadow: 0 3px 0 #d97eaf; }
-.student-content-page .student-learning-space { margin-top: 42px; padding-top: 0; border: 0; scroll-margin-top: 24px; }
-.student-content-page .student-learning-heading { display: flex; align-items: center; gap: 15px; min-width: 0; margin-bottom: 21px; }
-.student-content-page .student-learning-heading > div { min-width: 0; }
-.student-content-page .student-learning-heading h2 { color: var(--student-deep-blue); font-size: 26px; line-height: 1.4; font-weight: 900; letter-spacing: -.5px; overflow-wrap: anywhere; }
-.student-content-page .student-learning-heading p { margin-top: 4px; color: var(--student-muted); font-size: 14px; }
-.student-content-page .student-learning-heading .student-learning-label { display: block; margin-bottom: 3px; color: #57708b; font-size: 11px; font-weight: 900; letter-spacing: 1.1px; }
+.student-content-page .student-learning-space { margin-top: 28px; padding-top: 0; border: 0; scroll-margin-top: 24px; }
+.student-content-page .student-learning-heading { margin-bottom: 12px; color: var(--student-deep-blue); font-size: 16px; font-weight: 850; overflow-wrap: anywhere; }
 .student-content-page .student-profile-avatar { width: 58px; height: 58px; border: 3px solid #fff; border-radius: 20px; background: #ffdbec; color: #b33676; box-shadow: 0 4px 0 #f2bad5; font-size: 27px; font-weight: 900; }
 
 .student-content-page .student-content-nav { display: flex; flex-wrap: wrap; gap: 9px; margin-block: 18px 28px; }
@@ -165,12 +160,6 @@
 .student-content-page .is-complete .student-task-title { color: #17659a; }
 .student-content-page .is-complete .student-task-status { color: #08699f; }
 
-.student-content-page .student-kindness-panel { border-color: #cfe8ca; background: #eef9e9; }
-.student-content-page .student-kindness-panel .student-content-icon { background: #d6edc9; color: #4d7b34; }
-.student-content-page .student-kindness-body { color: #446344; font-size: 15px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
-.student-content-page .student-kindness-body + .student-kindness-body { margin-top: 18px; padding-top: 18px; border-top: 1px solid #cee3c5; }
-.student-content-page .student-kindness-body h4 { margin: 0 0 8px; color: #365f36; font-size: 16px; line-height: 1.7; font-weight: 900; }
-.student-content-page .student-kindness-body .student-content-body { color: #446344; }
 
 .student-content-page .student-profile-disclosure { margin-top: 32px; padding: 10px 24px 16px; border: 1px solid #cee6f5; border-radius: 23px; background: #fff; }
 .student-content-page .student-profile-disclosure > summary { min-height: 44px; padding-block: 13px; color: var(--student-deep-blue); font-size: 15px; font-weight: 900; cursor: pointer; }
@@ -204,16 +193,13 @@
 @media (max-width: 760px) {
   .student-content-page { padding-block: 22px 42px; }
   .student-content-page .student-page-toolbar { align-items: flex-start; }
-  .student-content-page .student-page-toolbar > .eyebrow { max-width: 220px; font-size: 11px; letter-spacing: .6px; }
   .student-content-page .student-dashboard-welcome { align-items: flex-start; min-height: 0; margin-top: 17px; padding: 27px 24px 30px; border-radius: 25px 25px 42px 25px; gap: 12px; }
   .student-content-page .student-dashboard-welcome .badge { font-size: 11px; padding-inline: 10px; }
   .student-content-page .student-dashboard-welcome h1 { margin-top: 17px; font-size: 30px; }
   .student-content-page .student-dashboard-welcome p { font-size: 15px; }
   .student-content-page .student-dashboard-welcome .student-content-intro { margin-top: 18px; font-size: 14px; }
   .student-content-page .student-welcome-art { display: none; }
-  .student-content-page .student-learning-space { margin-top: 36px; }
-  .student-content-page .student-learning-heading { gap: 12px; margin-bottom: 18px; }
-  .student-content-page .student-learning-heading h2 { font-size: 23px; }
+  .student-content-page .student-learning-space { margin-top: 24px; }
   .student-content-page .student-profile-avatar { width: 51px; height: 51px; font-size: 23px; border-radius: 18px; }
   .student-content-page .student-content-nav { gap: 9px; margin-bottom: 24px; }
   .student-content-page .student-content-nav a { padding-inline: 13px; font-size: 14px; }
@@ -257,7 +243,9 @@
 .student-extra-reminders { margin-top: 22px; padding-top: 16px; border-top: 1px solid #d9e9e3; }
 .student-extra-reminders > h4 { margin: 0 0 12px; color: #315e65; font-size: 14px; line-height: 1.6; }
 
-.student-content-page .student-chat-panel { max-inline-size: 754px; margin-top: 24px; padding: clamp(12px, 2vw, 16px); }
+.student-content-page :is(.student-discovery-panel, .student-chat-panel) { inline-size: 100%; margin-inline: auto; }
+.student-content-page .student-discovery-panel { max-inline-size: 900px; }
+.student-content-page .student-chat-panel { max-inline-size: 754px; padding: clamp(12px, 2vw, 16px); }
 
 /* Focused student views keep the selected activity close to its navigation. */
 html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact { min-height: 0; padding: 24px 30px; border-radius: 24px; box-shadow: 0 4px 0 #d5effc; }
@@ -268,19 +256,15 @@ html[data-site-theme] .student-content-page .student-dashboard-welcome.student-d
 html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact .student-welcome-art { flex-basis: 180px; height: 120px; }
 html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact .student-welcome-illustration { border-radius: 20px; transform: none; box-shadow: none; }
 .student-content-page .student-section-workspace { min-width: 0; }
-.student-content-page .student-section-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 12px; }
-.student-content-page .student-section-toolbar > p { color: var(--student-deep-blue); font-size: 15px; font-weight: 800; }
-.student-content-page .student-game-shortcut { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 9px 16px; border: 1px solid #eed58e; border-radius: 14px; background: #fff5cd; color: #75541b; font-size: 14px; font-weight: 900; }
-.student-content-page .student-game-shortcut:hover { background: #ffedaa; }
-.student-content-page .student-section-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 8px; margin-bottom: 20px; border: 1px solid #d1e7f1; border-radius: 21px; background: #eef7fb; }
-.student-content-page .student-section-tabs > button { display: flex; align-items: center; justify-content: center; gap: 10px; min-width: 0; min-height: 67px; padding: 11px 9px; border: 1px solid transparent; border-radius: 15px; background: transparent; color: #46677e; font-size: 15px; line-height: 1.5; font-weight: 900; text-align: left; cursor: pointer; }
-.student-content-page .student-section-tabs > button:hover { background: #fff; }
-.student-content-page .student-section-tabs > button[aria-selected="true"] { border-color: #81b8d6; background: #fff; color: #075d94; box-shadow: 0 3px 0 #c5e2f2; }
+.student-content-page .student-section-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding: 8px; margin-bottom: 20px; border: 1px solid #d1e7f1; border-radius: 21px; background: #eef7fb; }
+.student-content-page .student-section-tabs > a { display: flex; align-items: center; justify-content: center; gap: 10px; min-width: 0; min-height: 67px; padding: 11px 9px; border: 1px solid transparent; border-radius: 15px; background: transparent; color: #46677e; font-size: 15px; line-height: 1.5; font-weight: 900; text-align: left; }
+.student-content-page .student-section-tabs > a:hover { background: #fff; }
+.student-content-page .student-section-tabs > a[aria-current="location"] { border-color: #81b8d6; background: #fff; color: #075d94; box-shadow: 0 3px 0 #c5e2f2; }
 .student-content-page .student-section-tab-icon { display: grid; place-items: center; flex: 0 0 31px; height: 34px; border-radius: 10px; background: #dceffb; color: #197cb4; font-size: 22px; line-height: 1; }
-.student-content-page .student-section-tabs > button[aria-selected="true"] .student-section-tab-icon { background: #087fc4; color: #fff; }
+.student-content-page .student-section-quiz > .student-section-tab-icon { background: #fff0bc; color: #84601e; }
+.student-content-page .student-section-tabs > a[aria-current="location"] .student-section-tab-icon { background: #087fc4; color: #fff; }
 .student-content-page .student-section-tabs small { display: block; margin-top: 2px; color: #58778b; font-size: 11px; font-weight: 600; line-height: 1.6; }
-.student-content-page .student-section-tabs > button:focus-visible,
-.student-content-page .student-game-shortcut:focus-visible,
+.student-content-page .student-section-tabs > a:focus-visible,
 .student-content-page .student-daily-jumps a:focus-visible,
 .student-content-page .student-section-view:focus-visible { outline: 3px solid #1479bd; outline-offset: 4px; }
 .student-content-page .student-section-view { min-width: 0; border-radius: 22px; }
@@ -291,31 +275,27 @@ html[data-site-theme] .student-content-page .student-dashboard-welcome.student-d
 .student-content-page .student-daily-jumps { display: flex; grid-column: 1 / -1; gap: 10px; flex-wrap: wrap; }
 .student-content-page .student-daily-jumps a { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 44px; padding: 9px 15px; border: 1px solid #cde3ef; border-radius: 12px; background: #f5fbff; color: var(--student-deep-blue); font-size: 14px; font-weight: 800; }
 .student-content-page .student-daily-jumps a:last-child { border-color: #eadba0; background: #fff9e2; color: #775c1a; }
-.student-content-page .student-discovery-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; gap: 18px; }
 
 html[data-site-theme="discovery"] .student-content-page .student-section-tabs,
 html[data-site-theme="harmony"] .student-content-page .student-section-tabs { border-color: #cce2dc; background: #edf7f3; }
-html[data-site-theme="discovery"] .student-content-page .student-section-tabs > button[aria-selected="true"],
-html[data-site-theme="harmony"] .student-content-page .student-section-tabs > button[aria-selected="true"] { border-color: #80b8a9; color: #126b59; box-shadow: 0 3px 0 #d2e8df; }
-html[data-site-theme="discovery"] .student-content-page .student-section-tabs > button[aria-selected="true"] .student-section-tab-icon,
-html[data-site-theme="harmony"] .student-content-page .student-section-tabs > button[aria-selected="true"] .student-section-tab-icon { background: #16846e; }
+html[data-site-theme="discovery"] .student-content-page .student-section-tabs > a[aria-current="location"],
+html[data-site-theme="harmony"] .student-content-page .student-section-tabs > a[aria-current="location"] { border-color: #80b8a9; color: #126b59; box-shadow: 0 3px 0 #d2e8df; }
+html[data-site-theme="discovery"] .student-content-page .student-section-tabs > a[aria-current="location"] .student-section-tab-icon,
+html[data-site-theme="harmony"] .student-content-page .student-section-tabs > a[aria-current="location"] .student-section-tab-icon { background: #16846e; }
 
 @media (max-width: 1050px) {
-  .student-content-page .student-section-tabs > button { flex-direction: column; gap: 4px; text-align: center; }
+  .student-content-page .student-section-tabs > a { flex-direction: column; gap: 4px; text-align: center; }
+  .student-content-page .student-section-tab-icon { flex-basis: auto; width: 31px; }
   .student-content-page .student-section-tabs small { display: none; }
 }
 @media (max-width: 760px) {
   html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact { padding: 22px; border-radius: 21px; }
   html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact h1 { font-size: 27px; }
   html[data-site-theme] .student-content-page .student-dashboard-welcome.student-dashboard-welcome-compact p { font-size: 14px; }
-  .student-content-page .student-section-toolbar { margin-top: 4px; }
-  .student-content-page .student-section-toolbar > p { font-size: 14px; }
-  .student-content-page .student-game-shortcut { padding-inline: 11px; font-size: 13px; }
   .student-content-page .student-section-tabs { gap: 4px; padding: 5px; border-radius: 17px; }
-  .student-content-page .student-section-tabs > button { min-height: 70px; padding: 8px 2px; border-radius: 12px; font-size: 12px; }
+  .student-content-page .student-section-tabs > a { min-height: 66px; padding: 8px 2px; border-radius: 12px; font-size: 12px; text-wrap: balance; }
   .student-content-page .student-section-tab-icon { flex-basis: auto; width: 27px; height: 27px; border-radius: 8px; font-size: 20px; }
-  .student-content-page .student-daily-layout,
-  .student-content-page .student-discovery-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .student-content-page .student-daily-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .student-content-page .student-daily-jumps { gap: 8px; }
   .student-content-page .student-daily-jumps a { flex: 1; padding-inline: 8px; gap: 5px; font-size: 13px; }
 }

@@ -1,0 +1,56 @@
+:root[data-site-theme] .brand.class-home-brand {
+  --brand-title: #175d9b;
+  --brand-detail: #385f73;
+  --brand-icon-size: 44px;
+  --brand-book-size: 38px;
+  gap: 10px;
+  min-inline-size: 0;
+  flex-shrink: 1;
+}
+
+:root[data-site-theme="playful"] :is(.bulletin-home, .student-header, .teacher-header, .admin-header) .brand.class-home-brand {
+  --brand-title: #fff;
+  --brand-detail: #e2f5ff;
+}
+
+:root[data-site-theme] .brand.class-home-brand .brand-symbol {
+  flex: 0 0 auto;
+  inline-size: var(--brand-icon-size);
+  block-size: var(--brand-icon-size);
+  border-radius: 50%;
+  background: #fff0b5;
+  box-shadow: none;
+  transform: none;
+}
+
+:root[data-site-theme] .brand.class-home-brand .brand-symbol > svg {
+  inline-size: var(--brand-book-size);
+  block-size: var(--brand-book-size);
+  filter: none;
+  transform: none;
+}
+
+.class-home-brand .brand-copy { min-inline-size: 0; }
+
+:root[data-site-theme] .brand.class-home-brand .brand-copy strong {
+  color: var(--brand-title);
+  font-size: clamp(14px, 2.8vw, 20px);
+  letter-spacing: -.45px;
+}
+
+:root[data-site-theme] .brand.class-home-brand .class-home-brand-detail {
+  color: var(--brand-detail);
+  font-size: clamp(9px, 1.65vw, 12px);
+  font-weight: 750;
+  letter-spacing: 0;
+  line-height: 1.35;
+  opacity: 1;
+}
+
+@media (max-width: 520px) {
+  :root[data-site-theme] .brand.class-home-brand {
+    --brand-icon-size: 34px;
+    --brand-book-size: 30px;
+    gap: 7px;
+  }
+}

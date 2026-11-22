@@ -28,7 +28,7 @@ export function DiscoveryHome({ posts, unavailable, accountName, studentSignedIn
   const studentHref = studentSignedIn ? "/hoc-sinh" : "/dang-nhap";
 
   return <div className="discovery-home">
-    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand classHomepage /><div className="discovery-header-actions"><HomeAccountLink className="discovery-button discovery-button-teal" accountName={accountName} /></div></div></header>
+    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand /><div className="discovery-header-actions"><HomeAccountLink className="discovery-button discovery-button-teal" accountName={accountName} /></div></div></header>
     <main id="noi-dung">
       <section className="discovery-hero" aria-labelledby="discovery-home-title"><Image className="discovery-hero-image" src="/images/discovery-hero-3d.webp" alt="" fill sizes="100vw" preload /><div className="discovery-hero-shade" /><div className="discovery-hero-copy"><h1 id="discovery-home-title">CHÀO MỪNG ĐẾN VỚI LỚP BỐN 12</h1><Link className="discovery-button discovery-button-yellow" href={studentHref}>Vào lớp học <ArrowIcon /></Link><span className="discovery-hero-school">Trường Tiểu học Bến Tre</span></div><div className="discovery-hero-bottom" /></section>
 
