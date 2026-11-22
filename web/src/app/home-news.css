@@ -9,12 +9,14 @@
 
 #bang-tin .home-news-item {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
 #bang-tin .home-news-cover {
   display: block;
   position: relative;
+  align-self: start;
+  inline-size: 100%;
   margin: 0;
   border-radius: 0;
   aspect-ratio: 16 / 9;
@@ -41,5 +43,12 @@
 
   #bang-tin .home-news-item {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  #bang-tin .home-news-cover {
+    inline-size: 60%;
+    justify-self: center;
+    margin-block-start: 12px;
+    border-radius: 12px;
   }
 }
