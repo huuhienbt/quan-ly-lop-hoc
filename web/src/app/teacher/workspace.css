@@ -1,0 +1,40 @@
+.staff-workspace { min-height: 100dvh; display: flex; flex-direction: column; background: #fffdf6; color: #234d66; }
+.staff-header { position: relative; z-index: 3; background: #fffdf6; border-bottom: 1px solid #e2ebe5; }
+.staff-header-inner { min-height: 72px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 9px; }
+.staff-account { position: relative; min-width: 0; max-width: 45%; font-size: 14px; }
+.staff-account summary { display: flex; list-style: none; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: 24px; background: #147b69; color: white; font-weight: 800; cursor: pointer; }
+.staff-account summary::-webkit-details-marker { display: none; }
+.staff-account summary span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.staff-account-menu { position: absolute; right: 0; top: calc(100% + 6px); display: grid; width: max-content; min-width: 150px; padding: 8px; background: #fff; border: 1px solid #cadfd7; border-radius: 14px; box-shadow: 0 9px 24px #244c5c20; }
+.staff-account-menu > a, .staff-account-menu .button { display: flex; align-items: center; min-height: 44px; padding: 6px 12px; font: inherit; font-weight: 750; color: #205970; }
+.staff-role { padding: 6px 12px; font-size: 12px; color: #526e75; }
+.staff-banner { display: grid; align-items: center; min-height: clamp(128px, 16vw, 178px); background: linear-gradient(90deg, #f9fcf4 0%, #f9fcf4ef 26%, #f9fcf461 58%, transparent 82%), url('/images/discovery-hero-3d.webp') center 48% / cover; border-bottom: 1px solid #d6e7df; }
+.staff-banner-copy { padding-block: 18px; }
+.staff-banner h1 { margin: 0; font-size: clamp(26px, 4vw, 40px); line-height: 1.2; font-weight: 900; letter-spacing: -.035em; color: #175d83; }
+.staff-class-name, .staff-class-choice { margin-top: 8px; font-size: 14px; font-weight: 750; color: #254e5d; }
+.staff-class-choice { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 9px; }
+.staff-class-choice select { max-width: 100%; min-height: 44px; border-radius: 10px; background: #fffdf8; border: 1px solid #9bbdb3; color: #234d66; font-size: 16px; padding-inline: 7px; }
+.staff-menu { width: min(calc(100% - 28px), 600px); }
+.staff-menu[data-count="3"] { max-width: 455px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.staff-menu .home-shortcut[aria-current="page"] { border-color: #427b70; box-shadow: inset 0 -3px 0 #427b70; color: #124e43; }
+.staff-content { width: min(calc(100% - 32px), 1040px); min-width: 0; flex: 1; padding-block: clamp(20px, 3vw, 36px) 24px; }
+.staff-content .teacher-content-section { margin-top: 0; }
+.staff-content .teacher-section-heading h2 { margin: 0; }
+.staff-content .teacher-section-heading p { margin-top: 4px; color: #456875; }
+.staff-content .teacher-post-create > .lesson-composer { margin-top: 16px; }
+.staff-content .teacher-edit-link { display: inline-flex; align-items: center; min-height: 44px; color: #1669a3; font-weight: 800; }
+.staff-content a.teacher-edit-link:hover, .staff-account-menu a:hover { text-decoration: underline; }
+.staff-settings-options { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding-block: 4px 12px; margin-bottom: 14px; border-bottom: 1px solid #d9e6df; }
+.staff-settings-options a { display: inline-flex; align-items: center; min-height: 44px; padding: 5px 10px; border-radius: 8px; color: #285b69; font-size: 14px; font-weight: 750; }
+.staff-settings-options a[aria-current="page"] { color: #175c50; background: #e3f2e9; }
+.staff-workspace :is(summary, select, a):focus-visible { outline: 3px solid #176d91; outline-offset: 2px; }
+.staff-loading { color: #426473; }
+.staff-loading .skeleton { margin-top: 12px; }
+@media (max-width: 560px) {
+  .staff-header-inner { min-height: 60px; }
+  .staff-account summary { padding-inline: 10px; font-size: 12px; }
+  .staff-banner { background-image: linear-gradient(90deg,#f9fcf4f7, #f9fcf4db 48%, #f9fcf440), url('/images/discovery-hero-3d.webp'); }
+  .staff-class-choice { display: grid; justify-items: start; font-size: 12px; }
+  .staff-settings-options { gap: 4px; }
+  .staff-settings-options a { font-size: 13px; }
+}

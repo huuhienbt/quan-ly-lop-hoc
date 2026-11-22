@@ -3,7 +3,7 @@
 ## Chọn giao diện
 
 1. Đăng nhập Google bằng tài khoản Super Admin.
-2. Mở **Cài đặt nâng cao → Giao diện website** từ trang biên tập. Đường dẫn: `/admin?muc=giao-dien#cai-dat`.
+2. Mở **Cài đặt → Giao diện website** từ trang biên tập. Đường dẫn: `/teacher?tab=cai-dat&muc=giao-dien`.
 3. Chọn **Giao diện 1 – Lớp học vui nhộn**, **Giao diện 2 – Thế giới khám phá**
    hoặc **Giao diện 3 – Lớp học khám phá hạnh phúc**.
 4. Chọn **Áp dụng giao diện**. Sau khi lưu thành công, trang tải lại để áp dụng.
@@ -49,7 +49,7 @@ lịch, dấu hoàn thành và phân quyền tiếp tục dùng dữ liệu hi�
 
 Đầu trang Giao diện 2 đã được thu gọn để các lối tắt và nội dung lớp xuất hiện
 sớm hơn.
-Trong **Không gian quản trị → Giao diện website**, thẻ **Giao diện 2** dùng
+Trong **Cài đặt → Giao diện website**, thẻ **Giao diện 2** dùng
 ảnh xem trước của bố cục hiện tại: nút Đăng nhập, banner gọn, các lối tắt và
 thư viện ảnh của lớp. Nhãn “Tranh đầu trang đã thu gọn” đã được bỏ.
 Chọn thẻ rồi bấm **Áp dụng giao diện** để lưu lựa chọn cho toàn website.
@@ -72,7 +72,7 @@ trò chơi và chức năng chọn ảnh từ thiết bị. Dữ liệu D1 và c
 không nằm trong bản sao mã nguồn này.
 
 Để sử dụng lại thiết kế đã thu nhỏ, chọn **Giao diện 2 – Thế giới khám phá**
-trong `/admin?muc=giao-dien#cai-dat`; lựa chọn này không cần khôi phục mã nguồn cũ.
+trong `/teacher?tab=cai-dat&muc=giao-dien`; lựa chọn này không cần khôi phục mã nguồn cũ.
 
 ## Giao diện 3 – Lớp học khám phá hạnh phúc
 

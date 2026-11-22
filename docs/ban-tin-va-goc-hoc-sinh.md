@@ -20,8 +20,8 @@ trang chủ không xóa hay lưu trữ bài. Tên và lựa chọn của ba giao
 ## Cập nhật nội dung
 
 1. Đăng nhập Google bằng tài khoản quản trị hoặc giáo viên đã được phân công.
-2. Chọn **Giáo viên** tại trang đăng nhập để vào **Quản lý nội dung lớp**. Super Admin mở **Cài đặt nâng cao** nếu cần đổi giao diện, tạo năm học/lớp hoặc duyệt và phân công giáo viên.
-3. Chọn đúng lớp trước khi tạo bài, lịch hoặc việc cần làm.
+2. Chọn **Giáo viên** tại trang đăng nhập để vào **Quản trị lớp học**. Chọn **Tin lớp**, **Học tập** hoặc **Trò chuyện** ngay dưới banner. Nếu quản lý nhiều lớp, dùng ô chọn trên banner; chuyển mục sẽ giữ lớp đang chọn. Quản trị viên mở **Cài đặt** nếu cần đổi giao diện, tạo năm học/lớp hoặc duyệt và phân công giáo viên.
+3. Chọn đúng lớp trước khi soạn bản tin, bài học hoặc trả lời tin nhắn.
 
 Bài viết có tiêu đề, nội dung, loại bài, chủ đề, ảnh bìa tùy chọn và trạng
 thái. Bản nháp chỉ dành cho người biên tập. Chọn **Công khai** và **Xuất bản**

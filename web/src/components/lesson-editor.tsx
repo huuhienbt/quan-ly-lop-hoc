@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
 import { saveLearningPostAction } from "@/app/teacher/lesson-actions";
 import { saveRichBulletinAction } from "@/app/teacher/actions";
 import { vietnamToday, type ContentPost } from "@/lib/content-schemas";
@@ -123,7 +124,7 @@ function MediaPanel({ initial, classId, onAdd, close, setUploading }: {
   </section>;
 }
 
-export function LessonEditor({ classId, post, today, mode = "lesson" }: { classId: string; post?: ContentPost; today: string; mode?: "lesson" | "bulletin" }) {
+export function LessonEditor({ classId, post, today, closeHref, mode = "lesson" }: { classId: string; post?: ContentPost; today: string; closeHref: string; mode?: "lesson" | "bulletin" }) {
   const bulletin = mode === "bulletin";
   const noun = bulletin ? "bài viết" : "bài học";
   const [initial] = useState(() => startingBlocks(post, bulletin));
@@ -148,7 +149,7 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
   const writers = useRef(new Map<number, HTMLElement>());
   const saved = useRef(new Map<number, SavedSelection>());
   const afterRenderFocus = useRef<number | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
   const prefix = useId();
   const [state, action, pending] = useActionState(async (previous: { success: boolean; message: string; fieldErrors?: Record<string, string[]> }, form: FormData) => {
     if (bulletin && coverFile) form.set("cover_image", coverFile);
@@ -267,8 +268,8 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
     }
   }
   function close() {
-    const panel = formRef.current?.closest("details");
-    if (panel) { panel.open = false; panel.querySelector("summary")?.focus(); }
+    document.getElementById(post ? "staff-edit-" + post.id : "staff-create")?.focus({ preventScroll: true });
+    router.replace(closeHref, { scroll: false });
   }
   function moveAttachment(key: number, direction: number) {
     setRows(previous => {
@@ -283,7 +284,7 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
 
   const payload = JSON.stringify(rows.map(row => row.block).filter(block => block.type !== "text" || block.text.trim()));
   const mouse = (event: React.MouseEvent) => event.preventDefault();
-  return <form className="lesson-composer" action={action} ref={formRef} data-lesson-composer onSubmit={event => {
+  return <form className="lesson-composer" action={action} data-lesson-composer onSubmit={event => {
     if (uploading || preparingCover || tool || !decodeLesson(payload)) {
       event.preventDefault();
       setError(tool ? "Hãy chèn hoặc đóng công cụ đang mở trước khi lưu." : "Hãy nhập nội dung hợp lệ, tối đa 24 khối và 48.000 ký tự lưu trữ.");

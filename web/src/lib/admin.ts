@@ -2,6 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 import { batch, query } from "@/lib/d1";
+import type { SchoolSetting } from "@/lib/teacher-navigation";
 import { requireSuperAdmin } from "@/lib/rbac";
 
 const SCHOOL_ID = "school-ben-tre";
@@ -137,30 +138,30 @@ function audit(
   };
 }
 
-export async function getAdminOverview(): Promise<AdminOverview> {
+export async function getAdminSettings(section: Exclude<SchoolSetting, "giao-dien">): Promise<AdminOverview> {
   await requireSuperAdmin();
   const [schools, requests, teachers, classes, years, users] = await Promise.all([
     query<School>("SELECT id, name FROM schools WHERE id = ? AND archived_at IS NULL", [SCHOOL_ID]),
-    query<TeacherRequest>(`SELECT r.id, r.user_id, u.name, u.email, r.note, r.created_at
+    section === "giao-vien" ? query<TeacherRequest>(`SELECT r.id, r.user_id, u.name, u.email, r.note, r.created_at
       FROM teacher_requests r JOIN users u ON u.id = r.user_id
       WHERE r.school_id = ? AND r.status = 'PENDING' AND u.role = 'PENDING' AND u.status = 'ACTIVE'
-      ORDER BY r.created_at, r.id`, [SCHOOL_ID]),
-    query<Teacher>(`SELECT u.id, u.name, u.email FROM users u
+      ORDER BY r.created_at, r.id`, [SCHOOL_ID]) : [],
+    section === "giao-vien" ? query<Teacher>(`SELECT u.id, u.name, u.email FROM users u
       JOIN teacher_requests r ON r.user_id = u.id
       WHERE r.school_id = ? AND r.status = 'APPROVED' AND u.role = 'TEACHER' AND u.status = 'ACTIVE'
-      ORDER BY u.name, u.id`, [SCHOOL_ID]),
-    query<AdminClass>(`SELECT c.id, c.name, c.slug, c.grade, c.academic_year_id,
+      ORDER BY u.name, u.id`, [SCHOOL_ID]) : [],
+    section !== "nam-hoc" ? query<AdminClass>(`SELECT c.id, c.name, c.slug, c.grade, c.academic_year_id,
         y.name AS academic_year_name, c.visibility,
         t.user_id AS teacher_id, u.name AS teacher_name, u.email AS teacher_email
       FROM classes c JOIN academic_years y ON y.id = c.academic_year_id AND y.school_id = c.school_id
       LEFT JOIN class_teachers t ON t.class_id = c.id AND t.is_homeroom = 1 AND t.ended_at IS NULL
       LEFT JOIN users u ON u.id = t.user_id
       WHERE c.school_id = ? AND c.archived_at IS NULL
-      ORDER BY y.starts_on DESC, c.grade, c.name, c.id`, [SCHOOL_ID]),
-    query<AcademicYear>(`SELECT id, name, starts_on, ends_on, is_current FROM academic_years
-      WHERE school_id = ? ORDER BY starts_on DESC, id`, [SCHOOL_ID]),
-    query<AdminUser>(`SELECT id, name, email, role, status, created_at FROM users
-      ORDER BY CASE role WHEN 'SUPER_ADMIN' THEN 0 WHEN 'TEACHER' THEN 1 ELSE 2 END, name, id`),
+      ORDER BY y.starts_on DESC, c.grade, c.name, c.id`, [SCHOOL_ID]) : [],
+    section === "nam-hoc" ? query<AcademicYear>(`SELECT id, name, starts_on, ends_on, is_current FROM academic_years
+      WHERE school_id = ? ORDER BY starts_on DESC, id`, [SCHOOL_ID]) : [],
+    section === "giao-vien" ? query<AdminUser>(`SELECT id, name, email, role, status, created_at FROM users
+      ORDER BY CASE role WHEN 'SUPER_ADMIN' THEN 0 WHEN 'TEACHER' THEN 1 ELSE 2 END, name, id`) : [],
   ]);
   if (!schools[0]) throw new AdminActionError("Chưa có thông tin Trường Tiểu học Bến Tre trong D1.");
   return { school: schools[0], requests, teachers, classes, years, users };

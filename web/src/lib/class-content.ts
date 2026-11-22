@@ -6,6 +6,7 @@ import { attachPostAssets, postAssetGuard } from "@/lib/post-attachments";
 import { postDateUpdate, postDateUpdateParams, publicationValues } from "@/lib/post-dates";
 import { decodeLesson, lessonSummary } from "@/lib/lessons";
 import { getStudentTimetablePlan } from "@/lib/class-timetable";
+import type { TeacherPostTab } from "@/lib/teacher-navigation";
 import type { StudentHomeSection } from "@/lib/student-home";
 import {
   archiveContentSchema,
@@ -179,15 +180,37 @@ export async function getStudentClassContent(accountId: string, sessionVersion: 
   return { ...calendar, students };
 }
 
+export function getTeacherClasses(actorId: string): Promise<ContentClass[]> {
+  return query<ContentClass>(`SELECT c.id, c.name, c.slug, c.school_id, school.name AS school_name
+      FROM classes c JOIN schools school ON school.id = c.school_id
+      WHERE ${activeClass} AND ${staffAccess} ORDER BY c.grade, c.name, c.id`, [actorId]);
+}
+
+export type TeacherPostSummary = Pick<ContentPost, "id" | "title" | "kind" | "category" | "cover_url" | "status" | "visibility" | "is_pinned" | "published_at"> & { excerpt: string };
+
+function teacherPostFilter(tab: TeacherPostTab) {
+  return `p.class_id = ? AND p.status <> 'ARCHIVED' AND p.category ${tab === "hoc-tap" ? "=" : "<>"} 'DISCOVERY'
+    AND ${activeClass} AND ${staffAccess}`;
+}
+
+export function getTeacherPostList(actorId: string, classId: string, tab: TeacherPostTab): Promise<TeacherPostSummary[]> {
+  return query<TeacherPostSummary>(`SELECT p.id, p.title, p.kind, p.category, p.cover_url, p.status, p.visibility,
+      p.is_pinned, p.published_at, substr(p.body, 1, 221) AS excerpt FROM posts p ${classJoins}
+    WHERE ${teacherPostFilter(tab)} ORDER BY ${postOrder} LIMIT 500`, [classId, actorId]);
+}
+
+export async function getTeacherEditingPost(actorId: string, classId: string, tab: TeacherPostTab, postId: string): Promise<ContentPost | null> {
+  return (await query<ContentPost>(`SELECT ${richPostFields} FROM posts p ${classJoins}
+    WHERE ${teacherPostFilter(tab)} AND p.id = ? LIMIT 1`, [classId, actorId, postId]))[0] ?? null;
+}
+
 export async function getTeacherContentOverview(
   actorId: string,
   { includeLegacy = true }: { includeLegacy?: boolean } = {},
 ): Promise<TeacherContentOverview> {
   const calendar = getVietnamDateWindow();
   const [classes, posts, events, tasks] = await Promise.all([
-    query<ContentClass>(`SELECT c.id, c.name, c.slug, c.school_id, school.name AS school_name
-      FROM classes c JOIN schools school ON school.id = c.school_id
-      WHERE ${activeClass} AND ${staffAccess} ORDER BY c.grade, c.name, c.id`, [actorId]),
+    getTeacherClasses(actorId),
     query<ContentPost>(`SELECT ${richPostFields} FROM posts p ${classJoins}
       WHERE p.status <> 'ARCHIVED' AND ${activeClass} AND ${staffAccess}
       ORDER BY ${postOrder} LIMIT 500`, [actorId]),

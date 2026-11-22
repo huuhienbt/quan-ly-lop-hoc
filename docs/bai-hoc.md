@@ -1,6 +1,6 @@
 # Đăng bài trong mục Học tập
 
-1. Giáo viên vào **Học tập → Thêm bài học** hoặc **Bài viết → Thêm bài viết**,
+1. Giáo viên vào **Học tập → Thêm bài học** hoặc **Tin lớp → Thêm bài viết mới**,
    rồi chọn loại bài, điền tiêu đề và **Ngày đăng**.
 2. Gõ trực tiếp trong khung **Nội dung**. Bôi đen chữ rồi chọn **Đậm**,
    **Nghiêng**, **Gạch chân** hoặc **Màu chữ**. Dùng các nút căn lề cho đoạn
@@ -14,7 +14,7 @@
    ngày đã chọn, từ mới nhất đến cũ nhất. Bài ghim chỉ được ưu tiên trong cùng
    ngày. Ô ngày không hẹn giờ xuất bản.
 
-Trong **Bài viết**, có thể chọn chuyên mục, ảnh bìa, ghim bài và phạm vi
+Trong **Tin lớp**, có thể chọn ảnh bìa, ghim bài và phạm vi
 người xem. Khi chọn **Công khai trên trang chủ**, người ngoài lớp có thể xem
 nội dung và tệp chèn trong bài đã đăng.
 

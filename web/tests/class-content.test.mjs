@@ -8,6 +8,7 @@ import {
   getStudentClassContent,
   getStudentHomePosts,
   getTeacherContentOverview,
+  getTeacherClasses, getTeacherPostList, getTeacherEditingPost,
   saveEvent,
   savePost,
   saveTask,
@@ -357,6 +358,30 @@ test("teachers cannot write to another class and lose write access when their as
   await assert.rejects(savePost(teacher.id, postInput()));
   await assert.rejects(saveEvent(teacher.id, eventInput()));
   await assert.rejects(saveTask(teacher.id, taskInput()));
+});
+
+test("staff can open only live posts in the selected classroom and section, including their drafts", async () => {
+  const teacher = seedAssignedTeacher();
+  const body = "Nội dung mẫu. ".repeat(30);
+  const news = await savePost(administrator.id, postInput(classA.id, { body, status: "DRAFT", visibility: "PRIVATE" }));
+  const lesson = await savePost(administrator.id, postInput(classA.id, { category: "DISCOVERY", visibility: "PRIVATE" }));
+  const another = await savePost(administrator.id, postInput(classB.id));
+  assert.deepEqual((await getTeacherClasses(teacher.id)).map(c => c.id), [classA.id]);
+  const summaries = await getTeacherPostList(teacher.id, classA.id, "bai-viet");
+  assert.deepEqual(summaries.map(p => p.id), [news]);
+  assert.equal(summaries[0].excerpt.length, 221);
+  assert.equal(summaries[0].body, undefined);
+  assert.deepEqual((await getTeacherPostList(teacher.id, classA.id, "hoc-tap")).map(p => p.id), [lesson]);
+  assert.equal((await getTeacherEditingPost(teacher.id, classA.id, "bai-viet", news)).body, body.trim());
+  assert.equal(await getTeacherEditingPost(teacher.id, classA.id, "hoc-tap", news), null);
+  assert.equal(await getTeacherEditingPost(teacher.id, classA.id, "bai-viet", another), null);
+  assert.equal(await getTeacherEditingPost(teacher.id, classB.id, "bai-viet", another), null);
+  assert.deepEqual(await getTeacherPostList(teacher.id, classB.id, "bai-viet"), []);
+  await archiveContent(teacher.id, { type: "post", id: lesson });
+  assert.equal(await getTeacherEditingPost(teacher.id, classA.id, "hoc-tap", lesson), null);
+  fixture.database.prepare("UPDATE class_teachers SET ended_at = ? WHERE user_id = ?").run(fixedTime.toISOString(), teacher.id);
+  assert.equal(await getTeacherEditingPost(teacher.id, classA.id, "bai-viet", news), null);
+  assert.deepEqual(await getTeacherPostList(teacher.id, classA.id, "bai-viet"), []);
 });
 
 test("teacher overview is scoped to their assigned active classes including their drafts", async () => {

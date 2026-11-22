@@ -22,7 +22,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const studentDestination = classHomeLinks[section];
   const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : opensLearning ? "/teacher?tab=hoc-tap" : "/teacher";
   if (student) redirect(student.must_change_password ? studentPasswordLink(section) : studentDestination);
-  if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/admin" : teacherDestination);
+  if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/teacher?tab=cai-dat" : teacherDestination);
   if (user?.role === "TEACHER") redirect(teacherDestination);
   const setup = getSetupState();
   const teacherMode = query.vai === "giaovien" || typeof query.error === "string";

@@ -55,6 +55,7 @@ async function runAction<T extends z.ZodType>(
         : "Chưa thể lưu thay đổi. Tên/đường dẫn có thể đã tồn tại; hãy kiểm tra kết nối D1 và thử lại.",
     };
   }
+  revalidatePath("/teacher", "layout");
   revalidatePath("/admin");
   revalidatePath("/");
   return { success: true, message };
