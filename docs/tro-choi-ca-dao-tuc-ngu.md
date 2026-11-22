@@ -20,11 +20,12 @@ Ngân hàng có 30 câu hỏi với 30 câu ca dao, tục ngữ khác nhau:
 Các chủ đề gồm biết ơn, yêu thương, đoàn kết, chăm học, kiên trì, trung thực,
 lễ phép và cẩn thận. Lời giải diễn đạt riêng, ngắn gọn, dùng câu dân gian quen thuộc.
 
-1. Chọn một dạng hoặc **Thử sức tổng hợp**, rồi chọn **Bắt đầu chơi**.
-2. Mỗi lượt chọn ngẫu nhiên 5 câu, không lặp trong lượt; thứ tự đáp án cũng đổi.
-3. Chọn một đáp án và nhấn **Kiểm tra đáp án**. Sau đó đọc đáp án đúng, nguyên văn
+1. Chọn **Tổng hợp**, **Điền từ**, **Hiểu ý nghĩa** hoặc **Vận dụng**, rồi chọn **Bắt đầu chơi**.
+2. Mỗi lượt có 5 câu ngẫu nhiên, không tính giờ và không lặp trong lượt; thứ tự đáp án cũng đổi.
+3. Chọn một đáp án và nhấn **Kiểm tra**. Sau đó đọc đáp án đúng, nguyên văn
    câu ca dao/tục ngữ và lời giải. Câu điền từ không lộ nguyên văn trước khi chấm.
-4. Tiếp tục tới **Xem kết quả**, xem lại cả năm câu, rồi chơi lượt mới hoặc đổi dạng.
+4. Tiếp tục tới **Xem kết quả** để biết số câu trả lời đúng. Có thể mở
+   **Xem lại câu chưa đúng**, **Chơi lượt mới** hoặc **Chọn cách chơi khác**.
 
 Kết quả chỉ thuộc lượt chơi đang mở. Trò chơi luyện tập không ghi điểm hoặc sao
 vào tài khoản, không có bảng xếp hạng và không thay đổi dữ liệu lớp.
