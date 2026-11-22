@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
+import { HomeAccountLink } from "@/components/home-account-link";
 import { HomeShortcuts } from "@/components/home-shortcuts";
 import { HomeFooter } from "@/components/home-footer";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
@@ -10,7 +11,7 @@ import type { ContentPost } from "@/lib/content-schemas";
 export interface HarmonyHomeProps {
   posts: ContentPost[];
   unavailable: boolean;
-  signedIn: boolean;
+  accountName: string | null;
   studentSignedIn: boolean;
 }
 
@@ -35,7 +36,7 @@ function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compac
   );
 }
 
-export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: HarmonyHomeProps) {
+export function HarmonyHome({ posts, unavailable, accountName, studentSignedIn }: HarmonyHomeProps) {
   const studentHref = studentSignedIn ? "/hoc-sinh" : "/dang-nhap";
 
   return (
@@ -43,7 +44,7 @@ export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: H
       <header className="harmony-header">
         <div className="harmony-container harmony-header-inner">
           <Brand classHomepage />
-          <div className="harmony-header-actions"><Link className="harmony-button harmony-button-yellow" href="/dang-nhap">{signedIn ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div>
+          <div className="harmony-header-actions"><HomeAccountLink className="harmony-button harmony-button-yellow" accountName={accountName} /></div>
         </div>
       </header>
 

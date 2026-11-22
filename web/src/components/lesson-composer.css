@@ -24,7 +24,7 @@
 }
 .lesson-composer .lesson-meta, .lesson-composer .lesson-media-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .lesson-composer .lesson-meta { align-items: start; }
-.lesson-composer .lesson-name { grid-column: 1 / -1; }
+.lesson-composer :is(.lesson-name, .lesson-visibility) { grid-column: 1 / -1; }
 .lesson-composer label { display: grid; gap: 5px; min-width: 0; color: #526780; font-weight: 800; font-size: 13px; }
 .lesson-composer .lesson-editor-label, .lesson-composer .lesson-meta label {
   color: #566b87; font-size: 12px; line-height: 1.4; font-weight: 900; text-transform: uppercase; letter-spacing: .042em;

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
+import { HomeAccountLink } from "@/components/home-account-link";
 import { HomeShortcuts } from "@/components/home-shortcuts";
 import { HomeFooter } from "@/components/home-footer";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
@@ -10,7 +11,7 @@ import type { ContentPost } from "@/lib/content-schemas";
 interface DiscoveryHomeProps {
   posts: ContentPost[];
   unavailable: boolean;
-  signedIn: boolean;
+  accountName: string | null;
   studentSignedIn: boolean;
 }
 
@@ -23,11 +24,11 @@ function DiscoveryCard({ post }: { post: ContentPost }) {
   </article>;
 }
 
-export function DiscoveryHome({ posts, unavailable, signedIn, studentSignedIn }: DiscoveryHomeProps) {
+export function DiscoveryHome({ posts, unavailable, accountName, studentSignedIn }: DiscoveryHomeProps) {
   const studentHref = studentSignedIn ? "/hoc-sinh" : "/dang-nhap";
 
   return <div className="discovery-home">
-    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand classHomepage /><div className="discovery-header-actions"><Link className="discovery-button discovery-button-teal" href="/dang-nhap">{signedIn ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></div></header>
+    <header className="discovery-header"><div className="discovery-container discovery-header-inner"><Brand classHomepage /><div className="discovery-header-actions"><HomeAccountLink className="discovery-button discovery-button-teal" accountName={accountName} /></div></div></header>
     <main id="noi-dung">
       <section className="discovery-hero" aria-labelledby="discovery-home-title"><Image className="discovery-hero-image" src="/images/discovery-hero-3d.webp" alt="" fill sizes="100vw" preload /><div className="discovery-hero-shade" /><div className="discovery-hero-copy"><h1 id="discovery-home-title">CHÀO MỪNG ĐẾN VỚI LỚP BỐN 12</h1><Link className="discovery-button discovery-button-yellow" href={studentHref}>Vào lớp học <ArrowIcon /></Link><span className="discovery-hero-school">Trường Tiểu học Bến Tre</span></div><div className="discovery-hero-bottom" /></section>
 

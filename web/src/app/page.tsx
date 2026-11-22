@@ -5,6 +5,7 @@ import { HomeShortcuts } from "@/components/home-shortcuts";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
 import { HarmonyHome } from "@/components/harmony-home";
+import { HomeAccountLink } from "@/components/home-account-link";
 import { HomeFooter } from "@/components/home-footer";
 import { PostCard } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, SchoolIcon, SunIcon } from "@/components/icons";
@@ -23,20 +24,25 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const [student, user] = await Promise.all([getCurrentStudentAccount(), getCurrentUser()]);
   if (student?.must_change_password) redirect("/hoc-sinh/doi-mat-khau");
+  const firstStudent = student?.students[0];
+  const studentName = firstStudent && student?.students.every((profile) => profile.id === firstStudent.id)
+    ? firstStudent.display_name?.trim() || firstStudent.full_name.trim()
+    : null;
+  const accountName = student ? studentName || "Góc học sinh" : user ? user.name.trim() || "Người dùng" : null;
   let posts: ContentPost[] = [];
   let unavailable = false;
   try { posts = await getPublicPosts(); } catch { unavailable = true; }
 
   const theme = await getSiteTheme();
   if (theme === "harmony") {
-    return <HarmonyHome posts={posts} unavailable={unavailable} signedIn={Boolean(student || user)} studentSignedIn={Boolean(student)} />;
+    return <HarmonyHome posts={posts} unavailable={unavailable} accountName={accountName} studentSignedIn={Boolean(student)} />;
   }
   if (theme === "discovery") {
-    return <DiscoveryHome posts={posts} unavailable={unavailable} signedIn={Boolean(student || user)} studentSignedIn={Boolean(student)} />;
+    return <DiscoveryHome posts={posts} unavailable={unavailable} accountName={accountName} studentSignedIn={Boolean(student)} />;
   }
 
   return <div className="site-shell bulletin-home">
-    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand classHomepage /><div className="header-actions"><Link className="button button-primary bulletin-student-link" href="/dang-nhap">{user || student ? "Tài khoản" : "Đăng nhập"}<ArrowIcon /></Link></div></header></div>
+    <div className="bulletin-header-band"><header className="site-header page-width bulletin-header"><Brand classHomepage /><div className="header-actions"><HomeAccountLink className="button button-primary bulletin-student-link" accountName={accountName} /></div></header></div>
     <main id="noi-dung">
       <div className="bulletin-hero-sky"><section className="home-hero page-width bulletin-hero" aria-labelledby="home-title"><div className="hero-copy"><p className="eyebrow"><span aria-hidden="true">★</span> MỘT LỚP HỌC · MUÔN NIỀM VUI</p><h1 id="home-title">Mỗi ngày <span className="hero-yellow">đến lớp.</span><br />Một ngày <span className="hero-pink">hạnh phúc.</span></h1><div className="bulletin-hero-actions"><Link className="button button-primary" href={student ? "/hoc-sinh" : "/dang-nhap"}>Vào lớp học <ArrowIcon /></Link><a className="button bulletin-hero-secondary" href="#bang-tin">Xem tin lớp</a></div><div className="hero-origin"><span className="origin-mark"><SchoolIcon /></span><span>Bắt đầu từ lớp <strong>Bốn 12</strong><br /><span>Trường Tiểu học Bến Tre</span></span></div></div><ClassroomIllustration /></section></div>
 

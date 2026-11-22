@@ -1,0 +1,11 @@
+.home-account-link {
+  max-inline-size: min(19rem, 40vw);
+  min-inline-size: 0;
+}
+
+.home-account-link > span {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: center;
+}

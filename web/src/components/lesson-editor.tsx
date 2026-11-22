@@ -22,7 +22,6 @@ const mediaTools = [
 const mediaLabels: Record<MediaType, string> = { link: "Liên kết", image: "Hình ảnh", video: "Video", audio: "Âm thanh / MP3", pdf: "PDF" };
 const symbols = ["×", "÷", "−", "±", "≠", "≤", "≥", "°", "²", "³", "√", "π", "½", "¼", "¾"];
 const bulletinKinds = { NEWS: "Bản tin", ANNOUNCEMENT: "Thông báo", ACTIVITY: "Hoạt động" };
-const bulletinCategories = { GENERAL: "Tin chung", CLASS_STORY: "Chuyện lớp mình", KINDNESS: "Điều tử tế", PARENT_GUIDE: "Đồng hành cùng con" };
 
 function createMedia(type: MediaType, width: typeof lessonWidths[number]): Media {
   if (type === "image") return { type, label: "", width };
@@ -132,7 +131,6 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
   const [title, setTitle] = useState(post?.title ?? "");
   const [kind, setKind] = useState<ContentPost["kind"]>(post?.kind ?? "NEWS");
   const [postDate, setPostDate] = useState(post?.post_date ?? (post?.published_at ? vietnamToday(new Date(post.published_at)) : today));
-  const [category, setCategory] = useState(post?.category === "DISCOVERY" ? "GENERAL" : post?.category ?? "GENERAL");
   const [visibility, setVisibility] = useState(post?.visibility ?? "PRIVATE");
   const [pinned, setPinned] = useState(post?.is_pinned === 1);
   const [coverUrl, setCoverUrl] = useState(post?.cover_url ?? "");
@@ -159,7 +157,7 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
       const key = nextKey.current++;
       setRows([{ key, block: emptyText() }]); setActiveKey(key);
       setTitle(""); setKind("NEWS"); setTool(null); setImageKey(null); saved.current.clear();
-      setPostDate(today); setCategory("GENERAL"); setVisibility("PRIVATE"); setPinned(false);
+      setPostDate(today); setVisibility("PRIVATE"); setPinned(false);
       setCoverFile(null); setCoverUrl(""); setCoverReset(value => value + 1);
     }
     return result;
@@ -293,6 +291,7 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
   }}>
     <input type="hidden" name="class_id" value={classId} />
     {post && <input type="hidden" name="id" value={post.id} />}
+    {bulletin && <input type="hidden" name="category" value={post?.category ?? "GENERAL"} />}
     <input type="hidden" name={bulletin ? "bulletin_content" : "document"} value={payload} />
     <div className="lesson-composer-head">
       <button type="button" className="lesson-close" aria-label="Đóng khung soạn" onClick={close} disabled={pending || uploading || preparingCover}>×</button>
@@ -310,14 +309,11 @@ export function LessonEditor({ classId, post, today, mode = "lesson" }: { classI
         </label>
         <label className="lesson-name">Tiêu đề<input name="title" required maxLength={200} value={title} onChange={e => setTitle(e.target.value)}
           onKeyDown={e => { if (e.key === "Enter" && !e.nativeEvent.isComposing) e.preventDefault(); }} placeholder={`Nhập tiêu đề ${noun}`} /></label>
-        {bulletin && <>
-          <label>Chuyên mục<select name="category" value={category} onChange={e => setCategory(e.target.value as typeof category)}>
-            {Object.entries(bulletinCategories).map(([value,label]) => <option value={value} key={value}>{label}</option>)}
-          </select></label>
-          <label>Ai được xem<select name="visibility" value={visibility} onChange={e => setVisibility(e.target.value as typeof visibility)}>
+        {bulletin &&
+          <label className="lesson-visibility">Ai được xem<select name="visibility" value={visibility} onChange={e => setVisibility(e.target.value as typeof visibility)}>
             <option value="PRIVATE">Chỉ trong lớp</option><option value="PUBLIC">Công khai trên trang chủ</option>
           </select></label>
-        </>}
+        }
       </div>
       <p className="lesson-editor-label" id={prefix}>Nội dung</p>
       <div className="lesson-toolbar" role="group" aria-label="Công cụ soạn bài">
