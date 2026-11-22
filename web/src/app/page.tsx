@@ -2,13 +2,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
-import { AndroidDownload } from "@/components/android-download";
 import { ClassroomIllustration } from "@/components/classroom-illustration";
 import { DiscoveryHome } from "@/components/discovery-home";
 import { HarmonyHome } from "@/components/harmony-home";
 import { HomeFooter } from "@/components/home-footer";
 import { PostCard } from "@/components/bulletin";
-import { ArrowIcon, ClockIcon, SchoolIcon, StarIcon, SunIcon } from "@/components/icons";
+import { ArrowIcon, ClockIcon, SchoolIcon, SunIcon } from "@/components/icons";
 import { getPublicPosts } from "@/lib/class-content";
 import type { ContentPost } from "@/lib/content-schemas";
 import { getCurrentUser } from "@/lib/rbac";
@@ -43,11 +42,10 @@ export default async function Home() {
 
       <div className="page-width"><HomeShortcuts studentSignedIn={Boolean(student)} /></div>
       <section className="page-width bulletin-feed bulletin-feed-full" id="bang-tin" aria-labelledby="bulletin-title">
-        <div className="bulletin-section-heading"><div><p className="eyebrow"><StarIcon /> GÓC BẢN TIN LỚP MÌNH</p><h2 id="bulletin-title">Tin lớp mình</h2></div><span className="bulletin-flower" aria-hidden="true">✦</span></div>
+        <div className="bulletin-section-heading"><h2 id="bulletin-title">Tin lớp mình</h2><span className="bulletin-flower" aria-hidden="true">✦</span></div>
         {unavailable ? <div className="bulletin-empty"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="bulletin-card-grid home-news-list">{posts.map((post) => <PostCard key={post.id} post={post} />)}</div> : <div className="bulletin-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ thông báo và câu chuyện của lớp tại đây.</p></div>}
       </section>
 
-      <AndroidDownload />
     </main>
     <HomeFooter />
   </div>;

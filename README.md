@@ -50,8 +50,9 @@ riêng với thầy cô. Giáo viên trả lời, chọn học sinh và ẩn tin
 `/teacher?tab=tro-chuyen#tro-chuyen`; Super Admin dùng cùng tài khoản quản trị hiện có.
 Xem [hướng dẫn trò chuyện trong lớp](docs/tro-chuyen-lop.md).
 
-Trang chủ có ba lối tắt: **Tin lớp**, **Trò chơi học tập**, **Trò chuyện**.
-Góc học sinh mở ở thẻ **Tin lớp**, bên cạnh **Khám phá** và **Trò chuyện**.
+Menu trang chủ có bốn mục: **Tin lớp**, **Học tập**, **Đố vui** và **Trò chuyện**.
+Học sinh chọn **Học tập** để mở bài đọc trong lớp. **Học tập** và **Trò chuyện**
+yêu cầu đăng nhập; **Tin lớp** và **Đố vui** mở trực tiếp.
 
 Đầu trang hiện chỉ có logo và nút **Đăng nhập/Tài khoản**; bỏ menu ngang,
 khối ngày/“Lời nhắn mới” và thu nhỏ banner thêm khoảng 20% trên cả ba giao diện.

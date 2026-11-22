@@ -7,7 +7,7 @@ import { useActionState, useEffect, useState, type FormEvent } from "react";
 import { updateStudentPassword, type StudentPasswordState } from "@/app/hoc-sinh/doi-mat-khau/actions";
 import { ArrowIcon } from "./icons";
 
-export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabled: boolean; destination?: "/hoc-sinh" | "/hoc-sinh#tro-chuyen" }) {
+export function StudentLoginForm({ enabled, destination = "/hoc-sinh" }: { enabled: boolean; destination?: "/hoc-sinh" | "/hoc-sinh#kham-pha" | "/hoc-sinh#tro-chuyen" }) {
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");

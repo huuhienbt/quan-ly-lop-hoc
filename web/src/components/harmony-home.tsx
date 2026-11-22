@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { HomeShortcuts } from "@/components/home-shortcuts";
-import { AndroidDownload } from "@/components/android-download";
 import { HomeFooter } from "@/components/home-footer";
 import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, SunIcon } from "@/components/icons";
@@ -69,14 +68,13 @@ export function HarmonyHome({ posts, unavailable, signedIn, studentSignedIn }: H
         <div className="harmony-container"><HomeShortcuts studentSignedIn={studentSignedIn} /></div>
         <div className="harmony-container harmony-feed-wrap">
           <section className="harmony-stories" id="bang-tin" aria-labelledby="harmony-stories-title">
-            <div className="harmony-section-heading"><p className="harmony-eyebrow">NHỮNG ĐIỀU NHỎ, NIỀM VUI TO</p><h2 id="harmony-stories-title">Tin lớp mình <span aria-hidden="true">✦</span></h2><p>Hoạt động, điều hay và những khoảnh khắc cùng lớn lên.</p></div>
+            <div className="harmony-section-heading"><h2 id="harmony-stories-title">Tin lớp mình <span aria-hidden="true">✦</span></h2></div>
 
             {unavailable ? <div className="harmony-empty" role="status"><ClockIcon /><h3>Bản tin tạm thời chưa sẵn sàng</h3><p>Em hãy thử lại sau nhé.</p></div> : posts.length ? <div className="harmony-story-grid home-news-list">{posts.map((post) => <HarmonyStoryCard key={post.id} post={post} />)}</div> : <div className="harmony-empty"><SunIcon /><h3>Chưa có tin mới</h3><p>Thầy cô sẽ chia sẻ những hoạt động và lời nhắn của lớp tại đây.</p></div>}
           </section>
 
         </div>
 
-        <AndroidDownload />
       </main>
       <HomeFooter />
     </div>

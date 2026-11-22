@@ -5,10 +5,8 @@ trực tiếp, không cần đăng nhập. Nội dung chung không chứa dữ l
 
 ## Mở trò chơi
 
-- Trang chủ cả ba giao diện: mục **Vui học mỗi ngày**, sau các lối tắt,
-  chọn **Chơi đố vui**.
-- Góc học sinh: chọn **Trò chơi** trong điều hướng lớp, hoặc thẻ
-  **Đố vui ca dao, tục ngữ Việt Nam** phía dưới nội dung lớp.
+- Trang chủ cả ba giao diện: chọn **Đố vui** trong menu lớp học.
+- Góc học sinh: chọn **Chơi đố vui** trong điều hướng lớp.
 - Học sinh vẫn phải đăng nhập và đổi mật khẩu mặc định trước khi xem góc học sinh.
 
 ## Nội dung và cách chơi

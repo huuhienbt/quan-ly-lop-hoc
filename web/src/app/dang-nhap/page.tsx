@@ -15,15 +15,19 @@ export const metadata: Metadata = { title: "Đăng nhập" };
 export default async function SignInPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const [student, user, query] = await Promise.all([getCurrentStudentAccount(), getCurrentUser(), searchParams]);
   const opensChat = query.tiep === "tro-chuyen";
+  const opensLearning = query.tiep === "hoc-tap";
   const wantsAdmin = query.tiep === "quan-tri";
-  const studentDestination = opensChat ? "/hoc-sinh#tro-chuyen" : "/hoc-sinh";
+  const studentDestination = opensChat ? "/hoc-sinh#tro-chuyen" : opensLearning ? "/hoc-sinh#kham-pha" : "/hoc-sinh";
+  const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : "/teacher";
   if (student) redirect(student.must_change_password ? "/hoc-sinh/doi-mat-khau" : studentDestination);
-  if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/admin" : "/teacher");
-  if (user?.role === "TEACHER") redirect("/teacher");
+  if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/admin" : teacherDestination);
+  if (user?.role === "TEACHER") redirect(teacherDestination);
   const setup = getSetupState();
   const teacherMode = query.vai === "giaovien" || typeof query.error === "string";
-  const studentHref = opensChat ? "/dang-nhap?tiep=tro-chuyen" : "/dang-nhap";
-  const teacherHref = wantsAdmin ? "/dang-nhap?vai=giaovien&tiep=quan-tri" : opensChat ? "/dang-nhap?vai=giaovien&tiep=tro-chuyen" : "/dang-nhap?vai=giaovien";
+  const studentHref = opensChat ? "/dang-nhap?tiep=tro-chuyen" : opensLearning ? "/dang-nhap?tiep=hoc-tap" : "/dang-nhap";
+  const nextSection = wantsAdmin ? "quan-tri" : opensChat ? "tro-chuyen" : opensLearning ? "hoc-tap" : null;
+  const teacherHref = nextSection ? `/dang-nhap?vai=giaovien&tiep=${nextSection}` : "/dang-nhap?vai=giaovien";
+  const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : opensChat ? "/dang-nhap?tiep=tro-chuyen" : "/dang-nhap";
 
   return <main id="noi-dung" className="unified-login page-width">
     <header className="unified-login-header"><Brand /><Link href="/" className="button button-outline button-small">Trang chủ</Link></header>
@@ -38,7 +42,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <h2 id="login-form-title">Đăng nhập bằng Google</h2>
           <p className="student-card-description">Dành cho giáo viên và quản trị viên.</p>
           {typeof query.error === "string" && <p className="form-message is-error" role="alert">Chưa thể đăng nhập bằng Google. Vui lòng thử lại hoặc liên hệ quản trị viên.</p>}
-          <GoogleSignInButton enabled={setup.ready} callbackUrl={wantsAdmin ? "/dang-nhap?tiep=quan-tri" : "/dang-nhap"} />
+          <GoogleSignInButton enabled={setup.ready} callbackUrl={teacherCallback} />
           {!setup.ready && <p className="form-message" role="status">Đăng nhập Google đang được thiết lập.</p>}
         </div> : <>
           <h2 id="login-form-title">Vào lớp học</h2>

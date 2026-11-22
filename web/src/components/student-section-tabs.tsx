@@ -7,7 +7,7 @@ type SectionKey = "news" | "discovery" | "chat";
 type Section = { key: SectionKey; label: string; hint: string; symbol: string };
 const sections: Section[] = [
   { key: "news", label: "Tin lớp", hint: "Thông báo từ thầy cô", symbol: "▤" },
-  { key: "discovery", label: "Khám phá", hint: "Đọc và học điều hay", symbol: "✦" },
+  { key: "discovery", label: "Học tập", hint: "Đọc và học điều hay", symbol: "✦" },
   { key: "chat", label: "Trò chuyện", hint: "Với thầy cô và các bạn", symbol: "✉" },
 ];
 const firstStudentAliases: Record<string, string> = { "tin-lop": "news", "kham-pha": "discovery", "tro-chuyen": "chat" };
