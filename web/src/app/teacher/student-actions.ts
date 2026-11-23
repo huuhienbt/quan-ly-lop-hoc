@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/rbac";
-import { resetTeacherStudentPassword, resetTeacherStudentPasswords, TeacherStudentError, type BulkResetReceipt } from "@/lib/teacher-students";
+import { resetTeacherStudentPassword, resetTeacherStudentPasswords, setTeacherStudentPassword, TeacherStudentError, type BulkResetReceipt } from "@/lib/teacher-students";
 import { STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
 
 export type ResetStudentState =
@@ -25,6 +25,8 @@ const resetForm = z.object({
     .refine(version => Number.isSafeInteger(version) && version < Number.MAX_SAFE_INTEGER),
   confirmed: z.literal("yes"),
 }).strict();
+
+const manualForm = resetForm.extend({ temporary_password: z.string().length(8).regex(/^[0-9]{8}$/) });
 
 const bulkForm = z.object({
   class_id: id,
@@ -83,5 +85,27 @@ export async function resetStudentPasswordsAction(_previous: BulkResetStudentSta
   } catch (error) {
     return { kind: "error", message: error instanceof TeacherStudentError ? error.message
       : "Chưa thể xác nhận kết quả cấp lại. Hãy tải lại danh sách trước khi thử lại." };
+  }
+}
+
+export async function setStudentPasswordAction(_previous: BulkResetStudentState, formData: FormData): Promise<BulkResetStudentState> {
+  const input = manualForm.safeParse(uniqueFormFields(formData));
+  if (!input.success) {
+    const badPin = input.error.issues.some(issue => issue.path[0] === "temporary_password");
+    return { kind: "error", message: badPin ? "Mật khẩu tạm phải gồm đúng 8 chữ số."
+      : "Thông tin xác nhận chưa hợp lệ. Thầy cô hãy mở lại danh sách và thử lại." };
+  }
+  try {
+    const actor = await getCurrentUser();
+    if (actor?.role !== "TEACHER" && actor?.role !== "SUPER_ADMIN") {
+      return { kind: "error", message: "Thầy cô cần đăng nhập bằng tài khoản có quyền quản lý lớp." };
+    }
+    const { class_id, enrollment_id, account_id, session_version, temporary_password } = input.data;
+    const receipt = await setTeacherStudentPassword(actor.id, { class_id, enrollment_id, account_id, session_version }, temporary_password);
+    revalidatePath("/teacher");
+    return { kind: "success", ...receipt };
+  } catch (error) {
+    return { kind: "error", message: error instanceof TeacherStudentError ? error.message
+      : "Chưa thể xác nhận kết quả đặt mật khẩu. Thầy cô hãy tải lại danh sách trước khi thử lại." };
   }
 }

@@ -21,7 +21,7 @@
 .roster-view-switch .button { border-radius: 12px; padding: 8px 15px; }
 .roster-view-switch .button[aria-pressed="true"] { background: #e3f4e9; border-color: #77ad9b; color: #155c4e; }
 .roster-tools { min-width: 0; margin-bottom: 12px; }
-.roster-password-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.roster-password-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .roster-password-card { min-width: 0; padding: clamp(14px, 3vw, 22px); border: 1px solid #d8e7e3; border-radius: 14px; background: #fff; }
 .roster-password-card h3 { margin-block: 8px 4px; color: #175d83; font-size: 20px; font-weight: 900; }
 .roster-password-card p { color: #365c6b; line-height: 1.55; }
@@ -31,7 +31,7 @@
 .roster-board { border: 1px solid #d8e7e3; border-radius: 14px; background: #fff; overflow: hidden; }
 .roster-columns, .roster-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) minmax(152px, .9fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) minmax(236px, 1.1fr);
   align-items: center;
   gap: 8px 14px;
   padding: 10px 16px;
@@ -58,7 +58,7 @@
 .roster-status-off { color: #843757; background: #fcecf3; }
 .roster-status-wait { color: #73500b; background: #fff1ce; }
 .roster-status-active { color: #1a6657; background: #e3f4e9; }
-.roster-action { min-width: 0; }
+.roster-action { min-width: 0; display: flex; flex-wrap: wrap; gap: 4px 6px; }
 .roster-action-note { display: block; color: #456273; font-size: 12px; line-height: 1.5; }
 .roster-action .button { min-height: 40px; padding: 5px 10px; font-size: 12px; }
 .roster-empty { padding: 18px; background: #f6f9f8; border: 1px solid #dce9e5; border-radius: 12px; }
@@ -80,6 +80,15 @@
 .roster-dialog p { margin: 8px 0; line-height: 1.55; }
 .roster-dialog-account { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 10px; }
 .roster-dialog-account span { font-variant-numeric: tabular-nums; }
+.roster-manual-pin { display: grid; gap: 6px; margin-block: 14px; }
+.roster-manual-pin > label { font-weight: 800; }
+.roster-manual-pin > div { display: flex; gap: 8px; align-items: stretch; }
+.roster-manual-pin input {
+  width: min(100%, 200px); min-width: 0; min-height: 44px; padding: 8px 12px;
+  border: 1px solid #bfd6d1; border-radius: 11px; background: #fff;
+  color: #244756; font-size: 16px; font-variant-numeric: tabular-nums; letter-spacing: .12em;
+}
+.roster-manual-pin > span { color: #456273; font-size: 13px; line-height: 1.45; }
 .roster-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .roster-copy-message { font-size: 13px; color: #256457; }
 .roster-reset-error { color: #953b5c; }
@@ -122,5 +131,7 @@
   .roster-bulk-receipt .roster-bulk-person { grid-column: 1 / -1; }
 }
 @media (max-width: 375px) {
+  .roster-action { grid-column: 1 / -1; justify-self: start; }
+  .roster-action-note { max-width: none; text-align: start; }
   .roster-bulk-receipt { grid-template-columns: minmax(0, 1fr); }
 }

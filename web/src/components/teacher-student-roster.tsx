@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { STUDENT_BULK_RESET_HOURS } from "@/lib/student-reset-options";
 import type { TeacherStudentRow } from "@/lib/teacher-students";
-import { StudentPasswordResetDialog, studentPasswordCandidates, type PasswordCandidate } from "./teacher-student-bulk-reset";
+import { StudentPasswordResetDialog, studentPasswordCandidates, type PasswordCandidate, type PasswordDialogMode } from "./teacher-student-bulk-reset";
 import "./teacher-student-roster.css";
 
 function accountLabel(student: TeacherStudentRow) {
@@ -22,7 +22,7 @@ export function TeacherStudentRoster({ classId, classroomName, schoolName, stude
 }) {
   const [panel, setPanel] = useState<"list" | "passwords">("list");
   const [search, setSearch] = useState("");
-  const [reset, setReset] = useState<{ candidates: PasswordCandidate[]; single: boolean } | null>(null);
+  const [reset, setReset] = useState<{ candidates: PasswordCandidate[]; mode: PasswordDialogMode } | null>(null);
   const candidates = studentPasswordCandidates(students);
   const keyword = searchable(search);
   const phone = /^[+\d\s().-]+$/.test(search.trim()) ? search.trim().replace(/[\s().-]/g, "").replace(/^\+84/, "0") : "";
@@ -37,20 +37,20 @@ export function TeacherStudentRoster({ classId, classroomName, schoolName, stude
       <button className="button button-outline" type="button" aria-pressed={panel === "list"} onClick={() => setPanel("list")}>Danh sách</button>
       <button className="button button-outline" type="button" aria-pressed={panel === "passwords"} onClick={() => setPanel("passwords")}>Mật khẩu học sinh</button>
     </div>
-    {panel === "passwords" ? <section className="roster-password-workspace" aria-label="Mật khẩu học sinh và phiếu đăng nhập">
+    {panel === "passwords" && <section className="roster-password-workspace" aria-label="Mật khẩu học sinh và phiếu đăng nhập">
       <div className="roster-password-card">
         <span className="roster-workspace-tag">{candidates.size} tài khoản có thể cấp lại</span>
         <h3>Cấp lại mật khẩu</h3>
-        <p>Chọn một hoặc nhiều tài khoản để tạo mật khẩu tạm 8 chữ số, có hiệu lực {STUDENT_BULK_RESET_HOURS} giờ.</p>
+        <p>Tạo mã ngẫu nhiên cho nhiều em cùng lúc hoặc bấm <strong>Đặt mật khẩu</strong> ở dòng học sinh để tự nhập mã. Mã tạm có hiệu lực {STUDENT_BULK_RESET_HOURS} giờ.</p>
         <button type="button" className="button button-primary roster-bulk-button" disabled={!candidates.size}
-          onClick={() => setReset({ candidates: [...candidates.values()], single: false })}>Cấp lại hàng loạt</button>
+          onClick={() => setReset({ candidates: [...candidates.values()], mode: "bulk" })}>Cấp lại hàng loạt</button>
       </div>
       <div className="roster-password-card">
         <span className="roster-workspace-tag">Ảnh PNG · Một phiếu mỗi tài khoản</span>
         <h3>Xuất phiếu gửi phụ huynh</h3>
         <p>Sau khi cấp mật khẩu, bấm <strong>Xuất phiếu</strong> bên cạnh số điện thoại cần gửi. Phiếu có thông tin đăng nhập, hạn dùng và hướng dẫn cho phụ huynh.</p>
       </div>
-    </section> : <>
+    </section>}
       {students.length > 0 && <div className="roster-tools">
         <label className="roster-search">
           <span>Tìm học sinh</span>
@@ -72,17 +72,19 @@ export function TeacherStudentRoster({ classId, classroomName, schoolName, stude
               <span className="roster-phone"><span className="roster-mobile-label">Số đăng nhập: </span>{student.phone ?? "—"}</span>
               <span className={`roster-status ${status.className}`}>{status.text}</span>
               <div className="roster-action">
-                {candidate ? <button type="button" className="button button-outline button-small"
-                  aria-label={`Cấp lại mật khẩu cho ${student.full_name}`} onClick={() => setReset({ candidates: [candidate], single: true })}>Cấp lại mật khẩu</button>
-                  : student.account_status === "ACTIVE" ? <span className="roster-action-note">Tài khoản dùng ở nhiều lớp. Nhờ quản trị viên cấp lại.</span>
+                {candidate ? <>
+                  <button type="button" className="button button-outline button-small"
+                    aria-label={`Cấp lại mật khẩu cho ${student.full_name}`} onClick={() => setReset({ candidates: [candidate], mode: "single" })}>Cấp lại mật khẩu</button>
+                  <button type="button" className="button button-outline button-small"
+                    aria-label={`Đặt mật khẩu cho ${student.full_name}`} onClick={() => setReset({ candidates: [candidate], mode: "manual" })}>Đặt mật khẩu</button>
+                </> : student.account_status === "ACTIVE" ? <span className="roster-action-note">Tài khoản dùng ở nhiều lớp. Nhờ quản trị viên đổi mật khẩu.</span>
                   : null}
               </div>
             </li>;
           })}
         </ul>
       </div> : <p className="roster-empty" role="status">{students.length ? "Không tìm thấy học sinh phù hợp." : "Lớp chưa có học sinh trong danh sách."}</p>}
-    </>}
     {reset && <StudentPasswordResetDialog classId={classId} classroomName={classroomName} schoolName={schoolName}
-      candidates={reset.candidates} single={reset.single} onClose={() => setReset(null)} />}
+      candidates={reset.candidates} mode={reset.mode} onClose={() => setReset(null)} />}
   </section>;
 }

@@ -18,26 +18,29 @@ Sau năm lần nhập sai trong một khoảng 15 phút, tài khoản tạm khó
 Đổi mật khẩu làm hết hiệu lực các phiên cũ trên mọi thiết bị. Nếu chưa có số điện
 thoại đăng ký hoặc cần trợ giúp về tài khoản, liên hệ giáo viên chủ nhiệm.
 
-## Xem danh sách và cấp lại mật khẩu
+## Xem danh sách và quản lý mật khẩu
 
 1. Đăng nhập bằng tài khoản giáo viên, chọn lớp và mở mục **Học sinh** trên menu
    trang quản trị. Danh sách hiển thị họ tên, số điện thoại dùng để đăng nhập và
    tình trạng tài khoản. Có thể tìm theo tên hoặc số điện thoại.
-2. Ở đúng dòng học sinh, bấm **Cấp lại mật khẩu**. Kiểm tra tên và số điện thoại,
-   sau đó bấm **Xác nhận cấp lại**.
+2. Ở đúng dòng học sinh, bấm **Cấp lại mật khẩu** rồi **Xác nhận cấp lại** để
+   hệ thống tạo mã ngẫu nhiên. Để dùng mã do thầy cô chọn, bấm **Đặt mật khẩu**,
+   kiểm tra tên và số điện thoại, nhập đúng 8 chữ số rồi bấm **Lưu mật khẩu**.
+   Chọn mã riêng cho từng tài khoản, tránh ngày sinh, số điện thoại, dãy
+   dễ đoán và mật khẩu hiện tại.
 3. Trong **Phiếu gửi phụ huynh**, bấm **Xuất phiếu** để tải ảnh PNG cho đúng
    số điện thoại, hoặc **Sao chép mã**. Tải phiếu trước khi bấm **Xong** và gửi
    riêng cho từng gia đình. Phiếu có tên học sinh, số điện thoại đăng nhập,
    mật khẩu tạm, giờ hết hạn và hướng dẫn đổi mật khẩu.
 
-Mật khẩu tạm mới gồm 8 chữ số, có hiệu lực 24 giờ. Khi cấp lại, mật khẩu
-và các phiên cũ hết hiệu lực. Học sinh phải đổi mật khẩu khi đăng nhập.
+Mật khẩu tạm mới gồm 8 chữ số, có hiệu lực 24 giờ. Khi cấp lại hoặc đặt mã,
+mật khẩu và các phiên cũ hết hiệu lực. Học sinh phải đổi mật khẩu khi đăng nhập.
 Website không lưu mật khẩu dạng văn bản và không thể tải lại phiếu từ
 danh sách sau khi đã đóng hộp thoại kết quả.
 
-Mỗi số điện thoại là một tài khoản. Cấp lại ảnh hưởng đến mọi học sinh dùng
+Mỗi số điện thoại là một tài khoản. Cấp lại hoặc đặt mã áp dụng cho mọi học sinh dùng
 chung tài khoản đó. Giáo viên chỉ xem lớp được phân công; nếu tài khoản liên
-kết với học sinh ở lớp khác đang hoạt động, chỉ quản trị viên có thể cấp lại.
+kết với học sinh ở lớp khác đang hoạt động, chỉ quản trị viên có thể thao tác.
 Thao tác được ghi vào nhật ký, không lưu mật khẩu trong nhật ký. Chức năng sử
 dụng danh sách học sinh và tài khoản hiện có.
 
@@ -62,7 +65,7 @@ tài khoản.
   `student_account_students`, không sửa vai trò trong bảng `users`.
 - Chạy migration `0012_student_temporary_password_expiry.sql` trước khi triển
   khai mã sử dụng cột `student_accounts.temporary_password_expires_at`. Cột này
-  mặc định rỗng nên các mật khẩu đã cấp vẫn dùng như trước. Cấp lại hàng loạt
+  mặc định rỗng nên các mật khẩu đã cấp vẫn dùng như trước. Cấp lại hoặc đặt mã tạm
   đặt hạn dùng; khi học sinh đổi mật khẩu, hạn dùng được xóa. Không cần nhập
   lại danh sách.
 - Mỗi số điện thoại là một tài khoản. Một số gia đình có thể liên kết nhiều con;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useId, useRef, useState } from "react";
-import { resetStudentPasswordsAction, type BulkResetStudentState } from "@/app/teacher/student-actions";
+import { resetStudentPasswordsAction, setStudentPasswordAction, type BulkResetStudentState } from "@/app/teacher/student-actions";
 import { downloadParentLoginSlip, formatLoginSlipExpiry } from "@/lib/parent-login-slip";
 import { STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
 import type { BulkResetEntry, BulkResetTarget, TeacherStudentRow } from "@/lib/teacher-students";
@@ -11,19 +11,24 @@ export interface PasswordCandidate {
   phone: string;
   names: string[];
 }
+export type PasswordDialogMode = "bulk" | "single" | "manual";
 
 const initial: BulkResetStudentState = { kind: "idle" };
 
-export function StudentPasswordResetDialog({ classId, classroomName, schoolName, candidates, single, onClose }: {
+export function StudentPasswordResetDialog({ classId, classroomName, schoolName, candidates, mode, onClose }: {
   classId: string;
   classroomName: string;
   schoolName: string;
   candidates: PasswordCandidate[];
-  single: boolean;
+  mode: PasswordDialogMode;
   onClose: () => void;
 }) {
-  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(single ? [candidates[0].target.account_id] : []));
-  const [result, submitReset, pending] = useActionState(resetStudentPasswordsAction, initial);
+  const single = mode !== "bulk";
+  const manual = mode === "manual";
+  const singleAccount = single ? candidates[0] : undefined;
+  const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(singleAccount ? [singleAccount.target.account_id] : []));
+  const [result, submitReset, pending] = useActionState(manual ? setStudentPasswordAction : resetStudentPasswordsAction, initial);
+  const [showPin, setShowPin] = useState(false);
   const [copied, setCopied] = useState("");
   const [clipboardError, setClipboardError] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
@@ -32,6 +37,8 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
   const heading = useRef<HTMLHeadingElement>(null);
   const titleId = useId();
   const infoId = useId();
+  const pinId = useId();
+  const pinHelpId = useId();
   const targets = candidates.filter(candidate => selected.has(candidate.target.account_id)).map(candidate => candidate.target);
 
   useEffect(() => {
@@ -79,7 +86,8 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
 
   return <dialog className="roster-dialog roster-bulk-dialog" ref={dialog} aria-labelledby={titleId} aria-describedby={infoId}
     onCancel={event => { if (pending || exporting) event.preventDefault(); }} onClose={onClose}>
-    <h3 id={titleId} ref={heading} tabIndex={-1}>{result.kind === "success" ? "Phiếu gửi phụ huynh" : single ? "Cấp lại mật khẩu học sinh" : "Cấp lại mật khẩu hàng loạt"}</h3>
+    <h3 id={titleId} ref={heading} tabIndex={-1}>{result.kind === "success" ? "Phiếu gửi phụ huynh"
+      : manual ? "Đặt mật khẩu học sinh" : single ? "Cấp lại mật khẩu học sinh" : "Cấp lại mật khẩu hàng loạt"}</h3>
     {result.kind === "success" ? <>
       <p id={infoId}>Đã cấp mật khẩu tạm cho <strong>{result.accounts.length} tài khoản</strong>. Hạn dùng: {formatLoginSlipExpiry(result.expiresAt)} (giờ Việt Nam).</p>
       <p>Bấm <strong>Xuất phiếu</strong> ở từng dòng để tải ảnh PNG và gửi riêng cho phụ huynh. Tải các phiếu cần dùng trước khi bấm <strong>Xong</strong>.</p>
@@ -103,11 +111,28 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
       <div className="roster-dialog-actions"><button type="button" className="button button-outline" disabled={!!exporting} onClick={() => dialog.current?.close()}>Xong</button></div>
     </> : <form action={submitReset} aria-busy={pending}>
       <input type="hidden" name="class_id" value={classId} />
-      <input type="hidden" name="targets" value={JSON.stringify(targets)} />
       <input type="hidden" name="confirmed" value="yes" />
-      {single && <p className="roster-dialog-account"><strong>{candidates[0].names.join(", ")}</strong><span>{candidates[0].phone}</span></p>}
-      <p id={infoId}>{single ? "Cấp một mật khẩu tạm" : "Mỗi số điện thoại nhận một mật khẩu tạm"} 8 chữ số, dùng trong {STUDENT_BULK_RESET_HOURS} giờ. Học sinh phải đổi mật khẩu khi đăng nhập.</p>
-      <p>Mật khẩu và các phiên đăng nhập cũ của các tài khoản đã chọn sẽ hết hiệu lực. Các em dùng chung số điện thoại sẽ dùng chung mật khẩu tạm của tài khoản đó.</p>
+      {manual && singleAccount ? <>
+        <input type="hidden" name="enrollment_id" value={singleAccount.target.enrollment_id} />
+        <input type="hidden" name="account_id" value={singleAccount.target.account_id} />
+        <input type="hidden" name="session_version" value={singleAccount.target.session_version} />
+      </> : <input type="hidden" name="targets" value={JSON.stringify(targets)} />}
+      {singleAccount && <p className="roster-dialog-account"><strong>{singleAccount.names.join(", ")}</strong><span>{singleAccount.phone}</span></p>}
+      <p id={infoId}>{manual ? "Mật khẩu tạm" : single ? "Cấp một mật khẩu tạm" : "Mỗi số điện thoại nhận một mật khẩu tạm"} 8 chữ số, dùng trong {STUDENT_BULK_RESET_HOURS} giờ. Học sinh phải đổi mật khẩu khi đăng nhập.</p>
+      {manual && <div className="roster-manual-pin">
+        <label htmlFor={pinId}>Mật khẩu tạm mới</label>
+        <div>
+          <input id={pinId} name="temporary_password" type={showPin ? "text" : "password"} inputMode="numeric"
+            pattern="[0-9]{8}" minLength={8} maxLength={8} required readOnly={pending} autoComplete="new-password"
+            spellCheck={false} aria-describedby={pinHelpId} />
+          <button className="button button-outline button-small" type="button" aria-controls={pinId}
+            aria-label={showPin ? "Ẩn mật khẩu tạm" : "Hiện mật khẩu tạm"}
+            disabled={pending} onClick={() => setShowPin(value => !value)}>{showPin ? "Ẩn" : "Hiện"}</button>
+        </div>
+        <span id={pinHelpId}>Nhập đúng 8 chữ số. Tránh dùng ngày sinh, số điện thoại hoặc dãy số dễ đoán.</span>
+      </div>}
+      <p>Mật khẩu cũ và các phiên đăng nhập của {single ? "tài khoản này" : "các tài khoản đã chọn"} sẽ hết hiệu lực.
+        {(!single || (singleAccount && singleAccount.names.length > 1)) && " Các em dùng chung số điện thoại sẽ dùng chung mật khẩu tạm của tài khoản đó."}</p>
       {!single && <><div className="roster-bulk-select">
         <span role="status">Đã chọn <strong>{targets.length}/{candidates.length}</strong> tài khoản</span>
         <button type="button" className="button button-outline button-small" disabled={pending || targets.length >= Math.min(candidates.length, STUDENT_BULK_RESET_LIMIT)}
@@ -132,7 +157,8 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
       <div className="roster-dialog-actions">
         <button type="button" className="button button-outline" disabled={pending} onClick={() => dialog.current?.close()}>Hủy</button>
         <button type="submit" className="button button-primary" disabled={pending || !targets.length}>
-          {pending ? "Đang cấp lại…" : targets.length && !single ? `Xác nhận cấp lại (${targets.length})` : "Xác nhận cấp lại"}
+          {manual ? (pending ? "Đang lưu…" : "Lưu mật khẩu") : pending ? "Đang cấp lại…"
+            : targets.length && !single ? `Xác nhận cấp lại (${targets.length})` : "Xác nhận cấp lại"}
         </button>
       </div>
     </form>}

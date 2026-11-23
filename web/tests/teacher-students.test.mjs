@@ -15,7 +15,7 @@ let requestSession;
 let revalidated;
 require.cache[nextAuthPath].exports = { ...originalAuth, getServerSession: async () => requestSession };
 require.cache[nextCachePath].exports = { ...originalCache, revalidatePath: path => revalidated.push(path) };
-const { resetStudentPasswordAction, resetStudentPasswordsAction } = await import("../src/app/teacher/student-actions.ts");
+const { resetStudentPasswordAction, resetStudentPasswordsAction, setStudentPasswordAction } = await import("../src/app/teacher/student-actions.ts");
 const { getCurrentStudentAccount, requireStudentAccount } = await import("../src/lib/student-session.ts");
 require.cache[nextAuthPath].exports = originalAuth;
 require.cache[nextCachePath].exports = originalCache;
@@ -108,6 +108,10 @@ function bulkForm(classId, targets, confirmed = "yes") {
 
 function bulkAudits() {
   return fixture.database.prepare("SELECT * FROM audit_logs WHERE action = 'STUDENT_PASSWORD_BULK_RESET'").all();
+}
+
+function manualAudits() {
+  return fixture.database.prepare("SELECT * FROM audit_logs WHERE action = 'STUDENT_PASSWORD_MANUAL_SET'").all();
 }
 
 test("roster lists only assigned, active pupils, includes unlinked pupils, and does not contain password data", async () => {
@@ -378,4 +382,86 @@ test("bulk reset rolls back every account when writing the audit cannot complete
   assert.equal(result.accounts, undefined);
   assert([first, second].every(row => stored(row).session_version === 1 && stored(row).password_hash === initialHash));
   assert.deepEqual(bulkAudits(), []);
+});
+
+test("a teacher can set one temporary PIN, preserving the leading zero and issuing one slip for a shared number", async context => {
+  context.mock.timers.enable({ apis: ["Date"], now: new Date("2026-11-23T09:45:00.000Z") });
+  const account = seedAccount(1);
+  const other = seedAccount(3);
+  const pupil = seedPupil(1, "class-a", account);
+  const sibling = seedPupil(2, "class-a", account);
+  seedPupil(3, "class-a", other);
+  const otherBefore = stored(other);
+  const oldSession = await authorizeStudentCredentials({ phone: account.phone, password: initialPassword });
+  assert(oldSession);
+  const pin = "08371642";
+
+  requestSession = { user: { id: teacher.id } };
+  const receipt = await setStudentPasswordAction(idle, form(pupil, account, { temporary_password: pin }));
+  assert.deepEqual(receipt, {
+    kind: "success", expiresAt: "2026-11-24T09:45:00.000Z",
+    accounts: [{ phone: account.phone, names: [pupil.name, sibling.name], temporaryPassword: pin }],
+  });
+  assert.deepEqual(revalidated, ["/teacher"]);
+  const issued = stored(account);
+  assert.equal(issued.session_version, 2);
+  assert.equal(issued.must_change_password, 1);
+  assert.equal(issued.temporary_password_expires_at, receipt.expiresAt);
+  assert(await verifyPassword(pin, issued.password_hash));
+  assert.deepEqual(stored(other), otherBefore);
+  assert.deepEqual(manualAudits().map(row => [row.actor_user_id, row.class_id, row.entity_id, JSON.parse(row.details_json)]),
+    [[teacher.id, "class-a", account.id, { expires_at: receipt.expiresAt }]]);
+  assert(!fixture.requests.some(request => JSON.stringify(request.params ?? []).includes(pin)),
+    "the storage gateway never receives the PIN in plaintext");
+
+  const samePin = await setStudentPasswordAction(idle, form(pupil, account, { temporary_password: pin, session_version: 2 }));
+  assert.equal(samePin.kind, "error");
+  assert.match(samePin.message, /khác mật khẩu đang dùng/);
+  assert.deepEqual(stored(account), issued);
+  assert.equal(manualAudits().length, 1);
+
+  requestSession = signedInStudent(oldSession);
+  assert.equal(await getCurrentStudentAccount(), null);
+  assert.equal(await authorizeStudentCredentials({ phone: account.phone, password: initialPassword }), null);
+  const restrictedSession = await authorizeStudentCredentials({ phone: account.phone, password: pin });
+  assert(restrictedSession);
+  requestSession = signedInStudent(restrictedSession);
+  await assert.rejects(requireStudentAccount(), { code: "PASSWORD_CHANGE_REQUIRED" });
+  context.mock.timers.setTime(Date.parse(receipt.expiresAt));
+  assert.equal(await getCurrentStudentAccount(), null);
+  assert.equal(await authorizeStudentCredentials({ phone: account.phone, password: pin }), null);
+});
+
+test("manual setting refuses unconfirmed, guessed or out-of-scope PINs without changing any account", async () => {
+  const account = seedAccount(8164935);
+  const outside = seedAccount(2);
+  const pupil = seedPupil(1, "class-a", account);
+  const outsidePupil = seedPupil(2, "class-b", outside);
+  const shared = seedAccount(3);
+  const sharedPupil = seedPupil(3, "class-a", shared);
+  seedPupil(4, "class-b", shared);
+  const before = [account, outside, shared].map(stored);
+  const good = { temporary_password: "08371642" };
+  const duplicate = form(pupil, account, good);
+  duplicate.append("temporary_password", good.temporary_password);
+
+  for (const session of [null, { user: { id: teacher.id, kind: "student" } }]) {
+    requestSession = session;
+    assert.equal((await setStudentPasswordAction(idle, form(pupil, account, good))).kind, "error");
+  }
+  requestSession = { user: { id: teacher.id } };
+  for (const data of [
+    ...["12345678", "09072016", "20160907", "09/07/2016", "8371642", "08371642\n", account.phone.slice(-8)]
+      .map(temporary_password => form(pupil, account, { temporary_password })),
+    duplicate, form(pupil, account, { ...good, confirmed: undefined }),
+    form(pupil, account, { ...good, session_version: 2 }), form(pupil, outside, good),
+    form(outsidePupil, outside, good), form(sharedPupil, shared, good),
+  ]) {
+    const result = await setStudentPasswordAction(idle, data);
+    assert.equal(result.kind, "error");
+    assert.equal(result.accounts, undefined);
+  }
+  assert.deepEqual([account, outside, shared].map(stored), before);
+  assert.deepEqual(manualAudits(), []);
+  assert.deepEqual(revalidated, []);
 });

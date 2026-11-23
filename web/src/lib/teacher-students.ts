@@ -2,7 +2,7 @@ import "server-only";
 
 import { randomBytes, randomInt, randomUUID } from "node:crypto";
 import { batch, query } from "@/lib/d1";
-import { hashPassword } from "@/lib/password";
+import { hashPassword, verifyPassword } from "@/lib/password";
 import { isPredictableStudentPassword, STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
 
 export interface TeacherStudentRow {
@@ -128,7 +128,36 @@ function drawTemporaryPin(used: Set<string>, phone: string): string {
   return pin;
 }
 
-export async function resetTeacherStudentPasswords(actorId: string, classId: string, targets: BulkResetTarget[]): Promise<BulkResetReceipt> {
+export function resetTeacherStudentPasswords(actorId: string, classId: string, targets: BulkResetTarget[]): Promise<BulkResetReceipt> {
+  return issueTeacherStudentPasswords(actorId, classId, targets);
+}
+
+export async function setTeacherStudentPassword(actorId: string, input: ResetStudentInput, temporaryPassword: string): Promise<BulkResetReceipt> {
+  if (typeof temporaryPassword !== "string" || temporaryPassword.length !== 8 || !/^[0-9]{8}$/.test(temporaryPassword)) {
+    throw new TeacherStudentError("Mật khẩu tạm phải gồm đúng 8 chữ số.");
+  }
+  return issueTeacherStudentPasswords(actorId, input.class_id, [input], temporaryPassword);
+}
+
+async function checkChosenPin(pin: string, phone: string, target: BulkResetTarget): Promise<void> {
+  const looksLikeBirthDate = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(19|20)[0-9]{2}$/.test(pin) ||
+    /^(19|20)[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/.test(pin);
+  if (isPredictableStudentPassword(pin) || looksLikeBirthDate || phone.includes(pin)) {
+    throw new TeacherStudentError("Hãy chọn mã khác. Không dùng ngày sinh, dãy số dễ đoán hoặc một phần số điện thoại đăng nhập.");
+  }
+  const [previous] = await query<{ password_hash: string }>(
+    "SELECT password_hash FROM student_accounts WHERE id = ? AND phone = ? AND session_version = ? AND status = 'ACTIVE'",
+    [target.account_id, phone, target.session_version],
+  );
+  if (!previous) throw new TeacherStudentError(staleSelection);
+  if (await verifyPassword(pin, previous.password_hash)) {
+    throw new TeacherStudentError("Mật khẩu tạm mới phải khác mật khẩu đang dùng của tài khoản này.");
+  }
+}
+
+async function issueTeacherStudentPasswords(
+  actorId: string, classId: string, targets: BulkResetTarget[], chosenPin?: string,
+): Promise<BulkResetReceipt> {
   if (targets.length < 1 || targets.length > STUDENT_BULK_RESET_LIMIT ||
     new Set(targets.map(item => item.account_id)).size !== targets.length) {
     throw new TeacherStudentError("Số tài khoản đã chọn không hợp lệ.");
@@ -150,15 +179,16 @@ export async function resetTeacherStudentPasswords(actorId: string, classId: str
     return { names: namesByAccount.get(target.account_id)!, phone: row.phone };
   });
 
+  if (chosenPin !== undefined) await checkChosenPin(chosenPin, recipients[0].phone, targets[0]);
   const used = new Set<string>();
-  const accounts = recipients.map(row => ({ ...row, temporaryPassword: drawTemporaryPin(used, row.phone) }));
+  const accounts = recipients.map(row => ({ ...row, temporaryPassword: chosenPin ?? drawTemporaryPin(used, row.phone) }));
   const hashes: string[] = [];
   // Keep the password hashing workload bounded when a whole class is selected.
   for (let start = 0; start < accounts.length; start += 4) {
     hashes.push(...await Promise.all(accounts.slice(start, start + 4).map(row => hashPassword(row.temporaryPassword))));
   }
-  const payload = JSON.stringify(targets.map((target, i) => ({
-    ...target, phone: accounts[i].phone, password_hash: hashes[i], audit_id: randomUUID(),
+  const payload = JSON.stringify(targets.map(({ account_id, enrollment_id, session_version }, i) => ({
+    account_id, enrollment_id, session_version, phone: accounts[i].phone, password_hash: hashes[i], audit_id: randomUUID(),
   })));
   const now = new Date();
   const expiresAt = new Date(now.getTime() + STUDENT_BULK_RESET_HOURS * 60 * 60 * 1000).toISOString();
@@ -194,11 +224,12 @@ export async function resetTeacherStudentPasswords(actorId: string, classId: str
     {
       sql: `INSERT INTO audit_logs (id, actor_user_id, school_id, class_id, action, entity_type, entity_id, details_json)
         SELECT json_extract(job.value, '$.audit_id'), ?, classroom.school_id, classroom.id,
-          'STUDENT_PASSWORD_BULK_RESET', 'student_account', json_extract(job.value, '$.account_id'),
+          ?, 'student_account', json_extract(job.value, '$.account_id'),
           json_object('expires_at', ?)
         FROM classes classroom CROSS JOIN json_each(?) job
         WHERE classroom.id = ? AND changes() = ?`,
-      params: [actorId, expiresAt, payload, classId, targets.length],
+      params: [actorId, chosenPin === undefined ? "STUDENT_PASSWORD_BULK_RESET" : "STUDENT_PASSWORD_MANUAL_SET",
+        expiresAt, payload, classId, targets.length],
     },
   ]);
   if (write.meta.changes !== targets.length || audit.meta.changes !== targets.length) {
