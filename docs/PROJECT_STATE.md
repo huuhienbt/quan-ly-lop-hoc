@@ -5,6 +5,9 @@
   hoặc **Đặt mật khẩu** ở dòng học sinh để thao tác với từng tài khoản. Sau khi
   cấp hoặc đặt, xuất một ảnh PNG riêng cho từng số điện thoại trong hộp
   thoại kết quả. Xem [hướng dẫn sử dụng](dang-nhap-hoc-sinh.md).
+- Học sinh tự đổi và người quản trị đặt thủ công dùng mật khẩu từ 8–128 ký
+  tự, không bắt buộc chữ hoa, số hay ký tự đặc biệt. Cấp tự động vẫn tạo
+  mã 8 chữ số. Mật khẩu đã cấp và bản băm trước đây tiếp tục sử dụng được.
 - Áp dụng migration `0012_student_temporary_password_expiry.sql` vào đúng
   cơ sở dữ liệu D1 trước khi đưa phiên bản web có tính năng này lên chính
   thức. Mục đặt mật khẩu và xuất phiếu dùng cột hiện có, không cần migration

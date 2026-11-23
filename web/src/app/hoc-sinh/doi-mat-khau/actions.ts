@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { changeStudentPassword, StudentCredentialError } from "@/lib/student-credentials";
+import { STUDENT_PASSWORD_LENGTH_MESSAGE, STUDENT_PASSWORD_MAX_LENGTH, STUDENT_PASSWORD_MIN_LENGTH } from "@/lib/student-reset-options";
 import { requireStudentAccount, StudentAuthorizationError } from "@/lib/student-session";
 
 export interface StudentPasswordState {
@@ -11,9 +12,9 @@ export interface StudentPasswordState {
 }
 
 const passwordInput = z.object({
-  current_password: z.string().min(1, "Em hãy nhập mật khẩu hiện tại.").max(128, "Mật khẩu không hợp lệ."),
-  new_password: z.string().min(8, "Mật khẩu mới cần ít nhất 8 ký tự.").max(128, "Mật khẩu mới không được quá 128 ký tự."),
-  confirm_password: z.string().min(1, "Em hãy nhập lại mật khẩu mới.").max(128, "Mật khẩu không hợp lệ."),
+  current_password: z.string().min(1, "Em hãy nhập mật khẩu hiện tại.").max(STUDENT_PASSWORD_MAX_LENGTH, "Mật khẩu không hợp lệ."),
+  new_password: z.string().min(STUDENT_PASSWORD_MIN_LENGTH, STUDENT_PASSWORD_LENGTH_MESSAGE).max(STUDENT_PASSWORD_MAX_LENGTH, STUDENT_PASSWORD_LENGTH_MESSAGE),
+  confirm_password: z.string().min(1, "Em hãy nhập lại mật khẩu mới.").max(STUDENT_PASSWORD_MAX_LENGTH, STUDENT_PASSWORD_LENGTH_MESSAGE),
 }).strict().refine((input) => input.new_password === input.confirm_password, {
   path: ["confirm_password"], message: "Hai lần nhập mật khẩu mới chưa khớp nhau.",
 });

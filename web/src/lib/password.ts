@@ -1,5 +1,6 @@
 import "server-only";
 import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
+import { STUDENT_PASSWORD_MAX_LENGTH } from "@/lib/student-reset-options";
 
 const SCRYPT_N = 16_384;
 const SCRYPT_R = 8;
@@ -9,7 +10,7 @@ const MAX_MEMORY_BYTES = 64 * 1024 * 1024;
 const HASH_PATTERN = /^scrypt\$16384\$8\$1\$((?:[a-f0-9]{2}){16,64})\$([a-f0-9]{128})$/;
 
 function isValidPassword(password: string): boolean {
-  return typeof password === "string" && password.length >= 1 && password.length <= 128;
+  return typeof password === "string" && password.length >= 1 && password.length <= STUDENT_PASSWORD_MAX_LENGTH;
 }
 
 function deriveKey(password: string, salt: Buffer): Promise<Buffer> {
@@ -28,7 +29,7 @@ function deriveKey(password: string, salt: Buffer): Promise<Buffer> {
 
 export async function hashPassword(password: string): Promise<string> {
   if (!isValidPassword(password)) {
-    throw new RangeError("Mật khẩu phải có từ 1 đến 128 ký tự.");
+    throw new RangeError(`Mật khẩu phải có từ 1 đến ${STUDENT_PASSWORD_MAX_LENGTH} ký tự.`);
   }
   const salt = randomBytes(16);
   const key = await deriveKey(password, salt);

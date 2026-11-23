@@ -16,6 +16,7 @@ let revalidated;
 require.cache[nextAuthPath].exports = { ...originalAuth, getServerSession: async () => requestSession };
 require.cache[nextCachePath].exports = { ...originalCache, revalidatePath: path => revalidated.push(path) };
 const { resetStudentPasswordAction, resetStudentPasswordsAction, setStudentPasswordAction } = await import("../src/app/teacher/student-actions.ts");
+const { updateStudentPassword } = await import("../src/app/hoc-sinh/doi-mat-khau/actions.ts");
 const { getCurrentStudentAccount, requireStudentAccount } = await import("../src/lib/student-session.ts");
 require.cache[nextAuthPath].exports = originalAuth;
 require.cache[nextCachePath].exports = originalCache;
@@ -451,7 +452,8 @@ test("manual setting refuses unconfirmed, guessed or out-of-scope PINs without c
   }
   requestSession = { user: { id: teacher.id } };
   for (const data of [
-    ...["12345678", "09072016", "20160907", "09/07/2016", "8371642", "08371642\n", account.phone.slice(-8)]
+    ...["12345678", "password123", "09072016", "20160907", "09/07/2016", "7/9/2016", "8371642", "08371642\n",
+      " ".repeat(8), "bờ tre ".repeat(21), account.phone.slice(-8), "+84 " + account.phone.slice(1)]
       .map(temporary_password => form(pupil, account, { temporary_password })),
     duplicate, form(pupil, account, { ...good, confirmed: undefined }),
     form(pupil, account, { ...good, session_version: 2 }), form(pupil, outside, good),
@@ -464,4 +466,37 @@ test("manual setting refuses unconfirmed, guessed or out-of-scope PINs without c
   assert.deepEqual([account, outside, shared].map(stored), before);
   assert.deepEqual(manualAudits(), []);
   assert.deepEqual(revalidated, []);
+});
+
+test("staff and pupils can set longer passwords without requiring capitals, digits, or symbols", async () => {
+  const account = seedAccount(1);
+  const numeric = seedAccount(2);
+  const pupil = seedPupil(1, "class-a", account);
+  const numericPupil = seedPupil(2, "class-a", numeric);
+  requestSession = { user: { id: admin.id } };
+
+  const phrase = "cánh diều  bên bờ tre";
+  const receipt = await setStudentPasswordAction(idle, form(pupil, account, { temporary_password: phrase }));
+  assert.equal(receipt.kind, "success");
+  assert.equal(receipt.accounts[0].temporaryPassword, phrase);
+  assert(!fixture.requests.some(request => JSON.stringify(request.params ?? []).includes(phrase)));
+  assert.equal((await setStudentPasswordAction(idle, form(numericPupil, numeric, { temporary_password: "6387150296" }))).kind, "success");
+  assert(await authorizeStudentCredentials({ phone: numeric.phone, password: "6387150296" }));
+
+  // Repeated spaces are preserved, not trimmed or collapsed by form parsing.
+  assert.equal(await authorizeStudentCredentials({ phone: account.phone, password: phrase.replace("  ", " ") }), null);
+  const restricted = await authorizeStudentCredentials({ phone: account.phone, password: phrase });
+  assert(restricted);
+  requestSession = signedInStudent(restricted);
+  await assert.rejects(requireStudentAccount(), { code: "PASSWORD_CHANGE_REQUIRED" });
+  const nextPassword = "vuonhoaxanh";
+  const change = new FormData();
+  change.set("current_password", phrase);
+  change.set("new_password", nextPassword);
+  change.set("confirm_password", nextPassword);
+  assert.equal((await updateStudentPassword({ success: false, message: "" }, change)).success, true);
+  assert.equal(stored(account).must_change_password, 0);
+  assert.equal(stored(account).temporary_password_expires_at, null);
+  assert.equal(await authorizeStudentCredentials({ phone: account.phone, password: phrase }), null);
+  assert(await authorizeStudentCredentials({ phone: account.phone, password: nextPassword }));
 });

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/rbac";
 import { resetTeacherStudentPassword, resetTeacherStudentPasswords, setTeacherStudentPassword, TeacherStudentError, type BulkResetReceipt } from "@/lib/teacher-students";
-import { STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
+import { STUDENT_BULK_RESET_LIMIT, STUDENT_PASSWORD_LENGTH_MESSAGE, STUDENT_PASSWORD_MIN_LENGTH, STUDENT_PASSWORD_MAX_LENGTH } from "@/lib/student-reset-options";
 
 export type ResetStudentState =
   | { kind: "idle" }
@@ -26,7 +26,9 @@ const resetForm = z.object({
   confirmed: z.literal("yes"),
 }).strict();
 
-const manualForm = resetForm.extend({ temporary_password: z.string().length(8).regex(/^[0-9]{8}$/) });
+const manualForm = resetForm.extend({
+  temporary_password: z.string().min(STUDENT_PASSWORD_MIN_LENGTH).max(STUDENT_PASSWORD_MAX_LENGTH),
+});
 
 const bulkForm = z.object({
   class_id: id,
@@ -91,8 +93,8 @@ export async function resetStudentPasswordsAction(_previous: BulkResetStudentSta
 export async function setStudentPasswordAction(_previous: BulkResetStudentState, formData: FormData): Promise<BulkResetStudentState> {
   const input = manualForm.safeParse(uniqueFormFields(formData));
   if (!input.success) {
-    const badPin = input.error.issues.some(issue => issue.path[0] === "temporary_password");
-    return { kind: "error", message: badPin ? "Mật khẩu tạm phải gồm đúng 8 chữ số."
+    const invalidPassword = input.error.issues.some(issue => issue.path[0] === "temporary_password");
+    return { kind: "error", message: invalidPassword ? STUDENT_PASSWORD_LENGTH_MESSAGE
       : "Thông tin xác nhận chưa hợp lệ. Thầy cô hãy mở lại danh sách và thử lại." };
   }
   try {

@@ -9,8 +9,9 @@ tin, ngân hàng sao, cảm xúc hoặc các tiện ích của giai đoạn sau.
 1. Mở `/dang-nhap`, hoặc chọn **Đăng nhập** trên trang chủ rồi chọn **Học sinh**.
 2. Nhập số điện thoại đã đăng ký với lớp và mật khẩu ban đầu do giáo viên cung cấp.
    Có thể nhập số bắt đầu bằng `0` hoặc `+84`; hệ thống giữ số `0` đầu khi chuẩn hóa.
-3. Lần đăng nhập đầu, chọn mật khẩu riêng từ 8 đến 128 ký tự, khác mật khẩu được
-   cấp, khác mật khẩu hiện tại và tránh dùng dãy số dễ đoán. Nhập lại để xác nhận.
+3. Lần đăng nhập đầu, chọn mật khẩu riêng từ 8 đến 128 ký tự, khác mật khẩu hiện
+   tại và tránh các mật khẩu dễ đoán. Em có thể dùng một cụm từ dễ nhớ, không
+   cần chữ hoa, chữ số hay ký tự đặc biệt. Nhập lại để xác nhận.
 4. Đăng nhập lại bằng mật khẩu mới. Trang học sinh chỉ hiển thị hồ sơ được liên
    kết với tài khoản đó.
 
@@ -25,15 +26,15 @@ thoại đăng ký hoặc cần trợ giúp về tài khoản, liên hệ giáo 
    tình trạng tài khoản. Có thể tìm theo tên hoặc số điện thoại.
 2. Ở đúng dòng học sinh, bấm **Cấp lại mật khẩu** rồi **Xác nhận cấp lại** để
    hệ thống tạo mã ngẫu nhiên. Để dùng mã do thầy cô chọn, bấm **Đặt mật khẩu**,
-   kiểm tra tên và số điện thoại, nhập đúng 8 chữ số rồi bấm **Lưu mật khẩu**.
-   Chọn mã riêng cho từng tài khoản, tránh ngày sinh, số điện thoại, dãy
+   kiểm tra tên và số điện thoại, nhập từ 8 đến 128 ký tự rồi bấm **Lưu mật khẩu**.
+   Có thể dùng một cụm từ dễ nhớ. Tránh ngày sinh, số điện thoại, mật khẩu
    dễ đoán và mật khẩu hiện tại.
 3. Trong **Phiếu gửi phụ huynh**, bấm **Xuất phiếu** để tải ảnh PNG cho đúng
    số điện thoại, hoặc **Sao chép mã**. Tải phiếu trước khi bấm **Xong** và gửi
    riêng cho từng gia đình. Phiếu có tên học sinh, số điện thoại đăng nhập,
    mật khẩu tạm, giờ hết hạn và hướng dẫn đổi mật khẩu.
 
-Mật khẩu tạm mới gồm 8 chữ số, có hiệu lực 24 giờ. Khi cấp lại hoặc đặt mã,
+Mật khẩu tạm có hiệu lực 24 giờ. Khi cấp lại hoặc đặt mật khẩu,
 mật khẩu và các phiên cũ hết hiệu lực. Học sinh phải đổi mật khẩu khi đăng nhập.
 Website không lưu mật khẩu dạng văn bản và không thể tải lại phiếu từ
 danh sách sau khi đã đóng hộp thoại kết quả.

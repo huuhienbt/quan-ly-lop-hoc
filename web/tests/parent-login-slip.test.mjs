@@ -43,3 +43,19 @@ test("expired or malformed temporary credentials cannot generate a login slip", 
   assert.throws(() => buildParentLoginSlip({ ...fixture, expiresAt: "không có hạn" }, now), /hết hạn/);
   assert.throws(() => buildParentLoginSlip({ ...fixture, temporaryPassword: "3752091" }, now), /không hợp lệ/);
 });
+
+test("a long temporary passphrase fits on the slip without losing letters, accents or spaces", async () => {
+  const password = "bờ tre  o\u0302 <&> mây trắng ".repeat(6).slice(0, 128);
+  const { svg } = buildParentLoginSlip({ ...fixture, temporaryPassword: password }, now);
+  const lines = [...svg.matchAll(/xml:space="preserve">([^]*?)<\/text>/g)].map(([, line]) => line);
+  assert(lines.length > 1);
+  const entities = { lt: "<", gt: ">", amp: "&" };
+  const decoded = lines.join("").replace(/<tspan fill="#4a6b60">(·+)<\/tspan>/g, (_, spaces) => " ".repeat(spaces.length))
+    .replace(/&(lt|gt|amp);/g, (_, name) => entities[name]);
+  assert.equal(decoded, password);
+  assert(svg.includes("Nhập liền các dòng.") && svg.includes("là một dấu cách."));
+  const png = await sharp(Buffer.from(svg)).png().toBuffer();
+  const meta = await sharp(png).metadata();
+  assert.equal(meta.width, 1000);
+  assert(meta.height > 1200);
+});

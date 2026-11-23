@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { resetStudentPasswordsAction, setStudentPasswordAction, type BulkResetStudentState } from "@/app/teacher/student-actions";
 import { downloadParentLoginSlip, formatLoginSlipExpiry } from "@/lib/parent-login-slip";
-import { STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
+import { STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT, STUDENT_PASSWORD_HELP, STUDENT_PASSWORD_MIN_LENGTH } from "@/lib/student-reset-options";
 import type { BulkResetEntry, BulkResetTarget, TeacherStudentRow } from "@/lib/teacher-students";
 
 export interface PasswordCandidate {
@@ -28,7 +28,7 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
   const singleAccount = single ? candidates[0] : undefined;
   const [selected, setSelected] = useState<ReadonlySet<string>>(() => new Set(singleAccount ? [singleAccount.target.account_id] : []));
   const [result, submitReset, pending] = useActionState(manual ? setStudentPasswordAction : resetStudentPasswordsAction, initial);
-  const [showPin, setShowPin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [copied, setCopied] = useState("");
   const [clipboardError, setClipboardError] = useState(false);
   const [exporting, setExporting] = useState<string | null>(null);
@@ -37,8 +37,8 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
   const heading = useRef<HTMLHeadingElement>(null);
   const titleId = useId();
   const infoId = useId();
-  const pinId = useId();
-  const pinHelpId = useId();
+  const passwordId = useId();
+  const passwordHelpId = useId();
   const targets = candidates.filter(candidate => selected.has(candidate.target.account_id)).map(candidate => candidate.target);
 
   useEffect(() => {
@@ -118,18 +118,18 @@ export function StudentPasswordResetDialog({ classId, classroomName, schoolName,
         <input type="hidden" name="session_version" value={singleAccount.target.session_version} />
       </> : <input type="hidden" name="targets" value={JSON.stringify(targets)} />}
       {singleAccount && <p className="roster-dialog-account"><strong>{singleAccount.names.join(", ")}</strong><span>{singleAccount.phone}</span></p>}
-      <p id={infoId}>{manual ? "Mật khẩu tạm" : single ? "Cấp một mật khẩu tạm" : "Mỗi số điện thoại nhận một mật khẩu tạm"} 8 chữ số, dùng trong {STUDENT_BULK_RESET_HOURS} giờ. Học sinh phải đổi mật khẩu khi đăng nhập.</p>
-      {manual && <div className="roster-manual-pin">
-        <label htmlFor={pinId}>Mật khẩu tạm mới</label>
+      <p id={infoId}>{manual ? "Mật khẩu tạm" : single ? "Mật khẩu tạm 8 chữ số" : "Mỗi số điện thoại nhận một mật khẩu tạm 8 chữ số"}, dùng trong {STUDENT_BULK_RESET_HOURS} giờ. Học sinh phải đổi mật khẩu khi đăng nhập.</p>
+      {manual && <div className="roster-manual-password">
+        <label htmlFor={passwordId}>Mật khẩu tạm mới</label>
         <div>
-          <input id={pinId} name="temporary_password" type={showPin ? "text" : "password"} inputMode="numeric"
-            pattern="[0-9]{8}" minLength={8} maxLength={8} required readOnly={pending} autoComplete="new-password"
-            spellCheck={false} aria-describedby={pinHelpId} />
-          <button className="button button-outline button-small" type="button" aria-controls={pinId}
-            aria-label={showPin ? "Ẩn mật khẩu tạm" : "Hiện mật khẩu tạm"}
-            disabled={pending} onClick={() => setShowPin(value => !value)}>{showPin ? "Ẩn" : "Hiện"}</button>
+          <input id={passwordId} name="temporary_password" type={showPassword ? "text" : "password"}
+            minLength={STUDENT_PASSWORD_MIN_LENGTH} required readOnly={pending} autoComplete="new-password"
+            autoCapitalize="none" autoCorrect="off" spellCheck={false} aria-describedby={passwordHelpId} />
+          <button className="button button-outline button-small" type="button" aria-controls={passwordId}
+            aria-label={showPassword ? "Ẩn mật khẩu tạm" : "Hiện mật khẩu tạm"}
+            disabled={pending} onClick={() => setShowPassword(value => !value)}>{showPassword ? "Ẩn" : "Hiện"}</button>
         </div>
-        <span id={pinHelpId}>Nhập đúng 8 chữ số. Tránh dùng ngày sinh, số điện thoại hoặc dãy số dễ đoán.</span>
+        <span id={passwordHelpId}>{STUDENT_PASSWORD_HELP} Tránh dùng ngày sinh hoặc số điện thoại.</span>
       </div>}
       <p>Mật khẩu cũ và các phiên đăng nhập của {single ? "tài khoản này" : "các tài khoản đã chọn"} sẽ hết hiệu lực.
         {(!single || (singleAccount && singleAccount.names.length > 1)) && " Các em dùng chung số điện thoại sẽ dùng chung mật khẩu tạm của tài khoản đó."}</p>

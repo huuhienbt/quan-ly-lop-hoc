@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { query } from "@/lib/d1";
 import { hashPassword, verifyPassword } from "@/lib/password";
-import { isPredictableStudentPassword } from "@/lib/student-reset-options";
+import { isPredictableStudentPassword, STUDENT_PASSWORD_MAX_LENGTH, studentPasswordFormatError } from "@/lib/student-reset-options";
 
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
@@ -87,7 +87,7 @@ export async function authorizeStudentCredentials(
 ): Promise<StudentCredentialUser | null> {
   const phone = normalizeVietnamPhone(credentials?.phone);
   const password = credentials?.password;
-  if (!phone || typeof password !== "string" || !password.length || password.length > 128) return null;
+  if (!phone || typeof password !== "string" || !password.length || password.length > STUDENT_PASSWORD_MAX_LENGTH) return null;
   try {
     // The atomic reservation bounds expensive password checks even during parallel requests.
     const account = await reserveAttempt({ phone });
@@ -126,12 +126,12 @@ export async function changeStudentPassword(
   currentPassword: string,
   newPassword: string,
 ): Promise<void> {
-  if (typeof currentPassword !== "string" || !currentPassword.length || currentPassword.length > 128 ||
-    typeof newPassword !== "string" || newPassword.length < 8 || newPassword.length > 128 ||
-    isPredictableStudentPassword(newPassword) || newPassword === currentPassword) {
-    throw new StudentCredentialError("Mật khẩu mới phải có 8–128 ký tự, khác mật khẩu hiện tại và không dùng dãy số dễ đoán.");
-  }
-  if (!accountId || !Number.isSafeInteger(sessionVersion) || sessionVersion < 1) throw new StudentCredentialError();
+  if (typeof currentPassword !== "string" || !currentPassword.length || currentPassword.length > STUDENT_PASSWORD_MAX_LENGTH ||
+    !accountId || !Number.isSafeInteger(sessionVersion) || sessionVersion < 1) throw new StudentCredentialError();
+  const invalid = studentPasswordFormatError(newPassword);
+  if (invalid) throw new StudentCredentialError(invalid);
+  if (newPassword === currentPassword) throw new StudentCredentialError("Em hãy chọn mật khẩu khác mật khẩu hiện tại.");
+  if (isPredictableStudentPassword(newPassword)) throw new StudentCredentialError("Mật khẩu này dễ đoán. Em hãy thử dùng một cụm từ khác.");
   try {
     const account = await reserveAttempt({ accountId, sessionVersion });
     if (!account) { await verifyDummy(currentPassword); throw new StudentCredentialError(); }

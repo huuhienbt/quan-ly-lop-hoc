@@ -3,7 +3,7 @@ import "server-only";
 import { randomBytes, randomInt, randomUUID } from "node:crypto";
 import { batch, query } from "@/lib/d1";
 import { hashPassword, verifyPassword } from "@/lib/password";
-import { isPredictableStudentPassword, STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
+import { isPredictableStudentPassword, isStudentPhonePassword, STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT, studentPasswordFormatError } from "@/lib/student-reset-options";
 
 export interface TeacherStudentRow {
   enrollment_id: string;
@@ -133,30 +133,27 @@ export function resetTeacherStudentPasswords(actorId: string, classId: string, t
 }
 
 export async function setTeacherStudentPassword(actorId: string, input: ResetStudentInput, temporaryPassword: string): Promise<BulkResetReceipt> {
-  if (typeof temporaryPassword !== "string" || temporaryPassword.length !== 8 || !/^[0-9]{8}$/.test(temporaryPassword)) {
-    throw new TeacherStudentError("Mật khẩu tạm phải gồm đúng 8 chữ số.");
-  }
+  const invalid = studentPasswordFormatError(temporaryPassword);
+  if (invalid) throw new TeacherStudentError(invalid);
   return issueTeacherStudentPasswords(actorId, input.class_id, [input], temporaryPassword);
 }
 
-async function checkChosenPin(pin: string, phone: string, target: BulkResetTarget): Promise<void> {
-  const looksLikeBirthDate = /^(0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(19|20)[0-9]{2}$/.test(pin) ||
-    /^(19|20)[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/.test(pin);
-  if (isPredictableStudentPassword(pin) || looksLikeBirthDate || phone.includes(pin)) {
-    throw new TeacherStudentError("Hãy chọn mã khác. Không dùng ngày sinh, dãy số dễ đoán hoặc một phần số điện thoại đăng nhập.");
+async function checkChosenPassword(password: string, phone: string, target: BulkResetTarget): Promise<void> {
+  if (isPredictableStudentPassword(password) || isStudentPhonePassword(password, phone)) {
+    throw new TeacherStudentError("Hãy chọn mật khẩu khác. Tránh dùng mật khẩu quá phổ biến, ngày sinh hoặc số điện thoại đăng nhập.");
   }
   const [previous] = await query<{ password_hash: string }>(
     "SELECT password_hash FROM student_accounts WHERE id = ? AND phone = ? AND session_version = ? AND status = 'ACTIVE'",
     [target.account_id, phone, target.session_version],
   );
   if (!previous) throw new TeacherStudentError(staleSelection);
-  if (await verifyPassword(pin, previous.password_hash)) {
+  if (await verifyPassword(password, previous.password_hash)) {
     throw new TeacherStudentError("Mật khẩu tạm mới phải khác mật khẩu đang dùng của tài khoản này.");
   }
 }
 
 async function issueTeacherStudentPasswords(
-  actorId: string, classId: string, targets: BulkResetTarget[], chosenPin?: string,
+  actorId: string, classId: string, targets: BulkResetTarget[], chosenPassword?: string,
 ): Promise<BulkResetReceipt> {
   if (targets.length < 1 || targets.length > STUDENT_BULK_RESET_LIMIT ||
     new Set(targets.map(item => item.account_id)).size !== targets.length) {
@@ -179,9 +176,9 @@ async function issueTeacherStudentPasswords(
     return { names: namesByAccount.get(target.account_id)!, phone: row.phone };
   });
 
-  if (chosenPin !== undefined) await checkChosenPin(chosenPin, recipients[0].phone, targets[0]);
+  if (chosenPassword !== undefined) await checkChosenPassword(chosenPassword, recipients[0].phone, targets[0]);
   const used = new Set<string>();
-  const accounts = recipients.map(row => ({ ...row, temporaryPassword: chosenPin ?? drawTemporaryPin(used, row.phone) }));
+  const accounts = recipients.map(row => ({ ...row, temporaryPassword: chosenPassword ?? drawTemporaryPin(used, row.phone) }));
   const hashes: string[] = [];
   // Keep the password hashing workload bounded when a whole class is selected.
   for (let start = 0; start < accounts.length; start += 4) {
@@ -228,7 +225,7 @@ async function issueTeacherStudentPasswords(
           json_object('expires_at', ?)
         FROM classes classroom CROSS JOIN json_each(?) job
         WHERE classroom.id = ? AND changes() = ?`,
-      params: [actorId, chosenPin === undefined ? "STUDENT_PASSWORD_BULK_RESET" : "STUDENT_PASSWORD_MANUAL_SET",
+      params: [actorId, chosenPassword === undefined ? "STUDENT_PASSWORD_BULK_RESET" : "STUDENT_PASSWORD_MANUAL_SET",
         expiresAt, payload, classId, targets.length],
     },
   ]);
