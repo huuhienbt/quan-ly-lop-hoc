@@ -18,6 +18,23 @@ Sau năm lần nhập sai trong một khoảng 15 phút, tài khoản tạm khó
 Đổi mật khẩu làm hết hiệu lực các phiên cũ trên mọi thiết bị. Nếu chưa có số điện
 thoại đăng ký hoặc cần trợ giúp về tài khoản, liên hệ giáo viên chủ nhiệm.
 
+## Xem danh sách và cấp lại mật khẩu
+
+1. Đăng nhập bằng tài khoản giáo viên, chọn lớp và mở mục **Học sinh** trên menu
+   trang quản trị. Danh sách hiển thị họ tên, số điện thoại dùng để đăng nhập và
+   tình trạng tài khoản. Có thể tìm theo tên hoặc số điện thoại.
+2. Ở đúng dòng học sinh, bấm **Cấp lại mật khẩu**. Kiểm tra tên và số điện thoại,
+   sau đó bấm **Xác nhận cấp lại**.
+3. Sao chép mật khẩu tạm và gửi riêng cho phụ huynh. Mật khẩu tạm chỉ hiển thị
+   trong hộp thoại kết quả; website không lưu mật khẩu dạng văn bản. Các phiên
+   đăng nhập cũ bị thu hồi và người dùng phải đổi mật khẩu sau khi đăng nhập.
+
+Mỗi số điện thoại là một tài khoản. Cấp lại ảnh hưởng đến mọi học sinh dùng
+chung tài khoản đó. Giáo viên chỉ xem lớp được phân công; nếu tài khoản liên
+kết với học sinh ở lớp khác đang hoạt động, chỉ quản trị viên có thể cấp lại.
+Thao tác được ghi vào nhật ký, không lưu mật khẩu trong nhật ký. Chức năng sử
+dụng dữ liệu đã có; không cần nhập lại danh sách hay thêm cột cơ sở dữ liệu.
+
 ## Cấu hình và dữ liệu
 
 - Migration `0002_student_accounts.sql` bổ sung `student_accounts` và

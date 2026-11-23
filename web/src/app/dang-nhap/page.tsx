@@ -17,19 +17,20 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const [student, user, query] = await Promise.all([getCurrentStudentAccount(), getCurrentUser(), searchParams]);
   const opensChat = query.tiep === "tro-chuyen";
   const opensLearning = query.tiep === "hoc-tap";
+  const opensRoster = query.tiep === "hoc-sinh";
   const wantsAdmin = query.tiep === "quan-tri";
   const section = studentHomeSection(query.tiep);
   const studentDestination = classHomeLinks[section];
-  const teacherDestination = opensChat ? "/teacher?tab=tro-chuyen" : opensLearning ? "/teacher?tab=hoc-tap" : "/teacher";
+  const teacherDestination = opensRoster ? "/teacher?tab=hoc-sinh" : opensChat ? "/teacher?tab=tro-chuyen" : opensLearning ? "/teacher?tab=hoc-tap" : "/teacher";
   if (student) redirect(student.must_change_password ? studentPasswordLink(section) : studentDestination);
   if (user?.role === "SUPER_ADMIN") redirect(wantsAdmin ? "/teacher?tab=cai-dat" : teacherDestination);
   if (user?.role === "TEACHER") redirect(teacherDestination);
   const setup = getSetupState();
   const teacherMode = query.vai === "giaovien" || typeof query.error === "string";
   const studentHref = studentHomeLoginLink(section);
-  const nextSection = wantsAdmin ? "quan-tri" : opensChat ? "tro-chuyen" : opensLearning ? "hoc-tap" : null;
+  const nextSection = wantsAdmin ? "quan-tri" : opensRoster ? "hoc-sinh" : opensChat ? "tro-chuyen" : opensLearning ? "hoc-tap" : null;
   const teacherHref = nextSection ? `/dang-nhap?vai=giaovien&tiep=${nextSection}` : "/dang-nhap?vai=giaovien";
-  const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : studentHref;
+  const teacherCallback = wantsAdmin ? "/dang-nhap?tiep=quan-tri" : opensRoster ? "/dang-nhap?tiep=hoc-sinh" : studentHref;
 
   return <main id="noi-dung" className="unified-login page-width">
     <header className="unified-login-header"><Brand /><Link href="/" className="button button-outline button-small">Trang chủ</Link></header>

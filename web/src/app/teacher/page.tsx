@@ -3,13 +3,16 @@ import { redirect } from "next/navigation";
 import { TeacherHomeChat } from "@/components/teacher-home-chat";
 import { TeacherPosts } from "@/components/teacher-posts";
 import { TeacherSettings } from "@/components/teacher-settings";
+import { TeacherStudentRoster } from "@/components/teacher-student-roster";
 import { schoolSetting, selectedTeacherClass, teacherHref, teacherTab } from "@/lib/teacher-navigation";
+import { getTeacherStudentRoster } from "@/lib/teacher-students";
 import { getWorkspaceClasses, getWorkspaceUser } from "@/lib/teacher-workspace";
 
 export default async function TeacherPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const [actor, query] = await Promise.all([getWorkspaceUser(), searchParams]);
   if (actor?.role !== "TEACHER" && actor?.role !== "SUPER_ADMIN") {
-    const next = query.tab === "cai-dat" ? "quan-tri" : query.tab === "hoc-tap" || query.tab === "tro-chuyen" ? query.tab : "";
+    const next = query.tab === "cai-dat" ? "quan-tri"
+      : query.tab === "hoc-tap" || query.tab === "tro-chuyen" || query.tab === "hoc-sinh" ? query.tab : "";
     redirect("/dang-nhap?vai=giaovien" + (next ? "&tiep=" + next : ""));
   }
   const admin = actor.role === "SUPER_ADMIN";
@@ -19,6 +22,15 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
   if (query.tab === "cai-dat" && !admin) redirect(teacherHref("bai-viet", selected?.id));
 
   const invalidClass = query.class !== undefined && query.class !== selected?.id;
+  if (tab === "hoc-sinh" && selected) {
+    if (invalidClass) return <section className="teacher-no-class">
+      <h2>Không thể mở danh sách lớp đã chọn</h2>
+      <p>Thầy cô chỉ xem được danh sách của lớp mình có quyền quản lý.</p>
+      <Link href={teacherHref("hoc-sinh", selected.id)} className="button button-primary" prefetch={false}>Mở danh sách lớp đang quản lý</Link>
+    </section>;
+    const students = await getTeacherStudentRoster(actor.id, selected.id);
+    return <TeacherStudentRoster key={selected.id} classId={selected.id} classroomName={selected.name} students={students} />;
+  }
   return <>
     {invalidClass && <p className="teacher-feedback is-error" role="alert">Thầy cô không có quyền quản lý lớp đã chọn. Vui lòng kiểm tra lại lớp ở đầu trang.</p>}
     {tab === "cai-dat" && admin
