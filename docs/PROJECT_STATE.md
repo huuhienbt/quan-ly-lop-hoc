@@ -1,8 +1,8 @@
 # Quản lý mật khẩu và phiếu đăng nhập học sinh
 
-- Chức năng nằm trong **Quản trị lớp học → Học sinh → Mật khẩu học sinh**.
-  Có thể cấp lại từng tài khoản, cấp hàng loạt, hoặc chọn **Đặt mật khẩu**
-  ở dòng học sinh để tự nhập mã tạm 8 chữ số cho một tài khoản. Sau khi
+- Các thao tác mật khẩu nằm ngay trong **Quản trị lớp học → Học sinh**.
+  Nút **Cấp lại hàng loạt** nằm cạnh ô tìm kiếm; dùng **Cấp lại mật khẩu**
+  hoặc **Đặt mật khẩu** ở dòng học sinh để thao tác với từng tài khoản. Sau khi
   cấp hoặc đặt, xuất một ảnh PNG riêng cho từng số điện thoại trong hộp
   thoại kết quả. Xem [hướng dẫn sử dụng](dang-nhap-hoc-sinh.md).
 - Áp dụng migration `0012_student_temporary_password_expiry.sql` vào đúng

@@ -46,7 +46,7 @@ dụng danh sách học sinh và tài khoản hiện có.
 
 ### Cấp lại hàng loạt
 
-Trong **Học sinh → Mật khẩu học sinh**, bấm **Cấp lại hàng loạt**, chọn các
+Trong **Học sinh**, bấm **Cấp lại hàng loạt** cạnh ô tìm kiếm, chọn các
 tài khoản hoặc bấm **Chọn tất cả**, rồi kiểm tra số lượng trước khi xác nhận. Mỗi số điện thoại
 được cấp một mật khẩu tạm ngẫu nhiên gồm đúng 8 chữ số. Anh chị em dùng chung
 số điện thoại xuất hiện trên một dòng. Tài khoản không có quyền cấp lại hoặc
