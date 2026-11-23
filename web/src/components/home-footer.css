@@ -4,12 +4,11 @@
 .class-home-footer-inner {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  grid-template-areas: "brand identity top";
+  grid-template-areas: ". identity top";
   align-items: center;
   gap: 8px 24px;
   padding-block: 26px;
 }
-.class-home-footer-inner > .brand { grid-area: brand; justify-self: start; }
 .class-home-footer-identity { grid-area: identity; margin: 0; text-align: center; line-height: 1.5; }
 .class-home-footer-identity strong { display: block; font-size: 15px; font-weight: 800; }
 .class-home-footer-identity span { display: block; font-size: 14px; }
@@ -18,9 +17,9 @@
 .class-home-footer-top span { margin-left: 6px; }
 @media (max-width: 800px) {
   .class-home-footer-inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "brand top" "identity identity";
-    gap: 8px 12px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "identity" "top";
+    gap: 4px;
     padding-block: 18px;
   }
   .class-home-footer-identity strong { font-size: 14px; }
