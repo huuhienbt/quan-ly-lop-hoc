@@ -25,9 +25,15 @@ thoại đăng ký hoặc cần trợ giúp về tài khoản, liên hệ giáo 
    tình trạng tài khoản. Có thể tìm theo tên hoặc số điện thoại.
 2. Ở đúng dòng học sinh, bấm **Cấp lại mật khẩu**. Kiểm tra tên và số điện thoại,
    sau đó bấm **Xác nhận cấp lại**.
-3. Sao chép mật khẩu tạm và gửi riêng cho phụ huynh. Mật khẩu tạm chỉ hiển thị
-   trong hộp thoại kết quả; website không lưu mật khẩu dạng văn bản. Các phiên
-   đăng nhập cũ bị thu hồi và người dùng phải đổi mật khẩu sau khi đăng nhập.
+3. Trong **Phiếu gửi phụ huynh**, bấm **Xuất phiếu** để tải ảnh PNG cho đúng
+   số điện thoại, hoặc **Sao chép mã**. Tải phiếu trước khi bấm **Xong** và gửi
+   riêng cho từng gia đình. Phiếu có tên học sinh, số điện thoại đăng nhập,
+   mật khẩu tạm, giờ hết hạn và hướng dẫn đổi mật khẩu.
+
+Mật khẩu tạm mới gồm 8 chữ số, có hiệu lực 24 giờ. Khi cấp lại, mật khẩu
+và các phiên cũ hết hiệu lực. Học sinh phải đổi mật khẩu khi đăng nhập.
+Website không lưu mật khẩu dạng văn bản và không thể tải lại phiếu từ
+danh sách sau khi đã đóng hộp thoại kết quả.
 
 Mỗi số điện thoại là một tài khoản. Cấp lại ảnh hưởng đến mọi học sinh dùng
 chung tài khoản đó. Giáo viên chỉ xem lớp được phân công; nếu tài khoản liên
@@ -37,14 +43,14 @@ dụng danh sách học sinh và tài khoản hiện có.
 
 ### Cấp lại hàng loạt
 
-Trong **Học sinh**, bấm **Cấp lại hàng loạt**, chọn các tài khoản hoặc bấm
-**Chọn tất cả**, rồi kiểm tra số lượng trước khi xác nhận. Mỗi số điện thoại
+Trong **Học sinh → Mật khẩu học sinh**, bấm **Cấp lại hàng loạt**, chọn các
+tài khoản hoặc bấm **Chọn tất cả**, rồi kiểm tra số lượng trước khi xác nhận. Mỗi số điện thoại
 được cấp một mật khẩu tạm ngẫu nhiên gồm đúng 8 chữ số. Anh chị em dùng chung
 số điện thoại xuất hiện trên một dòng. Tài khoản không có quyền cấp lại hoặc
 đang tạm ngừng không xuất hiện trong danh sách chọn.
 
-Sao chép từng mật khẩu và gửi riêng cho phụ huynh. Mật khẩu tạm hết hạn sau
-24 giờ; học sinh đổi mật khẩu khi đăng nhập, kể cả khi mã bắt đầu bằng số 0.
+Tải từng phiếu hoặc sao chép từng mã và gửi riêng cho phụ huynh. Khi nhập
+mật khẩu tạm, học sinh nhập đủ 8 chữ số, kể cả số 0 ở đầu nếu có.
 Khi thành công, mật khẩu cũ và phiên đăng nhập trước đó của các tài khoản đã
 chọn hết hiệu lực. Nếu một tài khoản đã thay đổi sau khi mở hộp thoại, hệ thống
 yêu cầu chọn lại và không cấp mật khẩu nào trong lượt đó. Mỗi lượt tối đa 60

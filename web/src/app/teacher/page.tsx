@@ -29,7 +29,8 @@ export default async function TeacherPage({ searchParams }: { searchParams: Prom
       <Link href={teacherHref("hoc-sinh", selected.id)} className="button button-primary" prefetch={false}>Mở danh sách lớp đang quản lý</Link>
     </section>;
     const students = await getTeacherStudentRoster(actor.id, selected.id);
-    return <TeacherStudentRoster key={selected.id} classId={selected.id} classroomName={selected.name} students={students} />;
+    return <TeacherStudentRoster key={selected.id} classId={selected.id} classroomName={selected.name}
+      schoolName={selected.school_name} students={students} />;
   }
   return <>
     {invalidClass && <p className="teacher-feedback is-error" role="alert">Thầy cô không có quyền quản lý lớp đã chọn. Vui lòng kiểm tra lại lớp ở đầu trang.</p>}

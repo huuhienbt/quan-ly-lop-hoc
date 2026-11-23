@@ -17,7 +17,16 @@
   font-weight: 600;
   color: #244756;
 }
-.roster-tools { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 8px 12px; min-width: 0; }
+.roster-view-switch { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.roster-view-switch .button { border-radius: 12px; padding: 8px 15px; }
+.roster-view-switch .button[aria-pressed="true"] { background: #e3f4e9; border-color: #77ad9b; color: #155c4e; }
+.roster-tools { min-width: 0; margin-bottom: 12px; }
+.roster-password-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.roster-password-card { min-width: 0; padding: clamp(14px, 3vw, 22px); border: 1px solid #d8e7e3; border-radius: 14px; background: #fff; }
+.roster-password-card h3 { margin-block: 8px 4px; color: #175d83; font-size: 20px; font-weight: 900; }
+.roster-password-card p { color: #365c6b; line-height: 1.55; }
+.roster-password-card .roster-bulk-button { margin-top: 14px; }
+.roster-workspace-tag { display: inline-block; padding: 3px 8px; border-radius: 7px; background: #edf6f2; color: #255f51; font-size: 12px; font-weight: 850; }
 .roster-bulk-button { min-height: 44px; border-radius: 11px; padding-inline: 12px; font-size: 13px; }
 .roster-board { border: 1px solid #d8e7e3; border-radius: 14px; background: #fff; overflow: hidden; }
 .roster-columns, .roster-row {
@@ -72,18 +81,6 @@
 .roster-dialog-account { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 10px; }
 .roster-dialog-account span { font-variant-numeric: tabular-nums; }
 .roster-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.roster-password {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-  padding: 9px 12px;
-  border-radius: 10px;
-  background: #e7f4ee;
-}
-.roster-password code { color: #135345; font-size: clamp(14px, 4.2vw, 19px); font-weight: 800; user-select: all; }
 .roster-copy-message { font-size: 13px; color: #256457; }
 .roster-reset-error { color: #953b5c; }
 .roster-bulk-dialog { width: min(calc(100% - 30px), 650px); overflow: auto; }
@@ -106,6 +103,8 @@
 .roster-bulk-person > span { color: #496674; font-size: 13px; font-variant-numeric: tabular-nums; }
 .roster-bulk-receipt { grid-template-columns: minmax(0, 1fr) auto auto; }
 .roster-bulk-receipt code { color: #154e44; font-size: 17px; font-weight: 800; user-select: all; }
+.roster-slip-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.roster-slip-actions .button { padding-inline: 9px; }
 @media (max-width: 680px) {
   .roster-columns { display: none; }
   .roster-row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; padding: 9px 12px; }
@@ -117,7 +116,11 @@
   .roster-phone { font-size: 14px; }
   .roster-mobile-label { position: static; width: auto; height: auto; overflow: visible; clip-path: none; font-size: 12px; color: #506c7c; }
 }
-@media (max-width: 460px) {
+@media (max-width: 560px) {
+  .roster-password-workspace { grid-template-columns: 1fr; }
   .roster-bulk-receipt { grid-template-columns: minmax(0, 1fr) auto; }
   .roster-bulk-receipt .roster-bulk-person { grid-column: 1 / -1; }
+}
+@media (max-width: 375px) {
+  .roster-bulk-receipt { grid-template-columns: minmax(0, 1fr); }
 }
