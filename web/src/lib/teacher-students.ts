@@ -1,8 +1,9 @@
 import "server-only";
 
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes, randomInt, randomUUID } from "node:crypto";
 import { batch, query } from "@/lib/d1";
 import { hashPassword } from "@/lib/password";
+import { isPredictableStudentPassword, STUDENT_BULK_RESET_HOURS, STUDENT_BULK_RESET_LIMIT } from "@/lib/student-reset-options";
 
 export interface TeacherStudentRow {
   enrollment_id: string;
@@ -12,6 +13,7 @@ export interface TeacherStudentRow {
   phone: string | null;
   account_status: "ACTIVE" | "SUSPENDED" | null;
   must_change_password: number | null;
+  temporary_password_expired: number;
   session_version: number | null;
   can_reset: number;
 }
@@ -21,6 +23,17 @@ export interface ResetStudentInput {
   enrollment_id: string;
   account_id: string;
   session_version: number;
+}
+
+export type BulkResetTarget = Omit<ResetStudentInput, "class_id">;
+export interface BulkResetEntry {
+  names: string[];
+  phone: string;
+  temporaryPassword: string;
+}
+export interface BulkResetReceipt {
+  expiresAt: string;
+  accounts: BulkResetEntry[];
 }
 
 export class TeacherStudentError extends Error {}
@@ -56,6 +69,7 @@ export function getTeacherStudentRoster(actorId: string, classId: string): Promi
   return query<TeacherStudentRow>(`SELECT enrollment.id AS enrollment_id, enrollment.student_number,
       pupil.full_name, login.id AS account_id, login.phone, login.status AS account_status,
       login.must_change_password, login.session_version,
+      CASE WHEN login.temporary_password_expires_at <= ? THEN 1 ELSE 0 END AS temporary_password_expired,
       CASE WHEN login.status = 'ACTIVE' AND ${accountScope} THEN 1 ELSE 0 END AS can_reset
     ${rosterFrom}
     ${actorJoin}
@@ -63,7 +77,7 @@ export function getTeacherStudentRoster(actorId: string, classId: string): Promi
     LEFT JOIN student_accounts login ON login.id = link.account_id
     WHERE classroom.id = ? AND enrollment.status = 'ACTIVE' AND ${assignedStaff}
     ORDER BY enrollment.student_number IS NULL, enrollment.student_number, pupil.full_name, enrollment.id`,
-  [actorId, classId]);
+  [new Date().toISOString(), actorId, classId]);
 }
 
 function makeTemporaryPassword() {
@@ -79,7 +93,7 @@ export async function resetTeacherStudentPassword(actorId: string, input: ResetS
   const now = new Date().toISOString();
   const [write] = await batch([
     {
-      sql: `UPDATE student_accounts AS login SET password_hash = ?, must_change_password = 1,
+      sql: `UPDATE student_accounts AS login SET password_hash = ?, must_change_password = 1, temporary_password_expires_at = NULL,
           session_version = session_version + 1, failed_attempts = 0,
           failure_window_started_at = NULL, locked_until = NULL, updated_at = ?
         WHERE login.id = ? AND login.session_version = ? AND login.status = 'ACTIVE' AND EXISTS (
@@ -102,4 +116,93 @@ export async function resetTeacherStudentPassword(actorId: string, input: ResetS
     throw new TeacherStudentError("Không cấp lại được mật khẩu. Tài khoản có thể đã thay đổi hoặc không thuộc quyền quản lý. Thầy cô hãy tải lại danh sách.");
   }
   return password;
+}
+
+const staleSelection = "Danh sách hoặc quyền quản lý đã thay đổi. Thầy cô hãy tải lại trang và chọn lại các tài khoản.";
+
+function drawTemporaryPin(used: Set<string>, phone: string): string {
+  let pin: string;
+  do { pin = String(randomInt(100_000_000)).padStart(8, "0"); }
+  while (isPredictableStudentPassword(pin) || phone.endsWith(pin) || used.has(pin));
+  used.add(pin);
+  return pin;
+}
+
+export async function resetTeacherStudentPasswords(actorId: string, classId: string, targets: BulkResetTarget[]): Promise<BulkResetReceipt> {
+  if (targets.length < 1 || targets.length > STUDENT_BULK_RESET_LIMIT ||
+    new Set(targets.map(item => item.account_id)).size !== targets.length) {
+    throw new TeacherStudentError("Số tài khoản đã chọn không hợp lệ.");
+  }
+
+  const roster = await getTeacherStudentRoster(actorId, classId);
+  const byEnrollment = new Map(roster.map(row => [row.enrollment_id, row]));
+  const namesByAccount = new Map<string, string[]>();
+  for (const row of roster) {
+    if (!row.account_id) continue;
+    const names = namesByAccount.get(row.account_id);
+    if (names) names.push(row.full_name);
+    else namesByAccount.set(row.account_id, [row.full_name]);
+  }
+  const recipients = targets.map(target => {
+    const row = byEnrollment.get(target.enrollment_id);
+    if (!row?.phone || row.can_reset !== 1 || row.account_id !== target.account_id ||
+      row.session_version !== target.session_version) throw new TeacherStudentError(staleSelection);
+    return { names: namesByAccount.get(target.account_id)!, phone: row.phone };
+  });
+
+  const used = new Set<string>();
+  const accounts = recipients.map(row => ({ ...row, temporaryPassword: drawTemporaryPin(used, row.phone) }));
+  const hashes: string[] = [];
+  // Keep the password hashing workload bounded when a whole class is selected.
+  for (let start = 0; start < accounts.length; start += 4) {
+    hashes.push(...await Promise.all(accounts.slice(start, start + 4).map(row => hashPassword(row.temporaryPassword))));
+  }
+  const payload = JSON.stringify(targets.map((target, i) => ({
+    ...target, phone: accounts[i].phone, password_hash: hashes[i], audit_id: randomUUID(),
+  })));
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + STUDENT_BULK_RESET_HOURS * 60 * 60 * 1000).toISOString();
+  const [write, audit] = await batch([
+    {
+      // Materialize the authorized set before updating. If a single target has changed,
+      // the count guard prevents every write, including writes to the other targets.
+      sql: `WITH requested AS (
+          SELECT json_extract(value, '$.account_id') AS account_id,
+            json_extract(value, '$.enrollment_id') AS enrollment_id,
+            json_extract(value, '$.session_version') AS session_version,
+            json_extract(value, '$.phone') AS phone,
+            json_extract(value, '$.password_hash') AS password_hash
+          FROM json_each(?)
+        ), eligible AS MATERIALIZED (
+          SELECT login.id AS account_id, job.password_hash
+          ${rosterFrom}
+          ${actorJoin}
+          JOIN requested job ON job.enrollment_id = enrollment.id
+          JOIN student_account_students link ON link.student_id = pupil.id AND link.account_id = job.account_id
+          JOIN student_accounts login ON login.id = link.account_id AND login.status = 'ACTIVE'
+            AND login.session_version = job.session_version AND login.phone = job.phone
+          WHERE classroom.id = ? AND enrollment.status = 'ACTIVE' AND ${assignedStaff} AND ${accountScope}
+        )
+        UPDATE student_accounts AS current
+        SET password_hash = eligible.password_hash, must_change_password = 1, temporary_password_expires_at = ?,
+            session_version = current.session_version + 1, failed_attempts = 0, failure_window_started_at = NULL,
+            locked_until = NULL, updated_at = ?
+        FROM eligible
+        WHERE current.id = eligible.account_id AND (SELECT count(*) FROM eligible) = ?`,
+      params: [payload, actorId, classId, expiresAt, now.toISOString(), targets.length],
+    },
+    {
+      sql: `INSERT INTO audit_logs (id, actor_user_id, school_id, class_id, action, entity_type, entity_id, details_json)
+        SELECT json_extract(job.value, '$.audit_id'), ?, classroom.school_id, classroom.id,
+          'STUDENT_PASSWORD_BULK_RESET', 'student_account', json_extract(job.value, '$.account_id'),
+          json_object('expires_at', ?)
+        FROM classes classroom CROSS JOIN json_each(?) job
+        WHERE classroom.id = ? AND changes() = ?`,
+      params: [actorId, expiresAt, payload, classId, targets.length],
+    },
+  ]);
+  if (write.meta.changes !== targets.length || audit.meta.changes !== targets.length) {
+    throw new TeacherStudentError(staleSelection);
+  }
+  return { expiresAt, accounts };
 }

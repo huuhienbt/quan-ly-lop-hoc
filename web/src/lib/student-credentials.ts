@@ -2,10 +2,11 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { query } from "@/lib/d1";
 import { hashPassword, verifyPassword } from "@/lib/password";
+import { isPredictableStudentPassword } from "@/lib/student-reset-options";
 
-export const DEFAULT_STUDENT_PASSWORD = "123456789";
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
+const temporaryPasswordValid = "(temporary_password_expires_at IS NULL OR temporary_password_expires_at > ?)";
 
 export interface StudentCredentialUser {
   id: string;
@@ -71,11 +72,12 @@ async function reserveAttempt(
       updated_at = ?
      WHERE ${byPhone ? "phone = ?" : "id = ? AND session_version = ?"}
        AND status = 'ACTIVE' AND (locked_until IS NULL OR locked_until <= ?)
+       AND ${temporaryPasswordValid}
        AND (failure_window_started_at IS NULL OR failure_window_started_at <= ? OR failed_attempts < ?)
      RETURNING id, password_hash, session_version, failed_attempts, failure_window_started_at`,
     [cutoff, cutoff, timestamp, cutoff, MAX_ATTEMPTS, lockedUntil, timestamp,
       ...(byPhone ? [identity.phone] : [identity.accountId, identity.sessionVersion]),
-      timestamp, cutoff, MAX_ATTEMPTS],
+      timestamp, timestamp, cutoff, MAX_ATTEMPTS],
   );
   return rows[0];
 }
@@ -99,11 +101,12 @@ export async function authorizeStudentCredentials(
         locked_until = CASE WHEN failed_attempts = ? AND failure_window_started_at = ? THEN NULL ELSE locked_until END,
         last_login_at = ?, updated_at = ?
        WHERE id = ? AND status = 'ACTIVE' AND password_hash = ? AND session_version = ?
+         AND ${temporaryPasswordValid}
        RETURNING id, session_version`,
       [account.failed_attempts, account.failure_window_started_at,
         account.failed_attempts, account.failure_window_started_at,
         account.failed_attempts, account.failure_window_started_at, now, now,
-        account.id, account.password_hash, account.session_version],
+        account.id, account.password_hash, account.session_version, now],
     ))[0];
     if (!current) return null;
     const user: StudentCredentialUser = {
@@ -125,8 +128,8 @@ export async function changeStudentPassword(
 ): Promise<void> {
   if (typeof currentPassword !== "string" || !currentPassword.length || currentPassword.length > 128 ||
     typeof newPassword !== "string" || newPassword.length < 8 || newPassword.length > 128 ||
-    newPassword === DEFAULT_STUDENT_PASSWORD || newPassword === currentPassword) {
-    throw new StudentCredentialError("Mật khẩu mới phải có 8–128 ký tự, khác mật khẩu hiện tại và mật khẩu mặc định.");
+    isPredictableStudentPassword(newPassword) || newPassword === currentPassword) {
+    throw new StudentCredentialError("Mật khẩu mới phải có 8–128 ký tự, khác mật khẩu hiện tại và không dùng dãy số dễ đoán.");
   }
   if (!accountId || !Number.isSafeInteger(sessionVersion) || sessionVersion < 1) throw new StudentCredentialError();
   try {
@@ -136,12 +139,13 @@ export async function changeStudentPassword(
     const passwordHash = await hashPassword(newPassword);
     const now = new Date().toISOString();
     const updated = await query<{ id: string }>(
-      `UPDATE student_accounts SET password_hash = ?, must_change_password = 0,
+      `UPDATE student_accounts SET password_hash = ?, must_change_password = 0, temporary_password_expires_at = NULL,
         session_version = session_version + 1, failed_attempts = 0,
         failure_window_started_at = NULL, locked_until = NULL, password_changed_at = ?, updated_at = ?
        WHERE id = ? AND status = 'ACTIVE' AND password_hash = ? AND session_version = ?
+         AND ${temporaryPasswordValid}
        RETURNING id`,
-      [passwordHash, now, now, accountId, account.password_hash, sessionVersion],
+      [passwordHash, now, now, accountId, account.password_hash, sessionVersion, now],
     );
     if (!updated.length) throw new StudentCredentialError();
   } catch (error) {

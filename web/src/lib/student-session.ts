@@ -42,8 +42,9 @@ export async function getCurrentStudentAccount(): Promise<StudentAccountSession 
     !Number.isSafeInteger(identity.studentSessionVersion)) return null;
   const account = (await query<{ id: string; phone: string; must_change_password: number; session_version: number }>(
     `SELECT id, phone, must_change_password, session_version FROM student_accounts
-     WHERE id = ? AND status = 'ACTIVE' AND session_version = ?`,
-    [identity.studentAccountId, identity.studentSessionVersion!],
+     WHERE id = ? AND status = 'ACTIVE' AND session_version = ?
+       AND (temporary_password_expires_at IS NULL OR temporary_password_expires_at > ?)`,
+    [identity.studentAccountId, identity.studentSessionVersion!, new Date().toISOString()],
   ))[0];
   if (!account) return null;
   // Default-password sessions reach the password-change page without receiving pupil records.

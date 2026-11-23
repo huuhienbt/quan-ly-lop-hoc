@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { resetStudentPasswordAction, type ResetStudentState } from "@/app/teacher/student-actions";
 import type { TeacherStudentRow } from "@/lib/teacher-students";
+import { TeacherStudentBulkReset } from "./teacher-student-bulk-reset";
 import "./teacher-student-roster.css";
 
 type ResetTarget = {
@@ -24,6 +25,7 @@ function resetTarget(student: TeacherStudentRow): ResetTarget | null {
 function accountLabel(student: TeacherStudentRow) {
   if (!student.account_id) return { text: "Chưa có tài khoản", className: "roster-status-neutral" };
   if (student.account_status === "SUSPENDED") return { text: "Tạm ngừng", className: "roster-status-off" };
+  if (student.temporary_password_expired === 1) return { text: "Mật khẩu tạm hết hạn", className: "roster-status-off" };
   if (student.must_change_password === 1) return { text: "Cần đổi mật khẩu", className: "roster-status-wait" };
   return { text: "Đang hoạt động", className: "roster-status-active" };
 }
@@ -96,11 +98,14 @@ export function TeacherStudentRoster({ classId, classroomName, students }: { cla
   return <section className="teacher-content-section student-roster" aria-labelledby="student-roster-title">
     <div className="teacher-section-heading">
       <div><h2 id="student-roster-title">Danh sách học sinh</h2><p>{classroomName} · {students.length} học sinh</p></div>
-      {students.length > 0 && <label className="roster-search">
-        <span>Tìm học sinh</span>
-        <input type="search" placeholder="Nhập họ tên hoặc số điện thoại" autoComplete="off" maxLength={100}
-          value={search} onChange={event => setSearch(event.target.value)} />
-      </label>}
+      {students.length > 0 && <div className="roster-tools">
+        <label className="roster-search">
+          <span>Tìm học sinh</span>
+          <input type="search" placeholder="Nhập họ tên hoặc số điện thoại" autoComplete="off" maxLength={100}
+            value={search} onChange={event => setSearch(event.target.value)} />
+        </label>
+        <TeacherStudentBulkReset classId={classId} students={students} />
+      </div>}
     </div>
     {visible.length > 0 ? <div className="roster-board">
       <div className="roster-columns" aria-hidden="true"><span>Họ và tên</span><span>Số điện thoại đăng nhập</span><span>Tình trạng</span><span>Mật khẩu</span></div>

@@ -10,7 +10,7 @@ tin, ngân hàng sao, cảm xúc hoặc các tiện ích của giai đoạn sau.
 2. Nhập số điện thoại đã đăng ký với lớp và mật khẩu ban đầu do giáo viên cung cấp.
    Có thể nhập số bắt đầu bằng `0` hoặc `+84`; hệ thống giữ số `0` đầu khi chuẩn hóa.
 3. Lần đăng nhập đầu, chọn mật khẩu riêng từ 8 đến 128 ký tự, khác mật khẩu được
-   cấp và khác mật khẩu hiện tại. Nhập lại để xác nhận.
+   cấp, khác mật khẩu hiện tại và tránh dùng dãy số dễ đoán. Nhập lại để xác nhận.
 4. Đăng nhập lại bằng mật khẩu mới. Trang học sinh chỉ hiển thị hồ sơ được liên
    kết với tài khoản đó.
 
@@ -33,12 +33,32 @@ Mỗi số điện thoại là một tài khoản. Cấp lại ảnh hưởng đ
 chung tài khoản đó. Giáo viên chỉ xem lớp được phân công; nếu tài khoản liên
 kết với học sinh ở lớp khác đang hoạt động, chỉ quản trị viên có thể cấp lại.
 Thao tác được ghi vào nhật ký, không lưu mật khẩu trong nhật ký. Chức năng sử
-dụng dữ liệu đã có; không cần nhập lại danh sách hay thêm cột cơ sở dữ liệu.
+dụng danh sách học sinh và tài khoản hiện có.
+
+### Cấp lại hàng loạt
+
+Trong **Học sinh**, bấm **Cấp lại hàng loạt**, chọn các tài khoản hoặc bấm
+**Chọn tất cả**, rồi kiểm tra số lượng trước khi xác nhận. Mỗi số điện thoại
+được cấp một mật khẩu tạm ngẫu nhiên gồm đúng 8 chữ số. Anh chị em dùng chung
+số điện thoại xuất hiện trên một dòng. Tài khoản không có quyền cấp lại hoặc
+đang tạm ngừng không xuất hiện trong danh sách chọn.
+
+Sao chép từng mật khẩu và gửi riêng cho phụ huynh. Mật khẩu tạm hết hạn sau
+24 giờ; học sinh đổi mật khẩu khi đăng nhập, kể cả khi mã bắt đầu bằng số 0.
+Khi thành công, mật khẩu cũ và phiên đăng nhập trước đó của các tài khoản đã
+chọn hết hiệu lực. Nếu một tài khoản đã thay đổi sau khi mở hộp thoại, hệ thống
+yêu cầu chọn lại và không cấp mật khẩu nào trong lượt đó. Mỗi lượt tối đa 60
+tài khoản.
 
 ## Cấu hình và dữ liệu
 
 - Migration `0002_student_accounts.sql` bổ sung `student_accounts` và
   `student_account_students`, không sửa vai trò trong bảng `users`.
+- Chạy migration `0012_student_temporary_password_expiry.sql` trước khi triển
+  khai mã sử dụng cột `student_accounts.temporary_password_expires_at`. Cột này
+  mặc định rỗng nên các mật khẩu đã cấp vẫn dùng như trước. Cấp lại hàng loạt
+  đặt hạn dùng; khi học sinh đổi mật khẩu, hạn dùng được xóa. Không cần nhập
+  lại danh sách.
 - Mỗi số điện thoại là một tài khoản. Một số gia đình có thể liên kết nhiều con;
   mỗi học sinh chỉ thuộc một tài khoản. Quyền liên kết được cấp từ dữ liệu do
   người quản lý nhập; học sinh không thể tự thêm liên kết.
