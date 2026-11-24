@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { GalleryAlbum, GalleryPhoto } from "@/lib/gallery-schemas";
 import { GalleryPhotoRemoval } from "@/components/class-gallery-manager";
+import "@/app/gallery.css";
 
 function galleryImageUrl(value: string | null) {
   return value && /^\/api\/gallery-images\/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)

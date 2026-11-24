@@ -306,7 +306,9 @@ test("a family sees only its linked active pupils, including siblings, rather th
   seedLinkedProfiles(first, ["child-test-a", "child-test-a-sibling"]);
   seedLinkedProfiles(second, ["child-test-b"]);
   requestSession = studentSession(first);
+  const before = fixture.requests.length;
   const current = await requireStudentAccount();
+  assert.equal(fixture.requests.length - before, 1, "account and linked pupils load in one database read");
   assert.deepEqual(current.students.map((student) => student.id).sort(), ["child-test-a", "child-test-a-sibling"]);
   assert.equal(JSON.stringify(current).includes("child-test-b"), false);
   requestSession = studentSession(second);

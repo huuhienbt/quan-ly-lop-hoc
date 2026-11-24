@@ -9,6 +9,7 @@ import {
   type GalleryActionState,
 } from "@/app/teacher/gallery-actions";
 import type { GalleryAlbum, GalleryPhoto } from "@/lib/gallery-schemas";
+import "@/app/gallery.css";
 
 const emptyState: GalleryActionState = { success: false, message: "" };
 const maxOriginalBytes = 20 * 1024 * 1024;

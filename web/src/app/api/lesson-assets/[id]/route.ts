@@ -1,5 +1,6 @@
-import { getCurrentUser } from "@/lib/rbac";
-import { getCurrentStudentAccount } from "@/lib/student-session";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getSetupState } from "@/lib/config";
 import { readLessonAsset } from "@/lib/lesson-assets";
 
 export const runtime = "nodejs";
@@ -14,8 +15,14 @@ const headers = {
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const [{ id }, student, staff] = await Promise.all([params, getCurrentStudentAccount(), getCurrentUser()]);
-    const asset = await readLessonAsset(id, { staffId: staff?.id, studentId: student?.id, version: student?.session_version });
+    const [{ id }, session] = await Promise.all([params, getSetupState().sessionReady ? getServerSession(authOptions) : null]);
+    const user = session?.user;
+    // The file read itself checks the live account and class assignment,
+    // so loading the full student/staff profile first would duplicate work.
+    const viewer = user?.kind === "student"
+      ? { studentId: user.studentAccountId, version: user.studentSessionVersion }
+      : { staffId: user?.id };
+    const asset = await readLessonAsset(id, viewer);
     if (!asset) return new Response(null, { status: 404, headers });
     return new Response(new Uint8Array(asset.bytes), { headers: { ...headers, "Content-Type": asset.mime,
       "Content-Length": String(asset.bytes.length), "Content-Disposition": asset.mime === "application/pdf" ? 'inline; filename="tai-lieu.pdf"' : "inline",

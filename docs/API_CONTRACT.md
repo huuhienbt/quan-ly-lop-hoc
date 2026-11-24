@@ -55,3 +55,14 @@ vào URL, không gửi thêm yêu cầu lên máy chủ và không có đường
   bài đã xuất bản của lớp mà học sinh được phép truy cập; hiển thị trực tiếp
   nội dung và PDF bên dưới menu. Danh sách không đọc toàn bộ tài liệu của
   từng bài, và ảnh bìa nếu có được tải riêng.
+
+## Tải trang và tài liệu
+
+- Phiên học sinh đọc tài khoản đang hoạt động và các hồ sơ ghi danh hợp lệ
+  trong cùng một truy vấn D1; phiên buộc đổi mật khẩu không nhận hồ sơ.
+- Đọc ảnh hoặc PDF bài học kiểm tra phiên ký số và quyền hiện tại trong truy
+  vấn lấy tệp; không cần đọc hồ sơ tài khoản trước. Tệp riêng vẫn trả
+  `Cache-Control: private, no-store`, và lớp/tài khoản bị thu hồi quyền
+  không thể tiếp tục đọc tệp riêng.
+- Khách mở trang chủ đọc nội dung tin công khai song song với cấu hình
+  giao diện. Tài khoản học sinh vẫn chỉ đọc nội dung được phép.

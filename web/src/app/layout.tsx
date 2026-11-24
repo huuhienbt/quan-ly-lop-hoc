@@ -2,14 +2,13 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { getSiteTheme } from "@/lib/site-theme";
 import "./globals.css";
-import "./gallery.css";
 import "./discovery-portals.css";
 import "./harmony-portals.css";
 
 export const dynamic = "force-dynamic";
 
 const nunito = localFont({
-  src: "./fonts/Nunito-Variable.ttf",
+  src: "./fonts/Nunito-Variable.woff2",
   variable: "--font-nunito",
   weight: "200 1000",
   display: "swap",

@@ -25,10 +25,20 @@ import "./home-news.css";
 
 export const dynamic = "force-dynamic";
 
+async function getHomeNews(): Promise<{ posts: ContentPost[]; unavailable: boolean }> {
+  try { return { posts: await getPublicPosts(), unavailable: false }; }
+  catch { return { posts: [], unavailable: true }; }
+}
+
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const [student, user, { muc, bai }, theme] = await Promise.all([getCurrentStudentAccount(), getCurrentUser(), searchParams, getSiteTheme()]);
+  const { muc, bai } = await searchParams;
   const studentSection = studentHomeSection(muc);
   const section = muc === "do-vui" ? "do-vui" : studentSection;
+  const studentLookup = getCurrentStudentAccount();
+  // Guest news needn't wait on the site's theme or the staff account database read.
+  // A pupil still loads only the authorized class view; other tabs skip public news.
+  const news = section === "tin-lop" ? studentLookup.then(student => student ? null : getHomeNews()) : null;
+  const [student, user, theme, bulletin] = await Promise.all([studentLookup, getCurrentUser(), getSiteTheme(), news]);
   if (student?.must_change_password) redirect(studentPasswordLink(studentSection));
   if (!student && studentSection !== "tin-lop") redirect(studentHomeLoginLink(studentSection));
   const firstStudent = student?.students[0];
@@ -36,11 +46,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     ? firstStudent.full_name.trim()
     : null;
   const accountName = student ? studentName || "Góc học sinh" : user ? user.name.trim() || "Người dùng" : null;
-  let posts: ContentPost[] = [];
-  let unavailable = false;
-  if (!student && section === "tin-lop") {
-    try { posts = await getPublicPosts(); } catch { unavailable = true; }
-  }
+  const { posts, unavailable } = bulletin ?? { posts: [], unavailable: false };
   const studentSignedIn = Boolean(student);
   const classroom = section === "do-vui" ? <HomeQuiz /> : student ? <StudentHomeContent student={student} section={section} theme={theme}
     lessonId={section === "hoc-tap" && typeof bai === "string" ? bai : undefined} /> : null;

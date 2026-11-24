@@ -61,8 +61,10 @@ export async function readLessonAsset(id: string, viewer: { staffId?: string; st
       OR EXISTS (SELECT 1 FROM posts p, json_each(COALESCE(p.lesson_content, p.bulletin_content)) block
         WHERE p.id = a.post_id AND p.class_id = c.id AND p.status = 'PUBLISHED'
           AND json_extract(block.value, '$.assetId') = a.id
-          AND ((p.visibility = 'PUBLIC' AND p.bulletin_content IS NOT NULL) OR ${lessonStudentAccess}))
-    ) ORDER BY part.part`, [id, staff, staff, student, version]);
+          AND ((p.visibility = 'PUBLIC' AND p.bulletin_content IS NOT NULL) OR
+            (${lessonStudentAccess} AND EXISTS (SELECT 1 FROM student_accounts login WHERE login.id = ?
+              AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?)))))
+    ) ORDER BY part.part`, [id, staff, staff, student, version, student, new Date().toISOString()]);
   if (!rows.length) return null;
   const bytes = Buffer.concat(rows.map((row) => Buffer.from(row.data_base64, "base64")));
   if (bytes.length !== rows[0].byte_size) throw new Error("Incomplete lesson file");

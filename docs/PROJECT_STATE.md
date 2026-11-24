@@ -31,3 +31,18 @@ Quy ước kỹ thuật: [dữ liệu](DATA_SCHEMA.md) và [hành vi máy chủ]
   không tải trước toàn bộ tài liệu của các bài khác.
 - Lưu một ảnh nhỏ trong trường có sẵn, không cần migration hoặc cấu hình
   dịch vụ lưu ảnh mới. Các kiểm thử hồ sơ và quyền đọc tin dùng dữ liệu giả lập.
+
+### Tối ưu thời gian tải
+
+- Đọc tin công khai song song với giao diện; đọc phiên học sinh và danh sách
+  ghi danh trong một lượt D1. Khi mở tài liệu, kiểm tra quyền trong chính
+  truy vấn lấy tệp.
+- Dùng cùng phông Nunito nhưng dạng WOFF2 (khoảng 99 KiB thay cho 270 KiB).
+  CSS thư viện ảnh chỉ được tải cùng các thành phần thư viện.
+- Không cần migration, không lưu cache dữ liệu cá nhân và không thay đổi
+  quyền đọc nội dung hay giao diện.
+- Đo trên bản chạy thử với dữ liệu giả lập, thêm độ trễ 180 ms cho mỗi lượt
+  qua D1 (trung vị 3 lần sau làm nóng): trang chủ 490 → 363 ms, Học tập
+  641 → 496 ms, hồ sơ 441 → 263 ms, lấy PDF 595 → 207 ms và trò chuyện
+  574 → 422 ms. Đây là số đo phản hồi ứng dụng trong mô phỏng, không phải
+  tốc độ tải đầy đủ trên mạng thực tế.

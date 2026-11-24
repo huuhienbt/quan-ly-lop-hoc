@@ -55,32 +55,50 @@ export async function getStudentRequestIdentity(): Promise<StudentRequestIdentit
 export async function getCurrentStudentAccount({ includeProfileEditor = false }: { includeProfileEditor?: boolean } = {}): Promise<StudentAccountSession | null> {
   const identity = await getStudentRequestIdentity();
   if (!identity) return null;
-  const account = (await query<{ id: string; phone: string; must_change_password: number; session_version: number }>(
-    `SELECT id, phone, must_change_password, session_version FROM student_accounts
-     WHERE id = ? AND status = 'ACTIVE' AND session_version = ?
-       AND (temporary_password_expires_at IS NULL OR temporary_password_expires_at > ?)`,
+  // One database read validates the live account and selects only its active
+  // enrollments. A LEFT JOIN preserves valid accounts with no linked pupils
+  // (including password-change sessions); those rows carry no pupil data.
+  type AccountRow = Omit<StudentLinkedProfile, "id"> & {
+    id: string | null; account_id: string; phone: string; must_change_password: number;
+    session_version: number; year_starts_on: string | null;
+  };
+  const rows = await query<AccountRow>(
+    `WITH account AS (
+       SELECT id, phone, must_change_password, session_version FROM student_accounts
+       WHERE id = ? AND status = 'ACTIVE' AND session_version = ?
+         AND (temporary_password_expires_at IS NULL OR temporary_password_expires_at > ?)
+     ), linked_profiles AS (
+       SELECT s.id, s.full_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
+         c.id AS class_id, c.name AS class_name, c.slug AS class_slug,
+         school.name AS school_name, y.name AS academic_year_name, y.starts_on AS year_starts_on
+         ${includeProfileEditor ? `, s.updated_at AS profile_updated_at,
+           CASE WHEN instr(s.avatar_key, '${AVATAR_KEY_PREFIX}') = 1 THEN 1 ELSE 0 END AS has_avatar` : ""}
+       FROM account login
+       JOIN student_account_students link ON link.account_id = login.id
+       JOIN students s ON s.id = link.student_id AND s.archived_at IS NULL
+       JOIN student_enrollments e ON e.student_id = s.id AND e.school_id = s.school_id AND e.status = 'ACTIVE'
+       JOIN classes c ON c.id = e.class_id AND c.school_id = e.school_id
+         AND c.academic_year_id = e.academic_year_id AND c.archived_at IS NULL
+       JOIN schools school ON school.id = s.school_id AND school.archived_at IS NULL
+       JOIN academic_years y ON y.id = c.academic_year_id
+       WHERE login.must_change_password = 0
+     )
+     SELECT login.id AS account_id, login.phone, login.must_change_password, login.session_version, profile.*
+     FROM account login LEFT JOIN linked_profiles profile ON 1
+     ORDER BY profile.year_starts_on DESC, profile.class_name, profile.full_name, profile.enrollment_id`,
     [identity.accountId, identity.sessionVersion, new Date().toISOString()],
-  ))[0];
-  if (!account) return null;
-  // Default-password sessions reach the password-change page without receiving pupil records.
-  const students = account.must_change_password ? [] : await query<StudentLinkedProfile>(
-    `SELECT s.id, s.full_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
-      c.id AS class_id, c.name AS class_name, c.slug AS class_slug,
-      school.name AS school_name, y.name AS academic_year_name
-      ${includeProfileEditor ? `, s.updated_at AS profile_updated_at,
-        CASE WHEN instr(s.avatar_key, '${AVATAR_KEY_PREFIX}') = 1 THEN 1 ELSE 0 END AS has_avatar` : ""}
-     FROM student_account_students link
-     JOIN student_accounts login ON login.id = link.account_id AND login.status = 'ACTIVE'
-       AND login.session_version = ? AND login.must_change_password = 0
-     JOIN students s ON s.id = link.student_id AND s.archived_at IS NULL
-     JOIN student_enrollments e ON e.student_id = s.id AND e.school_id = s.school_id AND e.status = 'ACTIVE'
-     JOIN classes c ON c.id = e.class_id AND c.school_id = e.school_id
-       AND c.academic_year_id = e.academic_year_id AND c.archived_at IS NULL
-     JOIN schools school ON school.id = s.school_id AND school.archived_at IS NULL
-     JOIN academic_years y ON y.id = c.academic_year_id
-     WHERE link.account_id = ? ORDER BY y.starts_on DESC, c.name, s.full_name, e.id`, [account.session_version, account.id],
   );
-  return { ...account, must_change_password: account.must_change_password === 1, students };
+  const account = rows[0];
+  if (!account) return null;
+  const students: StudentLinkedProfile[] = rows.flatMap(row => row.id ? [{
+    id: row.id, full_name: row.full_name, gender: row.gender, date_of_birth: row.date_of_birth,
+    student_code: row.student_code, enrollment_id: row.enrollment_id,
+    class_id: row.class_id, class_name: row.class_name, class_slug: row.class_slug,
+    school_name: row.school_name, academic_year_name: row.academic_year_name,
+    ...(includeProfileEditor ? { profile_updated_at: row.profile_updated_at, has_avatar: row.has_avatar } : {}),
+  }] : []);
+  return { id: account.account_id, phone: account.phone, session_version: account.session_version,
+    must_change_password: account.must_change_password === 1, students };
 }
 
 export async function requireStudentAccount(
