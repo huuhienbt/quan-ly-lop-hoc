@@ -7,6 +7,7 @@ import {
   getPublicPosts,
   getStudentClassContent,
   getStudentHomePosts,
+  getStudentNewsPost,
   getTeacherContentOverview,
   getTeacherClasses, getTeacherPostList, getTeacherEditingPost,
   saveEvent,
@@ -274,6 +275,24 @@ test("the homepage section reads only published content of its kind for the sign
   assert.deepEqual(await getStudentHomePosts(family.id, 2, ownEnrollment, classA.id, "tin-lop"), []);
   fixture.database.prepare("UPDATE student_accounts SET must_change_password = 1 WHERE id = ?").run(family.id);
   assert.deepEqual(await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "hoc-tap"), []);
+});
+
+test("signed-in bulletin cards open the same article layout only for the pupil's authorized news", async () => {
+  const family = seedFamily("family-test-a", [classA]);
+  const other = seedFamily("family-test-b", [classB]);
+  const body = JSON.stringify([{ type: "text", text: "Thông báo riêng của lớp mẫu", align: "left" }]);
+  const note = await savePost(administrator.id, postInput(classA.id, { visibility: "PRIVATE", bulletin_content: body }));
+  const draft = await savePost(administrator.id, postInput(classA.id, { status: "DRAFT", visibility: "PRIVATE" }));
+  const cards = await getStudentHomePosts(family.id, 1, family.pupils[0].enrollment_id, classA.id, "tin-lop");
+  assert.equal(cards[0].id, note);
+  assert.equal(cards[0].bulletin_content, undefined, "listing cards don't fetch full rich documents");
+  assert.equal(await getPublicPost(note), null);
+  assert.equal((await getStudentNewsPost(family.id, 1, note)).bulletin_content, body);
+  assert.equal(await getStudentNewsPost(other.id, 1, note), null);
+  assert.equal(await getStudentNewsPost(family.id, 2, note), null);
+  assert.equal(await getStudentNewsPost(family.id, 1, draft), null);
+  fixture.database.prepare("UPDATE student_accounts SET must_change_password = 1 WHERE id = ?").run(family.id);
+  assert.equal(await getStudentNewsPost(family.id, 1, note), null);
 });
 
 test("archived pupils and ended enrollment cannot keep reading an old class feed", async () => {

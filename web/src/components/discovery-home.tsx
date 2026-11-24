@@ -9,12 +9,12 @@ import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, StarIcon, SunIcon } from "@/components/icons";
 import type { ContentPost } from "@/lib/content-schemas";
 
-function DiscoveryCard({ post }: { post: ContentPost }) {
+export function DiscoveryCard({ post }: { post: ContentPost }) {
   return <article className={`discovery-story-card home-news-item discovery-story-${post.category.toLowerCase()}`}>
-    <Link className="discovery-story-cover home-news-cover" href={`/ban-tin/${post.id}`} tabIndex={-1} aria-hidden="true">
+    <Link className="discovery-story-cover home-news-cover" href={`/ban-tin/${post.id}`} prefetch={false} tabIndex={-1} aria-hidden="true">
       {post.cover_url ? <Image src={post.cover_url} alt="" fill sizes="(max-width: 520px) 60vw, (max-width: 760px) 312px, (max-width: 890px) 40vw, 324px" unoptimized /> : <span className={`discovery-story-art discovery-art-${post.category.toLowerCase()}`} />}
     </Link>
-    <div className="discovery-story-body home-news-body"><div className="discovery-story-meta"><span>{categoryLabels[post.category]}</span>{post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}</div><h3><Link href={`/ban-tin/${post.id}`}>{post.title}</Link></h3><p>{post.body}</p><Link className="discovery-text-link" href={`/ban-tin/${post.id}`}>Đọc tiếp <ArrowIcon /></Link></div>
+    <div className="discovery-story-body home-news-body"><div className="discovery-story-meta"><span>{categoryLabels[post.category]}</span>{post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}</div><h3><Link href={`/ban-tin/${post.id}`} prefetch={false}>{post.title}</Link></h3><p>{post.body}</p><Link className="discovery-text-link" href={`/ban-tin/${post.id}`} prefetch={false}>Đọc tiếp <ArrowIcon /></Link></div>
   </article>;
 }
 

@@ -42,7 +42,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     try { posts = await getPublicPosts(); } catch { unavailable = true; }
   }
   const studentSignedIn = Boolean(student);
-  const classroom = section === "do-vui" ? <HomeQuiz /> : student ? <StudentHomeContent student={student} section={section} /> : null;
+  const classroom = section === "do-vui" ? <HomeQuiz /> : student ? <StudentHomeContent student={student} section={section} theme={theme} /> : null;
   const shared: HomePageProps = { posts, unavailable, accountName, section, studentSignedIn, classroom };
 
   if (theme === "harmony") {

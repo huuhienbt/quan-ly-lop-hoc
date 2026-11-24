@@ -89,3 +89,12 @@ Chạy từ repository root: `python3 -m unittest discover -s database/tests -v`
 Các kiểm thử chỉ dùng cơ sở dữ liệu SQLite riêng và dữ liệu giả lập. Kiểm tra trình
 duyệt cần xác nhận đăng nhập thật qua Credentials Provider, chuyển đến đổi mật khẩu,
 thu hồi phiên cũ và từ chối quyền quản trị của tài khoản học sinh.
+
+## Chỉnh sửa thông tin và ảnh đại diện
+
+Học sinh đăng nhập, bấm tên tài khoản ở đầu trang, chọn **Chỉnh sửa thông tin**.
+Có thể đổi tên hiển thị, ngày sinh, giới tính và chọn ảnh JPG, PNG hoặc WebP
+từ thiết bị, tối đa 2 MB. Ảnh được thu nhỏ trước khi gửi; có thể thay hoặc xóa
+ảnh. Bấm **Lưu thông tin** để lưu. Họ tên chính thức, mã học sinh và lớp do
+giáo viên quản lý. Ảnh đại diện chỉ hiển thị trong hồ sơ của chính học sinh.
+Nút **Đổi mật khẩu** nằm ở cuối trang thông tin.

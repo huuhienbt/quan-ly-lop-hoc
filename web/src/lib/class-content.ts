@@ -6,6 +6,7 @@ import { attachPostAssets, postAssetGuard } from "@/lib/post-attachments";
 import { postDateUpdate, postDateUpdateParams, publicationValues } from "@/lib/post-dates";
 import { decodeLesson, lessonSummary } from "@/lib/lessons";
 import { getStudentTimetablePlan } from "@/lib/class-timetable";
+import { lessonStudentAccess } from "@/lib/lesson-access";
 import type { TeacherPostTab } from "@/lib/teacher-navigation";
 import type { StudentHomeSection } from "@/lib/student-home";
 import {
@@ -125,15 +126,27 @@ function validStudentIdentity(accountId: string, version: number) {
     && Number.isSafeInteger(version) && version > 0;
 }
 
+// The article layout is shared with the public bulletin, but each private
+// article is read using a live, authorized membership in its own class.
+export async function getStudentNewsPost(accountId: string, sessionVersion: number, id: string): Promise<ContentPost | null> {
+  if (!validStudentIdentity(accountId, sessionVersion) || !archiveContentSchema.shape.id.safeParse(id).success) return null;
+  return (await query<ContentPost>(`SELECT ${postFields}, p.bulletin_content FROM posts p ${classJoins}
+    WHERE p.id = ? AND p.status = 'PUBLISHED' AND p.category NOT IN ('DISCOVERY', 'KINDNESS')
+      AND ${activeClass} AND ${lessonStudentAccess}
+      AND EXISTS (SELECT 1 FROM student_accounts login WHERE login.id = ?
+        AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?))`,
+  [id, accountId, sessionVersion, accountId, new Date().toISOString()]))[0] ?? null;
+}
+
 export async function getStudentHomePosts(
   accountId: string, sessionVersion: number, enrollmentId: string, classId: string,
   section: Exclude<StudentHomeSection, "tro-chuyen">,
 ): Promise<ContentPost[]> {
   if (!validStudentIdentity(accountId, sessionVersion)) return [];
   const lesson = section === "hoc-tap";
-  const detailField = lesson ? "p.lesson_content" : "p.bulletin_content";
+  const detailField = lesson ? ", p.lesson_content" : "";
   const categories = lesson ? "p.category = 'DISCOVERY'" : "p.category NOT IN ('DISCOVERY', 'KINDNESS')";
-  return query<ContentPost>(`SELECT ${postFields}, ${detailField} FROM posts p ${classJoins}
+  return query<ContentPost>(`SELECT ${postFields}${detailField} FROM posts p ${classJoins}
     WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${categories}
       AND ${activeClass} AND ${studentAccess}
     ORDER BY ${postOrder} LIMIT 100`, [classId, accountId, sessionVersion, enrollmentId]);

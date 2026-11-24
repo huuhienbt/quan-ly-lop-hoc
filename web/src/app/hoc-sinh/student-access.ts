@@ -2,9 +2,9 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { requireStudentAccount, StudentAuthorizationError } from "@/lib/student-session";
 
-export async function requireStudentPageAccount(allowPasswordChange = false) {
+export async function requireStudentPageAccount(allowPasswordChange = false, includeProfileEditor = false) {
   try {
-    return await requireStudentAccount({ allowPasswordChange });
+    return await requireStudentAccount({ allowPasswordChange, includeProfileEditor });
   } catch (error) {
     if (error instanceof StudentAuthorizationError) {
       redirect(error.code === "PASSWORD_CHANGE_REQUIRED" ? "/hoc-sinh/doi-mat-khau" : "/dang-nhap");

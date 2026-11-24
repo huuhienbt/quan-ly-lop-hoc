@@ -31,3 +31,20 @@ chung số. Mật khẩu dài được xuống dòng, dấu cách được đán
 từ ảnh; chức năng sao chép giữ nguyên từng ký tự. Phiếu không đưa mật khẩu
 vào URL, không gửi thêm yêu cầu lên máy chủ và không có đường dẫn công khai
 để truy xuất lại.
+
+## Hồ sơ và bảng tin học sinh
+
+- Trang `/hoc-sinh/thong-tin` dùng server action `updateStudentProfile` để
+  cập nhật tên hiển thị, ngày sinh, giới tính và ảnh của chính học sinh. Yêu cầu
+  phiên hợp lệ, lớp đang học, phiên bản hồ sơ hiện tại; không cho đổi họ tên
+  chính thức, mã học sinh, lớp hoặc quyền truy cập.
+- Ảnh gốc JPG, PNG, WebP tối đa 2 MiB. Trình duyệt thu nhỏ ảnh trước khi gửi
+  (tối đa 200 KiB); máy chủ kiểm tra định dạng và kích thước, lưu WebP
+  256 × 256 px không quá 64 KiB. Xóa ảnh được hỗ trợ.
+- `GET /api/student-avatars/{enrollmentId}` chỉ trả ảnh cho đúng tài khoản
+  học sinh đang hoạt động; các trường hợp không có ảnh hoặc không đủ quyền
+  trả 404; phản hồi riêng tư, không lưu cache.
+- Tin lớp sau đăng nhập dùng cùng thẻ bài và ảnh bìa theo giao diện trang chủ.
+  Trang chi tiết `/ban-tin/{id}` phục vụ tin công khai hoặc tin riêng của lớp
+  đang học, kiểm tra quyền phía máy chủ. Danh sách chỉ đọc dữ liệu thẻ bài;
+  nội dung chi tiết được đọc khi mở bài.

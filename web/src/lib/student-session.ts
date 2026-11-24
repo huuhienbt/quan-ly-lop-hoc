@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getSetupState } from "@/lib/config";
 import { query } from "@/lib/d1";
+import { AVATAR_KEY_PREFIX } from "@/lib/student-profile-options";
 
 export interface StudentLinkedProfile {
   id: string;
@@ -17,6 +18,8 @@ export interface StudentLinkedProfile {
   class_slug: string;
   school_name: string;
   academic_year_name: string;
+  profile_updated_at?: string;
+  has_avatar?: number;
 }
 
 export interface StudentAccountSession {
@@ -34,17 +37,31 @@ export class StudentAuthorizationError extends Error {
   }
 }
 
-export async function getCurrentStudentAccount(): Promise<StudentAccountSession | null> {
+export interface StudentRequestIdentity {
+  accountId: string;
+  sessionVersion: number;
+}
+
+// Avatar reads can authenticate and check the exact enrollment in one database
+// query, without loading every linked pupil's profile.
+export async function getStudentRequestIdentity(): Promise<StudentRequestIdentity | null> {
   if (!getSetupState().sessionReady) return null;
   const session = await getServerSession(authOptions);
   const identity = session?.user;
-  if (identity?.kind !== "student" || !identity.studentAccountId ||
-    !Number.isSafeInteger(identity.studentSessionVersion)) return null;
+  if (identity?.kind !== "student" || typeof identity.studentAccountId !== "string" ||
+    !/^[A-Za-z0-9_-]{1,100}$/.test(identity.studentAccountId) ||
+    !Number.isSafeInteger(identity.studentSessionVersion) || identity.studentSessionVersion! < 1) return null;
+  return { accountId: identity.studentAccountId, sessionVersion: identity.studentSessionVersion! };
+}
+
+export async function getCurrentStudentAccount({ includeProfileEditor = false }: { includeProfileEditor?: boolean } = {}): Promise<StudentAccountSession | null> {
+  const identity = await getStudentRequestIdentity();
+  if (!identity) return null;
   const account = (await query<{ id: string; phone: string; must_change_password: number; session_version: number }>(
     `SELECT id, phone, must_change_password, session_version FROM student_accounts
      WHERE id = ? AND status = 'ACTIVE' AND session_version = ?
        AND (temporary_password_expires_at IS NULL OR temporary_password_expires_at > ?)`,
-    [identity.studentAccountId, identity.studentSessionVersion!, new Date().toISOString()],
+    [identity.accountId, identity.sessionVersion, new Date().toISOString()],
   ))[0];
   if (!account) return null;
   // Default-password sessions reach the password-change page without receiving pupil records.
@@ -52,6 +69,8 @@ export async function getCurrentStudentAccount(): Promise<StudentAccountSession 
     `SELECT s.id, s.full_name, s.display_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
       c.id AS class_id, c.name AS class_name, c.slug AS class_slug,
       school.name AS school_name, y.name AS academic_year_name
+      ${includeProfileEditor ? `, s.updated_at AS profile_updated_at,
+        CASE WHEN instr(s.avatar_key, '${AVATAR_KEY_PREFIX}') = 1 THEN 1 ELSE 0 END AS has_avatar` : ""}
      FROM student_account_students link
      JOIN student_accounts login ON login.id = link.account_id AND login.status = 'ACTIVE'
        AND login.session_version = ? AND login.must_change_password = 0
@@ -67,9 +86,9 @@ export async function getCurrentStudentAccount(): Promise<StudentAccountSession 
 }
 
 export async function requireStudentAccount(
-  { allowPasswordChange = false }: { allowPasswordChange?: boolean } = {},
+  { allowPasswordChange = false, includeProfileEditor = false }: { allowPasswordChange?: boolean; includeProfileEditor?: boolean } = {},
 ): Promise<StudentAccountSession> {
-  const account = await getCurrentStudentAccount();
+  const account = await getCurrentStudentAccount({ includeProfileEditor });
   if (!account) throw new StudentAuthorizationError(401, "UNAUTHENTICATED");
   if (account.must_change_password && !allowPasswordChange) {
     throw new StudentAuthorizationError(403, "PASSWORD_CHANGE_REQUIRED");

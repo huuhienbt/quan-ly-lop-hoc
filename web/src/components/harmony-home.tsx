@@ -9,10 +9,10 @@ import { categoryLabels, formatContentDate } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, SunIcon } from "@/components/icons";
 import type { ContentPost } from "@/lib/content-schemas";
 
-function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
+export function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
   return (
     <article className={`harmony-story-card home-news-item${compact ? " is-compact" : ""}`}>
-      <Link className="harmony-story-cover home-news-cover" href={`/ban-tin/${post.id}`} tabIndex={-1} aria-hidden="true">
+      <Link className="harmony-story-cover home-news-cover" href={`/ban-tin/${post.id}`} prefetch={false} tabIndex={-1} aria-hidden="true">
         {post.cover_url ? (
           <Image src={post.cover_url} alt="" fill sizes="(max-width: 520px) 60vw, (max-width: 760px) 312px, (max-width: 890px) 40vw, 324px" unoptimized />
         ) : <span className={`harmony-story-art harmony-art-${post.category.toLowerCase()}`} />}
@@ -22,9 +22,9 @@ function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compac
           <span>{categoryLabels[post.category]}</span>
           {post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}
         </div>
-        <h3><Link href={`/ban-tin/${post.id}`}>{post.title}</Link></h3>
+        <h3><Link href={`/ban-tin/${post.id}`} prefetch={false}>{post.title}</Link></h3>
         <p>{post.body}</p>
-        <Link className="harmony-text-link" href={`/ban-tin/${post.id}`}>Đọc câu chuyện <ArrowIcon /></Link>
+        <Link className="harmony-text-link" href={`/ban-tin/${post.id}`} prefetch={false}>Đọc câu chuyện <ArrowIcon /></Link>
       </div>
     </article>
   );

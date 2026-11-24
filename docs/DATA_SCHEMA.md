@@ -18,3 +18,15 @@ lô (`STUDENT_PASSWORD_BULK_RESET`) và đặt thủ công (`STUDENT_PASSWORD_MA
 lưu người thao tác, lớp, mã tài khoản và hạn dùng; không ghi mật khẩu.
 Phiếu đăng nhập không tạo thêm bản ghi, dùng ngay mã tạm trong hộp thoại
 kết quả để tải ảnh trên thiết bị của giáo viên.
+
+## Hồ sơ cá nhân học sinh
+
+Học sinh có thể cập nhật `students.display_name`, `date_of_birth`, `gender`
+và ảnh của mình. Họ tên chính thức, mã học sinh, lớp và tài khoản vẫn do giáo
+viên quản lý. `students.avatar_key` dùng cột TEXT hiện có, lưu một ảnh WebP
+256 × 256 px tối đa 64 KiB theo dạng `inline-webp-v1:<base64>`; thay ảnh
+ghi đè bản cũ, xóa ảnh đặt giá trị NULL. Không cần migration dữ liệu.
+`students.updated_at` dùng để từ chối ghi đè khi hồ sơ vừa được cập nhật.
+Ảnh được phục vụ qua API yêu cầu phiên đăng nhập đúng học sinh đang theo học.
+Nhật ký `STUDENT_PROFILE_UPDATED` chỉ ghi thông tin thao tác, không ghi ảnh
+hoặc giá trị các trường cá nhân.

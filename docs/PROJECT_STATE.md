@@ -18,3 +18,12 @@
   Kiểm thử chỉ cấp hoặc đặt mật khẩu trên tài khoản giả lập.
 
 Quy ước kỹ thuật: [dữ liệu](DATA_SCHEMA.md) và [hành vi máy chủ](API_CONTRACT.md).
+
+### Bảng tin và hồ sơ học sinh
+
+- Dùng chung thẻ bài của trang chủ cho Tin lớp sau đăng nhập, hiển thị ảnh
+  ngay; giữ quyền đọc tin riêng theo lớp.
+- Căn giữa thông tin học sinh; thêm chỉnh sửa thông tin và ảnh đại diện,
+  chuyển Đổi mật khẩu xuống cuối. Giới hạn ảnh và kiểm tra quyền trên máy chủ.
+- Lưu một ảnh nhỏ trong trường có sẵn, không cần migration hoặc cấu hình
+  dịch vụ lưu ảnh mới. Các kiểm thử hồ sơ và quyền đọc tin dùng dữ liệu giả lập.
