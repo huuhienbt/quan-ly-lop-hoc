@@ -34,7 +34,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
   return <main id="noi-dung" className="unified-login page-width">
     <header className="unified-login-header"><Brand /><Link href="/" className="button button-outline button-small">Trang chủ</Link></header>
-    <div className="unified-login-title"><p className="eyebrow">LỚP HỌC HẠNH PHÚC</p><h1>Đăng nhập</h1></div>
+    <div className="unified-login-title"><h1>Đăng nhập</h1></div>
     {user ? <section className="student-auth-card unified-login-card"><h2>Tài khoản đang chờ duyệt</h2><p>Quản trị viên cần duyệt quyền và phân công lớp trước khi bạn sử dụng trang giáo viên.</p><SignOutButton /></section> :
       <section className="student-auth-card unified-login-card" aria-labelledby="login-form-title">
         <nav className="unified-login-roles" aria-label="Loại tài khoản">

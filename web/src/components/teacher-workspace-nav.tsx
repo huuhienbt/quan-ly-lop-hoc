@@ -17,15 +17,14 @@ export function TeacherWorkspaceNav({ classes, admin }: { classes: ClassOption[]
     <section className="staff-banner" aria-labelledby="staff-title">
       <div className="staff-banner-copy page-width">
         <h1 id="staff-title">Quản trị lớp học</h1>
-        {classes.length > 1 ?
+        {classes.length > 1 &&
           <label className="staff-class-choice">Lớp đang quản lý
             <select value={selected?.id} onChange={event => router.push(
               teacherHref(tab, event.target.value, { setting: schoolSetting(params.get("muc")) }), { scroll: false }
             )}>
               {classes.map(item => <option key={item.id} value={item.id}>{item.name} · {item.school_name}</option>)}
             </select>
-          </label>
-          : <p className="staff-class-name">{selected ? selected.name + " · " + selected.school_name : "Trường Tiểu học Bến Tre"}</p>}
+          </label>}
       </div>
     </section>
     <nav className="home-shortcuts staff-menu" aria-label="Menu quản trị" data-count={items.length}>
