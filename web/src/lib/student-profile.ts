@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { z } from "zod";
 import { batch, query } from "@/lib/d1";
 import { vietnamToday } from "@/lib/content-schemas";
+import { lessonStaffAccess } from "@/lib/lesson-access";
 import type { StudentRequestIdentity } from "@/lib/student-session";
 import { AVATAR_FILE_TYPES, AVATAR_KEY_PREFIX, AVATAR_SIZE, MAX_AVATAR_BYTES, MAX_AVATAR_UPLOAD_BYTES,
   studentGenders } from "@/lib/student-profile-options";
@@ -22,8 +23,6 @@ function birthDateValid(value: string): boolean {
 export const studentProfileInput = z.object({
   enrollment_id: id,
   revision: z.string().min(1).max(80),
-  display_name: z.string().max(60).refine(name => !/[\p{Cc}\p{Cf}\p{Cs}]/u.test(name), "Tên hiển thị cần nằm trên một dòng.")
-    .transform(name => name.normalize("NFC").trim().replace(/\s+/gu, " ") || null),
   date_of_birth: z.string().refine(birthDateValid, "Ngày sinh chưa hợp lệ.").transform(value => value || null),
   gender: z.enum(studentGenders),
   avatar_intent: z.enum(["keep", "replace", "remove"]),
@@ -93,10 +92,10 @@ export async function saveStudentProfile(identity: StudentRequestIdentity, input
   const updated = new Date(Math.max(now.getTime(), Number.isFinite(previousTime) ? previousTime + 1 : 0)).toISOString();
   const [result] = await batch([
     {
-      sql: `UPDATE students SET display_name = ?, date_of_birth = ?, gender = ?,
+      sql: `UPDATE students SET date_of_birth = ?, gender = ?,
         avatar_key = CASE WHEN ? = 'keep' THEN avatar_key ELSE ? END, updated_at = ?
         WHERE id IN (${ownEnrollment}) AND updated_at = ?`,
-      params: [input.display_name, input.date_of_birth, input.gender, input.avatar_intent, avatar, updated,
+      params: [input.date_of_birth, input.gender, input.avatar_intent, avatar, updated,
         input.enrollment_id, identity.accountId, identity.sessionVersion, now.toISOString(), input.revision],
     }, {
       sql: `INSERT INTO audit_logs (id, school_id, class_id, action, entity_type, entity_id, details_json)
@@ -108,11 +107,37 @@ export async function saveStudentProfile(identity: StudentRequestIdentity, input
   if (result.meta.changes !== 1) throw new StudentProfileError("Hồ sơ đã thay đổi hoặc em không còn quyền sửa. Hãy tải lại trang rồi thử lại.");
 }
 
-export async function readStudentAvatar(identity: StudentRequestIdentity, enrollmentId: string): Promise<Buffer | null> {
-  if (!validIdentity(identity) || !id.safeParse(enrollmentId).success) return null;
+export type StudentAvatarViewer = StudentRequestIdentity | { actorId: string };
+
+export async function readStudentAvatar(identity: StudentAvatarViewer, enrollmentId: string): Promise<Buffer | null> {
+  if (!id.safeParse(enrollmentId).success) return null;
+  const staff = "actorId" in identity;
+  if (staff ? !id.safeParse(identity.actorId).success : !validIdentity(identity)) return null;
+  const day = vietnamToday();
+  // The owner can see their portrait in their account. For chat, only active
+  // classmates and staff authorized for that class can read the same image.
+  const classWindow = "e.enrolled_on <= ? AND ? BETWEEN year.starts_on AND year.ends_on";
+  const guard = staff ? `(${classWindow} AND ${lessonStaffAccess})` : `EXISTS (
+    SELECT 1 FROM student_accounts login
+    JOIN student_account_students link ON link.account_id = login.id
+    JOIN students viewer ON viewer.id = link.student_id AND viewer.archived_at IS NULL
+    JOIN student_enrollments membership ON membership.student_id = viewer.id AND membership.school_id = viewer.school_id
+    WHERE login.id = ? AND login.session_version = ? AND login.status = 'ACTIVE'
+      AND login.must_change_password = 0
+      AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?)
+      AND membership.class_id = c.id AND membership.school_id = c.school_id
+      AND membership.academic_year_id = c.academic_year_id AND membership.status = 'ACTIVE'
+      AND (membership.id = e.id OR (membership.enrolled_on <= ? AND ${classWindow})))`;
   const [stored] = await query<{ avatar_key: string | null }>(
-    `SELECT avatar_key FROM students WHERE id IN (${ownEnrollment})`,
-    [enrollmentId, identity.accountId, identity.sessionVersion, new Date().toISOString()],
+    `SELECT pupil.avatar_key FROM student_enrollments e
+      JOIN students pupil ON pupil.id = e.student_id AND pupil.school_id = e.school_id AND pupil.archived_at IS NULL
+      JOIN classes c ON c.id = e.class_id AND c.school_id = e.school_id
+        AND c.academic_year_id = e.academic_year_id AND c.archived_at IS NULL
+      JOIN schools school ON school.id = c.school_id AND school.archived_at IS NULL
+      JOIN academic_years year ON year.id = c.academic_year_id AND year.school_id = c.school_id
+      WHERE e.id = ? AND e.status = 'ACTIVE' AND ${guard}`,
+    [enrollmentId, ...(staff ? [day, day, identity.actorId]
+      : [identity.accountId, identity.sessionVersion, new Date().toISOString(), day, day, day])],
   );
   if (!stored?.avatar_key?.startsWith(AVATAR_KEY_PREFIX)) return null;
   const encoded = stored.avatar_key.slice(AVATAR_KEY_PREFIX.length);

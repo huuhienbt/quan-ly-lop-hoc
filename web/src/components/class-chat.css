@@ -55,6 +55,8 @@
 .class-chat-message { display: flex; align-items: flex-start; gap: 10px; min-width: 0; max-width: 87%; }
 .class-chat-avatar { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border: 2px solid #fff; border-radius: 12px; background: #f9e2ee; color: #994d75; box-shadow: 0 1px 0 #c9dce9; font-size: 14px; font-weight: 900; }
 .class-chat-avatar.is-teacher { border-radius: 50%; background: #fff0bb; color: #86671b; }
+.class-chat-avatar, .class-chat-room-avatar { overflow: hidden; }
+.class-chat-avatar img, .class-chat-room-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .class-chat-message-content { min-width: 0; flex: 1; }
 .class-chat-message-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 7px; margin: 0 0 5px; color: var(--chat-muted); font-size: 11px; line-height: 1.7; }
 .class-chat-message-meta strong { color: var(--chat-ink); font-size: 12px; font-weight: 900; overflow-wrap: anywhere; }

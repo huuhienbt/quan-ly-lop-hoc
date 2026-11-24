@@ -7,7 +7,10 @@
 .student-account-page .student-profile-card:only-child { grid-column: 1 / -1; width: min(100%, 560px); justify-self: center; }
 .student-profile-avatar-large { width: 78px; height: 78px; border-radius: 50%; overflow: hidden; font-size: 32px; }
 .student-profile-avatar-large img { width: 100%; height: 100%; object-fit: cover; }
-.student-profile-edit-footer { display: grid; gap: 8px; justify-items: start; margin-top: 20px; }
+.student-profile-edit-footer { display: grid; gap: 8px; margin-top: 20px; }
+.student-profile-account-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; align-items: stretch; }
+.student-profile-account-actions .button { min-width: 0; padding: 8px 9px; text-align: center; line-height: 1.4; }
+.student-profile-account-actions .button:only-child { grid-column: 1 / -1; }
 .student-profile-editor { margin-top: 22px; padding-top: 18px; border-top: 1px solid #dfece8; }
 .student-profile-fields { min-width: 0; display: grid; gap: 13px; }
 .student-avatar-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px; background: #f1f7f4; border-radius: 13px; }
@@ -15,9 +18,14 @@
 .student-avatar-controls p { flex-basis: 100%; font-size: 12px; color: #456777; }
 .student-avatar-input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; }
 .student-avatar-controls:focus-within > label { outline: 2px solid #1479bd; outline-offset: 3px; }
-.student-profile-fields .student-field > span { font-weight: 800; color: #294d66; }
-.student-profile-fields :is(input:not([type="file"]), select) { width: 100%; min-width: 0; min-height: 43px; border: 1px solid #c7ddd8; border-radius: 9px; padding: 8px 11px; background: #fff; color: #234d66; font-size: 16px; }
-.student-profile-edit-row { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 10px; }
+.student-profile-fixed-name { display: grid; gap: 5px; padding: 9px 11px; border-radius: 9px; background: #f0f5f6; overflow-wrap: anywhere; }
+.student-profile-fixed-name span { color: #456777; font-size: 12px; font-weight: 800; }
+.student-profile-fixed-name strong { color: #294d66; font-size: 16px; }
+.student-profile-fields .student-field { display: grid; min-width: 0; margin: 0; gap: 6px; align-content: start; }
+.student-profile-fields .student-field > span { font-size: 14px; line-height: 1.5; font-weight: 800; color: #294d66; }
+.student-profile-fields :is(input:not([type="file"]), select) { box-sizing: border-box; display: block; width: 100%; min-width: 0; height: 44px; min-height: 44px; border: 1px solid #c7ddd8; border-radius: 9px; padding: 8px 10px; background: #fff; color: #234d66; font: inherit; font-size: 16px; }
+.student-profile-fields input[type="date"]::-webkit-date-and-time-value { text-align: left; min-width: 0; }
+.student-profile-edit-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 10px; }
 .student-profile-edit-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
 .student-account-bottom-actions { display: flex; justify-content: center; margin-top: 24px; }
 .student-account-bottom-actions svg { width: 18px; height: 18px; }
@@ -26,6 +34,6 @@
   .student-account-page .student-profiles-grid { grid-template-columns: minmax(0, 1fr); }
   .student-profile-avatar-large { width: 66px; height: 66px; }
 }
-@media (max-width: 400px) {
+@media (max-width: 360px) {
   .student-profile-edit-row { grid-template-columns: minmax(0, 1fr); }
 }

@@ -26,14 +26,14 @@ import "./home-news.css";
 export const dynamic = "force-dynamic";
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const [student, user, { muc }, theme] = await Promise.all([getCurrentStudentAccount(), getCurrentUser(), searchParams, getSiteTheme()]);
+  const [student, user, { muc, bai }, theme] = await Promise.all([getCurrentStudentAccount(), getCurrentUser(), searchParams, getSiteTheme()]);
   const studentSection = studentHomeSection(muc);
   const section = muc === "do-vui" ? "do-vui" : studentSection;
   if (student?.must_change_password) redirect(studentPasswordLink(studentSection));
   if (!student && studentSection !== "tin-lop") redirect(studentHomeLoginLink(studentSection));
   const firstStudent = student?.students[0];
   const studentName = firstStudent && student?.students.every((profile) => profile.id === firstStudent.id)
-    ? firstStudent.display_name?.trim() || firstStudent.full_name.trim()
+    ? firstStudent.full_name.trim()
     : null;
   const accountName = student ? studentName || "Góc học sinh" : user ? user.name.trim() || "Người dùng" : null;
   let posts: ContentPost[] = [];
@@ -42,7 +42,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
     try { posts = await getPublicPosts(); } catch { unavailable = true; }
   }
   const studentSignedIn = Boolean(student);
-  const classroom = section === "do-vui" ? <HomeQuiz /> : student ? <StudentHomeContent student={student} section={section} theme={theme} /> : null;
+  const classroom = section === "do-vui" ? <HomeQuiz /> : student ? <StudentHomeContent student={student} section={section} theme={theme}
+    lessonId={section === "hoc-tap" && typeof bai === "string" ? bai : undefined} /> : null;
   const shared: HomePageProps = { posts, unavailable, accountName, section, studentSignedIn, classroom };
 
   if (theme === "harmony") {

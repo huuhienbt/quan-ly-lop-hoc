@@ -1,4 +1,4 @@
-#bang-tin .home-news-list {
+:is(#bang-tin, #noi-dung-lop) .home-news-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(16px, 2.5vw, 26px);
@@ -7,12 +7,12 @@
   margin-inline: auto;
 }
 
-#bang-tin .home-news-item {
+:is(#bang-tin, #noi-dung-lop) .home-news-item {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
 }
 
-#bang-tin .home-news-cover {
+:is(#bang-tin, #noi-dung-lop) .home-news-cover {
   display: block;
   position: relative;
   align-self: start;
@@ -23,29 +23,29 @@
   overflow: hidden;
 }
 
-#bang-tin .home-news-cover img,
-#bang-tin .home-news-cover .bulletin-art {
+:is(#bang-tin, #noi-dung-lop) .home-news-cover img,
+:is(#bang-tin, #noi-dung-lop) .home-news-cover .bulletin-art {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-#bang-tin .home-news-body {
+:is(#bang-tin, #noi-dung-lop) .home-news-body {
   min-width: 0;
   padding: clamp(16px, 3vw, 30px);
   overflow-wrap: anywhere;
 }
 
 @media (max-width: 760px) {
-  #bang-tin .home-news-list {
+  :is(#bang-tin, #noi-dung-lop) .home-news-list {
     max-inline-size: 520px;
   }
 
-  #bang-tin .home-news-item {
+  :is(#bang-tin, #noi-dung-lop) .home-news-item {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #bang-tin .home-news-cover {
+  :is(#bang-tin, #noi-dung-lop) .home-news-cover {
     inline-size: 60%;
     justify-self: center;
     margin-block-start: 12px;

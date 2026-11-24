@@ -4,6 +4,8 @@ export interface ChatMessage {
   id: string;
   sender_name: string;
   sender_kind: "TEACHER" | "STUDENT";
+  sender_enrollment_id: string | null;
+  sender_avatar_url: string | null;
   body: string;
   created_at: string;
   is_own: boolean;
@@ -12,6 +14,7 @@ export interface ChatMessage {
 export interface ChatStudent {
   enrollment_id: string;
   student_name: string;
+  avatar_url: string | null;
   last_message_at: string | null;
 }
 export interface ChatSnapshot {

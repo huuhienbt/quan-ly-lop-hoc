@@ -5,26 +5,25 @@ import { HomeAccountLink } from "@/components/home-account-link";
 import { HomeShortcuts } from "@/components/home-shortcuts";
 import { HomeFooter } from "@/components/home-footer";
 import type { HomePageProps } from "@/components/home-page-props";
-import { categoryLabels, formatContentDate } from "@/components/bulletin";
+import { formatContentDate, postCardTarget, type PostCardProps } from "@/components/bulletin";
 import { ArrowIcon, ClockIcon, HeartIcon, SunIcon } from "@/components/icons";
-import type { ContentPost } from "@/lib/content-schemas";
-
-export function HarmonyStoryCard({ post, compact = false }: { post: ContentPost; compact?: boolean }) {
+export function HarmonyStoryCard({ post, compact = false, lesson = false }: PostCardProps) {
+  const { href, label } = postCardTarget(post, lesson);
   return (
     <article className={`harmony-story-card home-news-item${compact ? " is-compact" : ""}`}>
-      <Link className="harmony-story-cover home-news-cover" href={`/ban-tin/${post.id}`} prefetch={false} tabIndex={-1} aria-hidden="true">
+      <Link className="harmony-story-cover home-news-cover" href={href} prefetch={false} tabIndex={-1} aria-hidden="true">
         {post.cover_url ? (
           <Image src={post.cover_url} alt="" fill sizes="(max-width: 520px) 60vw, (max-width: 760px) 312px, (max-width: 890px) 40vw, 324px" unoptimized />
         ) : <span className={`harmony-story-art harmony-art-${post.category.toLowerCase()}`} />}
       </Link>
       <div className="harmony-story-body home-news-body">
         <div className="harmony-story-meta">
-          <span>{categoryLabels[post.category]}</span>
+          <span>{label}</span>
           {post.published_at && <time dateTime={post.published_at}>{formatContentDate(post.published_at, true)}</time>}
         </div>
-        <h3><Link href={`/ban-tin/${post.id}`} prefetch={false}>{post.title}</Link></h3>
+        <h3><Link href={href} prefetch={false}>{post.title}</Link></h3>
         <p>{post.body}</p>
-        <Link className="harmony-text-link" href={`/ban-tin/${post.id}`} prefetch={false}>Đọc câu chuyện <ArrowIcon /></Link>
+        <Link className="harmony-text-link" href={href} prefetch={false}>{lesson ? "Mở bài học" : "Đọc câu chuyện"} <ArrowIcon /></Link>
       </div>
     </article>
   );

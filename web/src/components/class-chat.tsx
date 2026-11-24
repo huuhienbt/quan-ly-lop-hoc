@@ -2,6 +2,7 @@
 
 import { useActionState, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { hideChatMessageAction, sendChatMessageAction } from "@/app/chat-actions";
+import { StudentAvatar } from "@/components/student-avatar";
 import type { ChatMessage, ChatSnapshot, ChatStudent } from "@/lib/chat-schemas";
 import "./class-chat.css";
 
@@ -67,7 +68,7 @@ function ClassChatWorkspace({ mode, classId, enrollmentId, students = [] }: Chat
       <button type="button" className={privateRoom ? "is-active" : ""} aria-pressed={privateRoom} disabled={mode === "teacher" && !rosterReady} onClick={() => setPrivateRoom(true)}><ChatIcon privateRoom /><span>{mode === "student" ? "Nhắn riêng với thầy cô" : "Cá nhân"}</span></button>
     </div>
     {privateRoom && mode === "teacher" && <div className="class-chat-student-picker"><label htmlFor={`${prefix}-student`}>Chọn học sinh để trò chuyện riêng</label><select id={`${prefix}-student`} value={selected?.enrollment_id ?? ""} disabled={!roster.length} onChange={(event) => setSelectedStudent(event.target.value)}>{!roster.length && <option value="">Lớp chưa có học sinh</option>}{roster.map((student) => <option key={student.enrollment_id} value={student.enrollment_id}>{student.student_name}{student.last_message_at ? ` · ${messageTime(student.last_message_at, true)}` : ""}</option>)}</select><p>Các cuộc trò chuyện có tin gần đây được đưa lên đầu danh sách.</p></div>}
-    <div className={`class-chat-room-heading${privateRoom ? " is-private" : ""}`}><span className="class-chat-room-icon"><ChatIcon privateRoom={privateRoom} /></span><div><h3>{privateRoom ? mode === "teacher" ? `Trò chuyện với ${selected?.student_name ?? "học sinh"}` : "Góc trò chuyện riêng với thầy cô" : "Phòng chung của lớp"}</h3><p>{privateRoom ? mode === "student" ? "Chỉ em và thầy cô được phân quyền của lớp xem được cuộc trò chuyện này. Các bạn khác không xem được." : "Chỉ học sinh được chọn và thầy cô được phân quyền của lớp xem được cuộc trò chuyện này." : "Cùng hỏi bài, chia sẻ điều hay và gửi lời chào đến thầy cô, các bạn."}</p></div></div>
+    <div className={`class-chat-room-heading${privateRoom ? " is-private" : ""}`}>{privateRoom && mode === "teacher" && selected ? <StudentAvatar className="class-chat-room-icon class-chat-room-avatar" name={selected.student_name} src={selected.avatar_url} size={49} /> : <span className="class-chat-room-icon"><ChatIcon privateRoom={privateRoom} /></span>}<div><h3>{privateRoom ? mode === "teacher" ? `Trò chuyện với ${selected?.student_name ?? "học sinh"}` : "Góc trò chuyện riêng với thầy cô" : "Phòng chung của lớp"}</h3><p>{privateRoom ? mode === "student" ? "Chỉ em và thầy cô được phân quyền của lớp xem được cuộc trò chuyện này. Các bạn khác không xem được." : "Chỉ học sinh được chọn và thầy cô được phân quyền của lớp xem được cuộc trò chuyện này." : "Cùng hỏi bài, chia sẻ điều hay và gửi lời chào đến thầy cô, các bạn."}</p></div></div>
     {privateRoom && mode === "teacher" && !selected ? <p className="class-chat-unavailable">Khi lớp có học sinh, thầy cô có thể chọn tên để gửi tin nhắn riêng tại đây.</p> : mode === "student" && !enrollmentId ? <p className="class-chat-unavailable">Em đăng nhập và chọn lớp để bắt đầu trò chuyện nhé.</p> : <ChatRoom key={roomKey} mode={mode} classId={classId} enrollmentId={enrollmentId} threadEnrollmentId={threadEnrollmentId} roomKey={roomKey} draft={drafts[roomKey] ?? emptyDraft} updateDraft={updateDraft} updateRoster={updateRoster} />}
   </div>;
 }
@@ -92,7 +93,12 @@ function HideMessage({ message, context, onHidden }: { message: ChatMessage; con
 }
 
 function mergeMessages(previous: ChatMessage[], incoming: ChatMessage[]) {
-  const messages = new Map(previous.map((message) => [message.id, message]));
+  const currentSenders = new Map(incoming.filter(message => message.sender_enrollment_id)
+    .map(message => [message.sender_enrollment_id, message]));
+  const messages = new Map(previous.map(message => {
+    const current = currentSenders.get(message.sender_enrollment_id);
+    return [message.id, current ? { ...message, sender_name: current.sender_name, sender_avatar_url: current.sender_avatar_url } : message];
+  }));
   for (const message of incoming) messages.set(message.id, message);
   return [...messages.values()].sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id));
 }
@@ -287,7 +293,7 @@ function ChatRoom({ mode, classId, enrollmentId, threadEnrollmentId, roomKey, dr
         const day = messageDay(message.created_at);
         return <li className={`class-chat-message-row${message.is_own ? " is-own" : ""}${message.is_hidden ? " is-hidden" : ""}`} key={message.id} data-chat-message={message.id}>
           {(index === 0 || day !== messageDay(data.messages[index - 1].created_at)) && <div className="class-chat-date"><span>{day}</span></div>}
-          <article className="class-chat-message"><span className={`class-chat-avatar${message.sender_kind === "TEACHER" ? " is-teacher" : ""}`} aria-hidden="true">{Array.from(message.sender_name.trim())[0] ?? "•"}</span><div className="class-chat-message-content"><div className="class-chat-message-meta"><strong>{message.sender_name}</strong>{message.sender_kind === "TEACHER" && <span className="class-chat-role">Thầy cô</span>}{message.is_own && <span className="class-chat-own-label">{mode === "student" ? "Em" : "Tôi"}</span>}<time dateTime={chatDate(message.created_at)?.toISOString()} title={messageTime(message.created_at, true)}>{messageTime(message.created_at)}</time></div><p className="class-chat-message-body">{message.is_hidden ? "Tin nhắn đã được thầy cô ẩn." : message.body}</p>{mode === "teacher" && !message.is_hidden && <HideMessage message={message} context={context} onHidden={() => {
+          <article className="class-chat-message"><StudentAvatar className={`class-chat-avatar${message.sender_kind === "TEACHER" ? " is-teacher" : ""}`} name={message.sender_name} src={message.sender_avatar_url} size={34} /><div className="class-chat-message-content"><div className="class-chat-message-meta"><strong>{message.sender_name}</strong>{message.sender_kind === "TEACHER" && <span className="class-chat-role">Thầy cô</span>}{message.is_own && <span className="class-chat-own-label">{mode === "student" ? "Em" : "Tôi"}</span>}<time dateTime={chatDate(message.created_at)?.toISOString()} title={messageTime(message.created_at, true)}>{messageTime(message.created_at)}</time></div><p className="class-chat-message-body">{message.is_hidden ? "Tin nhắn đã được thầy cô ẩn." : message.body}</p>{mode === "teacher" && !message.is_hidden && <HideMessage message={message} context={context} onHidden={() => {
             // Acknowledge moderation immediately, including rows beyond the latest page.
             request.current.sequence++;
             request.current.controller?.abort();

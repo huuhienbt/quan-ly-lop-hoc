@@ -4,6 +4,8 @@ import { afterEach, beforeEach, test } from "node:test";
 import { createD1Fixture, insertUser } from "./d1-fixture.mjs";
 import { hashPassword } from "../src/lib/password.ts";
 import { chatSendSchema } from "../src/lib/chat-schemas.ts";
+import { AVATAR_KEY_PREFIX, studentAvatarUrl } from "../src/lib/student-profile-options.ts";
+import sharp from "sharp";
 
 // Stub only the framework cookie/session edge. All live authorization, SQL,
 // rate limits and transactions run against the actual migration schema.
@@ -88,7 +90,7 @@ test("new chat rooms are empty and teacher roster exposes names without login de
   const account = family(), other = family("chat-family-b", classB);
   assert.deepEqual(await getChatSnapshot(studentIdentity(account), room(account)), { messages: [], has_more: false });
   const students = await getTeacherChatStudents(admin.id, classA.id);
-  assert.deepEqual(students, [{ enrollment_id: account.enrollment, student_name: `Synthetic ${account.student}`, last_message_at: null }]);
+  assert.deepEqual(students, [{ enrollment_id: account.enrollment, student_name: `Synthetic ${account.student}`, last_message_at: null, avatar_url: null }]);
   assert.equal(JSON.stringify(students).includes(other.student), false);
   assert.equal(JSON.stringify(students).includes("phone"), false);
 });
@@ -104,6 +106,30 @@ test("class room is shared with classmates and assigned staff but never another 
   assert.equal((await getChatSnapshot(teacherIdentity(educator), staffRoom())).messages.length, 1);
   assert.equal((await getChatSnapshot(studentIdentity(other), room(other))).messages.length, 0);
   await assert.rejects(getChatSnapshot(studentIdentity(other), { ...room(other), class_id: classA.id }), { status: 403 });
+});
+test("chat displays the fixed roster name and latest avatar on old and new messages", async () => {
+  const account = family(), peer = family("chat-family-peer"), educator = teacher();
+  const saved = await post(account);
+  const avatar = await sharp({ create: { width: 256, height: 256, channels: 3, background: "#65a4c4" } }).webp().toBuffer();
+  const revision = new Date(Date.now() + 1000).toISOString();
+  fixture.database.prepare("UPDATE students SET display_name='Old nickname', avatar_key=?, updated_at=? WHERE id=?")
+    .run(AVATAR_KEY_PREFIX + avatar.toString("base64"), revision, account.student);
+  const snapshot = await getChatSnapshot(studentIdentity(peer), room(peer));
+  const url = studentAvatarUrl(account.enrollment, revision);
+  assert.equal(snapshot.messages[0].id, saved.id);
+  assert.equal(snapshot.messages[0].sender_name, `Synthetic ${account.student}`);
+  assert.equal(snapshot.messages[0].sender_avatar_url, url);
+  assert(!JSON.stringify(snapshot).includes(avatar.toString("base64")));
+  const teacherView = await getChatSnapshot(teacherIdentity(educator), staffRoom());
+  assert.equal(teacherView.messages[0].sender_avatar_url, url);
+  assert.equal(teacherView.students.find(student => student.enrollment_id === account.enrollment).avatar_url, url);
+  advance(); await post(account, "Another synthetic message");
+  const nextRevision = new Date().toISOString();
+  fixture.database.prepare("UPDATE students SET updated_at=? WHERE id=?").run(nextRevision, account.student);
+  assert((await getChatSnapshot(studentIdentity(peer), room(peer))).messages.every(message =>
+    message.sender_avatar_url === studentAvatarUrl(account.enrollment, nextRevision)));
+  fixture.database.prepare("UPDATE students SET avatar_key=NULL WHERE id=?").run(account.student);
+  assert((await getChatSnapshot(studentIdentity(peer), room(peer))).messages.every(message => message.sender_avatar_url === null));
 });
 test("private exchanges are visible only to selected pupil and currently assigned class staff", async () => {
   const account = family(), peer = family("chat-family-b"), educator = teacher(), stranger = teacher([classB]);

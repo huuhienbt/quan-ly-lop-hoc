@@ -1,5 +1,7 @@
-import { getStudentRequestIdentity } from "@/lib/student-session";
-import { readStudentAvatar } from "@/lib/student-profile";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getSetupState } from "@/lib/config";
+import { readStudentAvatar, type StudentAvatarViewer } from "@/lib/student-profile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +18,12 @@ const headers = {
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const [identity, { id }] = await Promise.all([getStudentRequestIdentity(), params]);
+    const [session, { id }] = await Promise.all([getSetupState().sessionReady ? getServerSession(authOptions) : null, params]);
+    const user = session?.user;
+    const identity: StudentAvatarViewer | null = user?.kind === "student"
+      ? typeof user.studentAccountId === "string" && typeof user.studentSessionVersion === "number"
+        ? { accountId: user.studentAccountId, sessionVersion: user.studentSessionVersion } : null
+      : user?.id ? { actorId: user.id } : null;
     if (!identity) return new Response(null, { status: 404, headers });
     const bytes = await readStudentAvatar(identity, id);
     if (!bytes) return new Response(null, { status: 404, headers });

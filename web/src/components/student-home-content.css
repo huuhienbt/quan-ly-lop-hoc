@@ -11,16 +11,12 @@
 .student-home-content > h2 { margin-block: 0 18px; color: #175d9b; text-align: center; font-size: clamp(22px, 4vw, 30px); font-weight: 900; }
 .student-home-class + .student-home-class { margin-top: 24px; }
 .student-home-class-label { margin-bottom: 10px; font-size: 16px; font-weight: 800; overflow-wrap: anywhere; }
-.student-home-posts { display: grid; gap: 12px; }
-.student-home-posts > details, .student-home-notice { min-width: 0; border: 1px solid #d5e6e5; border-radius: 16px; background: #fffefb; overflow-wrap: anywhere; }
-.student-home-posts > details > summary { padding: clamp(12px, 2.5vw, 18px); border-radius: 15px; min-height: 44px; cursor: pointer; }
-.student-home-posts summary::marker { color: #167b6a; }
-.student-home-posts summary:hover { background: #edf8f4; }
-.student-home-posts summary:focus-visible { outline: 3px solid #1479bd; outline-offset: 3px; }
-.student-home-posts summary h3 { margin-top: 4px; color: #175d9b; font-size: 16px; line-height: 1.5; }
-.student-home-posts summary time { display: block; margin-top: 3px; color: #536c85; font-size: 13px; }
-.student-home-posts .student-content-kicker { color: #426d67; font-size: 12px; font-weight: 800; }
-.student-home-posts .student-news-more { display: inline-block; margin-top: 6px; color: #196987; font-size: 14px; font-weight: 800; }
+.student-open-lesson, .student-home-notice { min-width: 0; border: 1px solid #d5e6e5; border-radius: 16px; background: #fffefb; overflow-wrap: anywhere; }
+.student-lesson-back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 10px; color: #176d84; font-weight: 800; font-size: 14px; }
+.student-lesson-back:hover { text-decoration: underline; text-underline-offset: 3px; }
+.student-open-lesson > header { padding: clamp(14px, 3vw, 24px) clamp(12px, 2.5vw, 18px); }
+.student-open-lesson > header > span, .student-open-lesson > header > time { color: #456777; display: block; font-size: 13px; }
+.student-open-lesson > header > h3 { color: #175d9b; font-size: clamp(20px, 3.5vw, 28px); font-weight: 900; margin-block: 6px; }
 .student-home-post-body { padding: 0 clamp(12px, 2.5vw, 18px) 16px; min-inline-size: 0; white-space: normal; overflow-wrap: anywhere; }
 .student-home-post-body > p { white-space: pre-wrap; line-height: 1.7; }
 .student-home-post-cover { display: block; width: 100%; height: auto; max-height: 420px; object-fit: contain; margin-bottom: 12px; border-radius: 12px; background: #f5faf9; }

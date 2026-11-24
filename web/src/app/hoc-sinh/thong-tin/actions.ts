@@ -19,7 +19,7 @@ export async function updateStudentProfile(formData: FormData): Promise<ProfileE
     const parsed = studentProfileInput.safeParse(Object.fromEntries(entries));
     if (!parsed.success) {
       return { success: false, message: parsed.error.issues.some(issue => issue.path[0] === "date_of_birth")
-        ? "Ngày sinh chưa hợp lệ." : "Em hãy kiểm tra lại tên hiển thị, ngày sinh, giới tính và ảnh đã chọn." };
+        ? "Ngày sinh chưa hợp lệ." : "Em hãy kiểm tra lại ngày sinh, giới tính và ảnh đã chọn. Họ tên do thầy cô quản lý." };
     }
     const data = parsed.data;
     if (!account.students.some(student => student.enrollment_id === data.enrollment_id && student.profile_updated_at === data.revision)) {

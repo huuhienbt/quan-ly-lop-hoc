@@ -8,7 +8,6 @@ import { AVATAR_KEY_PREFIX } from "@/lib/student-profile-options";
 export interface StudentLinkedProfile {
   id: string;
   full_name: string;
-  display_name: string | null;
   gender: "MALE" | "FEMALE" | "OTHER" | "UNSPECIFIED";
   date_of_birth: string | null;
   student_code: string | null;
@@ -42,8 +41,7 @@ export interface StudentRequestIdentity {
   sessionVersion: number;
 }
 
-// Avatar reads can authenticate and check the exact enrollment in one database
-// query, without loading every linked pupil's profile.
+// Resolve the signed student identity before reading authorized pupil records.
 export async function getStudentRequestIdentity(): Promise<StudentRequestIdentity | null> {
   if (!getSetupState().sessionReady) return null;
   const session = await getServerSession(authOptions);
@@ -66,7 +64,7 @@ export async function getCurrentStudentAccount({ includeProfileEditor = false }:
   if (!account) return null;
   // Default-password sessions reach the password-change page without receiving pupil records.
   const students = account.must_change_password ? [] : await query<StudentLinkedProfile>(
-    `SELECT s.id, s.full_name, s.display_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
+    `SELECT s.id, s.full_name, s.gender, s.date_of_birth, s.student_code, e.id AS enrollment_id,
       c.id AS class_id, c.name AS class_name, c.slug AS class_slug,
       school.name AS school_name, y.name AS academic_year_name
       ${includeProfileEditor ? `, s.updated_at AS profile_updated_at,

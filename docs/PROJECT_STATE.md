@@ -23,7 +23,11 @@ Quy ước kỹ thuật: [dữ liệu](DATA_SCHEMA.md) và [hành vi máy chủ]
 
 - Dùng chung thẻ bài của trang chủ cho Tin lớp sau đăng nhập, hiển thị ảnh
   ngay; giữ quyền đọc tin riêng theo lớp.
-- Căn giữa thông tin học sinh; thêm chỉnh sửa thông tin và ảnh đại diện,
-  chuyển Đổi mật khẩu xuống cuối. Giới hạn ảnh và kiểm tra quyền trên máy chủ.
+- Căn giữa thông tin học sinh; giữ họ tên theo danh sách lớp, cho chỉnh ngày
+  sinh, giới tính và ảnh đại diện. Hai ô nhập cùng kích thước; Đổi mật khẩu
+  cùng hàng với Chỉnh sửa thông tin. Giữ giới hạn ảnh gốc 2 MB như trước.
+- Đồng bộ ảnh hiện tại vào hồ sơ và trò chuyện, chỉ trong phạm vi lớp và người
+  được phép xem. Học tập dùng chung thẻ Tin lớp, mở trực tiếp bài và PDF,
+  không tải trước toàn bộ tài liệu của các bài khác.
 - Lưu một ảnh nhỏ trong trường có sẵn, không cần migration hoặc cấu hình
   dịch vụ lưu ảnh mới. Các kiểm thử hồ sơ và quyền đọc tin dùng dữ liệu giả lập.

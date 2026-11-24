@@ -35,16 +35,23 @@ vào URL, không gửi thêm yêu cầu lên máy chủ và không có đường
 ## Hồ sơ và bảng tin học sinh
 
 - Trang `/hoc-sinh/thong-tin` dùng server action `updateStudentProfile` để
-  cập nhật tên hiển thị, ngày sinh, giới tính và ảnh của chính học sinh. Yêu cầu
-  phiên hợp lệ, lớp đang học, phiên bản hồ sơ hiện tại; không cho đổi họ tên
-  chính thức, mã học sinh, lớp hoặc quyền truy cập.
+  cập nhật ngày sinh, giới tính và ảnh của chính học sinh. Yêu cầu phiên hợp
+  lệ, lớp đang học, phiên bản hồ sơ hiện tại; từ chối trường họ tên hoặc tên
+  hiển thị, mã học sinh, lớp hoặc quyền truy cập trong yêu cầu chỉnh sửa.
 - Ảnh gốc JPG, PNG, WebP tối đa 2 MiB. Trình duyệt thu nhỏ ảnh trước khi gửi
   (tối đa 200 KiB); máy chủ kiểm tra định dạng và kích thước, lưu WebP
   256 × 256 px không quá 64 KiB. Xóa ảnh được hỗ trợ.
-- `GET /api/student-avatars/{enrollmentId}` chỉ trả ảnh cho đúng tài khoản
-  học sinh đang hoạt động; các trường hợp không có ảnh hoặc không đủ quyền
-  trả 404; phản hồi riêng tư, không lưu cache.
+- `GET /api/student-avatars/{enrollmentId}` trả ảnh cho đúng tài khoản học
+  sinh đang hoạt động, hoặc cho thành viên cùng lớp và giáo viên có quyền
+  quản lý lớp trong năm học đang diễn ra. Không có ảnh hoặc không đủ quyền
+  trả 404; phản hồi riêng tư, không lưu cache. API trò chuyện trả đường dẫn
+  ảnh theo phiên bản hiện tại (`sender_avatar_url` và `avatar_url` cho danh
+  sách chọn học sinh của giáo viên), không trả dữ liệu ảnh trong JSON.
 - Tin lớp sau đăng nhập dùng cùng thẻ bài và ảnh bìa theo giao diện trang chủ.
   Trang chi tiết `/ban-tin/{id}` phục vụ tin công khai hoặc tin riêng của lớp
   đang học, kiểm tra quyền phía máy chủ. Danh sách chỉ đọc dữ liệu thẻ bài;
   nội dung chi tiết được đọc khi mở bài.
+- Học tập dùng cùng kiểu thẻ như Tin lớp. `/?muc=hoc-tap&bai={id}` chỉ đọc
+  bài đã xuất bản của lớp mà học sinh được phép truy cập; hiển thị trực tiếp
+  nội dung và PDF bên dưới menu. Danh sách không đọc toàn bộ tài liệu của
+  từng bài, và ảnh bìa nếu có được tải riêng.

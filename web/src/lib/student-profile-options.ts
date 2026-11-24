@@ -14,7 +14,6 @@ export const genderLabels: Record<StudentGender, string> = {
 export interface StudentEditableProfile {
   enrollmentId: string;
   fullName: string;
-  displayName: string | null;
   dateOfBirth: string | null;
   maxBirthDate: string;
   gender: StudentGender;

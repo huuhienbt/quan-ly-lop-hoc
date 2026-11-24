@@ -93,8 +93,10 @@ thu hồi phiên cũ và từ chối quyền quản trị của tài khoản h�
 ## Chỉnh sửa thông tin và ảnh đại diện
 
 Học sinh đăng nhập, bấm tên tài khoản ở đầu trang, chọn **Chỉnh sửa thông tin**.
-Có thể đổi tên hiển thị, ngày sinh, giới tính và chọn ảnh JPG, PNG hoặc WebP
+Có thể đổi ngày sinh, giới tính và chọn ảnh JPG, PNG hoặc WebP
 từ thiết bị, tối đa 2 MB. Ảnh được thu nhỏ trước khi gửi; có thể thay hoặc xóa
-ảnh. Bấm **Lưu thông tin** để lưu. Họ tên chính thức, mã học sinh và lớp do
-giáo viên quản lý. Ảnh đại diện chỉ hiển thị trong hồ sơ của chính học sinh.
-Nút **Đổi mật khẩu** nằm ở cuối trang thông tin.
+ảnh. Bấm **Lưu thông tin** để lưu. Họ tên học sinh không thể tự thay đổi;
+mã học sinh và lớp cũng do giáo viên quản lý. Ảnh đại diện tự cập nhật trong
+hồ sơ và tin nhắn của lớp. Chỉ học sinh cùng lớp và giáo viên được phân quyền
+có thể xem ảnh, không công khai trên trang chủ.
+Nút **Đổi mật khẩu** nằm cùng hàng với **Chỉnh sửa thông tin**.

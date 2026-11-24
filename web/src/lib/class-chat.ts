@@ -3,6 +3,7 @@ import { batch, type SqlValue } from "@/lib/d1";
 import { vietnamToday } from "@/lib/content-schemas";
 import { getCurrentUser } from "@/lib/rbac";
 import { requireStudentAccount, StudentAuthorizationError } from "@/lib/student-session";
+import { AVATAR_KEY_PREFIX, studentAvatarUrl } from "@/lib/student-profile-options";
 import {
   chatContextSchema, chatHideSchema, chatReadSchema, chatSendSchema,
   type ChatContext, type ChatHideInput, type ChatMessage, type ChatSendInput,
@@ -64,15 +65,17 @@ function access(identity: ChatIdentity, context: ChatContext): { sql: string; pa
       JOIN students pupil ON pupil.id = link.student_id AND pupil.archived_at IS NULL
       JOIN student_enrollments enrollment ON enrollment.student_id = pupil.id AND enrollment.school_id = pupil.school_id
       WHERE login.id = ? AND login.session_version = ? AND login.status = 'ACTIVE' AND login.must_change_password = 0
+        AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?)
         AND enrollment.id = ? AND enrollment.class_id = c.id AND enrollment.school_id = c.school_id
         AND enrollment.academic_year_id = c.academic_year_id AND enrollment.status = 'ACTIVE'
         AND enrollment.enrolled_on <= ?)${targetGuard}`,
-    params: [...params, identity.accountId, identity.sessionVersion, context.enrollment_id!, day, ...(thread ? [thread, day] : [])],
+    params: [...params, identity.accountId, identity.sessionVersion, new Date().toISOString(), context.enrollment_id!, day, ...(thread ? [thread, day] : [])],
   };
 }
 function rosterSql(guard: ReturnType<typeof access>) {
   return {
-    sql: `SELECT enrollment.id AS enrollment_id, COALESCE(NULLIF(pupil.display_name, ''), pupil.full_name) AS student_name,
+    sql: `SELECT enrollment.id AS enrollment_id, pupil.full_name AS student_name,
+      CASE WHEN instr(pupil.avatar_key, '${AVATAR_KEY_PREFIX}') = 1 THEN pupil.updated_at END AS avatar_revision,
       (SELECT message.created_at FROM class_chat_messages message
         WHERE message.class_id = c.id AND message.thread_enrollment_id = enrollment.id
         ORDER BY message.created_at DESC, message.id DESC LIMIT 1) AS last_message_at
@@ -85,13 +88,18 @@ function rosterSql(guard: ReturnType<typeof access>) {
     params: [...guard.params, vietnamToday()],
   };
 }
+function chatStudents(rows: Record<string, unknown>[]): ChatStudent[] {
+  return (rows as unknown as (Omit<ChatStudent, "avatar_url"> & { avatar_revision: string | null })[])
+    .map(({ avatar_revision, ...student }) => ({ ...student,
+      avatar_url: avatar_revision ? studentAvatarUrl(student.enrollment_id, avatar_revision) : null }));
+}
 export async function getTeacherChatStudents(actorId: string, classId: string): Promise<ChatStudent[]> {
   const guard = access({ mode: "teacher", actorId }, { mode: "teacher", class_id: classId });
   const result = await batch([
     { sql: `SELECT c.id FROM classes c ${joins} WHERE ${guard.sql}`, params: guard.params }, rosterSql(guard),
   ]);
   if (!result[0].results.length) throw new ChatError(403, denied);
-  return result[1].results as unknown as ChatStudent[];
+  return chatStudents(result[1].results);
 }
 export async function getChatSnapshot(identity: ChatIdentity, context: ChatContext, beforeId?: string, throughId?: string): Promise<ChatSnapshot> {
   if (!chatReadSchema.safeParse({ ...context, before_id: beforeId, through_id: throughId }).success) throw new ChatError(400, invalid);
@@ -101,21 +109,25 @@ export async function getChatSnapshot(identity: ChatIdentity, context: ChatConte
   const ownParams = identity.mode === "teacher" ? [identity.actorId] : [identity.accountId, context.enrollment_id!];
   const result = await batch([
     { sql: `SELECT c.id FROM classes c ${joins} WHERE ${guard.sql}`, params: guard.params },
-    { sql: `SELECT message.id, message.sender_kind,
+    { sql: `SELECT message.id, message.sender_kind, message.sender_enrollment_id,
         CASE WHEN message.sender_kind = 'TEACHER' THEN staff.name
-          ELSE COALESCE(NULLIF(pupil.display_name, ''), pupil.full_name) END AS sender_name,
+          ELSE pupil.full_name END AS sender_name,
+        CASE WHEN sent_enrollment.status = 'ACTIVE' AND sent_enrollment.enrolled_on <= ?
+          AND pupil.archived_at IS NULL AND instr(pupil.avatar_key, '${AVATAR_KEY_PREFIX}') = 1
+          THEN pupil.updated_at END AS avatar_revision,
         CASE WHEN message.hidden_at IS NULL THEN message.body ELSE '' END AS body,
         message.created_at, (${own}) AS is_own, (message.hidden_at IS NOT NULL) AS is_hidden
       FROM class_chat_messages message JOIN classes c ON c.id = message.class_id ${joins}
       LEFT JOIN users staff ON staff.id = message.sender_user_id
       LEFT JOIN student_enrollments sent_enrollment ON sent_enrollment.id = message.sender_enrollment_id AND sent_enrollment.class_id = message.class_id
-      LEFT JOIN students pupil ON pupil.id = sent_enrollment.student_id
+        AND sent_enrollment.school_id = c.school_id AND sent_enrollment.academic_year_id = c.academic_year_id
+      LEFT JOIN students pupil ON pupil.id = sent_enrollment.student_id AND pupil.school_id = sent_enrollment.school_id
       WHERE ${guard.sql} AND message.thread_enrollment_id IS ?
         AND (? IS NULL OR EXISTS (SELECT 1 FROM class_chat_messages cursor
           WHERE cursor.id = ? AND cursor.class_id = c.id AND cursor.thread_enrollment_id IS ?
             AND (message.created_at < cursor.created_at OR (message.created_at = cursor.created_at AND message.id ${throughId ? "<=" : "<"} cursor.id))))
       ORDER BY message.created_at DESC, message.id DESC LIMIT 51`,
-    params: [...ownParams, ...guard.params, thread, cursorId ?? null, cursorId ?? null, thread] },
+    params: [vietnamToday(), ...ownParams, ...guard.params, thread, cursorId ?? null, cursorId ?? null, thread] },
     { sql: `SELECT message.id FROM class_chat_messages message JOIN classes c ON c.id = message.class_id ${joins}
       WHERE ${guard.sql} AND message.thread_enrollment_id IS ? AND message.id = ?`,
     params: [...guard.params, thread, cursorId ?? null] },
@@ -123,11 +135,14 @@ export async function getChatSnapshot(identity: ChatIdentity, context: ChatConte
   ]);
   if (!result[0].results.length) throw new ChatError(403, denied);
   if (cursorId && !result[2].results.length) throw new ChatError(400, "Mốc tin nhắn đã thay đổi. Hãy tải lại phòng trò chuyện.");
-  const rows = result[1].results as unknown as (Omit<ChatMessage, "is_own" | "is_hidden"> & { is_own: number; is_hidden: number })[];
+  const rows = result[1].results as unknown as (Omit<ChatMessage, "is_own" | "is_hidden" | "sender_avatar_url"> & { is_own: number; is_hidden: number; avatar_revision: string | null })[];
   return {
-    messages: rows.slice(0, 50).reverse().map((row) => ({ ...row, is_own: !!row.is_own, is_hidden: !!row.is_hidden })),
+    messages: rows.slice(0, 50).reverse().map(({ avatar_revision, ...row }) => ({
+      ...row, is_own: !!row.is_own, is_hidden: !!row.is_hidden,
+      sender_avatar_url: avatar_revision && row.sender_enrollment_id ? studentAvatarUrl(row.sender_enrollment_id, avatar_revision) : null,
+    })),
     has_more: rows.length > 50,
-    ...(identity.mode === "teacher" ? { students: result[3].results as unknown as ChatStudent[] } : {}),
+    ...(identity.mode === "teacher" ? { students: chatStudents(result[3].results) } : {}),
   };
 }
 export async function sendChatMessage(identity: ChatIdentity, value: ChatSendInput): Promise<{ id: string }> {

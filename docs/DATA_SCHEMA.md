@@ -21,12 +21,17 @@ kết quả để tải ảnh trên thiết bị của giáo viên.
 
 ## Hồ sơ cá nhân học sinh
 
-Học sinh có thể cập nhật `students.display_name`, `date_of_birth`, `gender`
-và ảnh của mình. Họ tên chính thức, mã học sinh, lớp và tài khoản vẫn do giáo
-viên quản lý. `students.avatar_key` dùng cột TEXT hiện có, lưu một ảnh WebP
+Học sinh chỉ có thể cập nhật `students.date_of_birth`, `gender` và ảnh
+của mình. Họ tên, mã học sinh, lớp và tài khoản vẫn do giáo viên quản lý.
+Trang tài khoản, trang lớp và trò chuyện dùng `students.full_name`;
+không sửa hay dùng `display_name` cũ để thay thế họ tên học sinh.
+`students.avatar_key` dùng cột TEXT hiện có, lưu một ảnh WebP
 256 × 256 px tối đa 64 KiB theo dạng `inline-webp-v1:<base64>`; thay ảnh
 ghi đè bản cũ, xóa ảnh đặt giá trị NULL. Không cần migration dữ liệu.
 `students.updated_at` dùng để từ chối ghi đè khi hồ sơ vừa được cập nhật.
-Ảnh được phục vụ qua API yêu cầu phiên đăng nhập đúng học sinh đang theo học.
+Ảnh được phục vụ qua API cho chính học sinh; trong lớp đang hoạt động, bạn
+cùng lớp và giáo viên có quyền quản lý lớp cũng có thể xem ảnh để trò chuyện.
+Ảnh không công khai. Tin nhắn chỉ đọc tham chiếu ảnh và phiên bản hiện tại
+của hồ sơ, không sao chép hoặc lưu riêng từng ảnh theo tin nhắn.
 Nhật ký `STUDENT_PROFILE_UPDATED` chỉ ghi thông tin thao tác, không ghi ảnh
 hoặc giá trị các trường cá nhân.

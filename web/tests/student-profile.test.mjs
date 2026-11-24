@@ -5,7 +5,7 @@ import sharp from "sharp";
 import { createD1Fixture, insertUser } from "./d1-fixture.mjs";
 import { hashPassword } from "../src/lib/password.ts";
 import { normalizeStudentAvatar } from "../src/lib/student-profile.ts";
-import { AVATAR_KEY_PREFIX, AVATAR_SIZE, MAX_AVATAR_BYTES, MAX_AVATAR_UPLOAD_BYTES } from "../src/lib/student-profile-options.ts";
+import { AVATAR_KEY_PREFIX, AVATAR_SIZE, MAX_AVATAR_BYTES, MAX_AVATAR_SOURCE_BYTES, MAX_AVATAR_UPLOAD_BYTES } from "../src/lib/student-profile-options.ts";
 
 const require = createRequire(import.meta.url);
 const authPath = require.resolve("next-auth");
@@ -29,7 +29,8 @@ let fixture;
 let pupils;
 let staff;
 
-beforeEach(() => {
+beforeEach((context) => {
+  context.mock.timers.enable({ apis: ["Date"], now: new Date("2026-11-24T05:00:00.000Z") });
   fixture = createD1Fixture();
   staff = insertUser(fixture.database, { role: "SUPER_ADMIN" });
   fixture.database.prepare("UPDATE users SET email_verified_at = CURRENT_TIMESTAMP").run();
@@ -43,12 +44,12 @@ beforeEach(() => {
   session = studentSession(pupils[0]);
   invalidated = [];
 });
-afterEach(() => fixture.restore());
+afterEach((context) => { fixture.restore(); context.mock.timers.reset(); });
 
 function seedPupil(n, group) {
   const pupil = { id: "fixture-pupil-" + n, enrollment: "fixture-enrollment-" + n, account: "fixture-account-" + n };
-  fixture.database.prepare("INSERT INTO students(id,school_id,full_name,student_code) VALUES (?,'school-ben-tre',?,?)")
-    .run(pupil.id, "Học sinh giả lập "+n, "TEST-"+n);
+  fixture.database.prepare("INSERT INTO students(id,school_id,full_name,student_code,display_name) VALUES (?,'school-ben-tre',?,?,?)")
+    .run(pupil.id, "Học sinh giả lập "+n, "TEST-"+n, "Tên cũ giả lập "+n);
   fixture.database.prepare("INSERT INTO student_accounts(id,phone,password_hash,must_change_password) VALUES (?,?,?,0)")
     .run(pupil.account, "090000000"+n, sampleHash);
   fixture.database.prepare("INSERT INTO student_account_students(account_id,student_id) VALUES (?,?)").run(pupil.account,pupil.id);
@@ -66,7 +67,7 @@ function row(pupil) {
 function form(pupil, overrides={}) {
   const fields = {
     enrollment_id: pupil.enrollment, revision: row(pupil).updated_at,
-    display_name: "  Tên mẫu  đã   sửa  ", date_of_birth: "2016-02-29", gender: "FEMALE",
+    date_of_birth: "2016-02-29", gender: "FEMALE",
     avatar_intent: "keep", ...overrides,
   };
   const body = new FormData();
@@ -79,6 +80,7 @@ function read(pupil) {
 }
 
 test("avatar uploads produce a bounded square WebP image with no source metadata", async () => {
+  assert.equal(MAX_AVATAR_SOURCE_BYTES, 2 * 1024 * 1024);
   const bytes = await normalizeStudentAvatar(newAvatar());
   const meta = await sharp(bytes).metadata();
   assert.equal(meta.format, "webp");
@@ -96,7 +98,7 @@ test("the student can update a linked profile and replace or clear a private ava
   assert.deepEqual(await updateStudentProfile(form(pupil, { avatar_intent: "replace", avatar: newAvatar() })),
     { success: true, message: "Đã lưu thông tin của em." });
   const updated = row(pupil);
-  assert.equal(updated.display_name, "Tên mẫu đã sửa");
+  assert.equal(updated.display_name, old.display_name);
   assert.equal(updated.gender, "FEMALE");
   assert.equal(updated.date_of_birth, "2016-02-29");
   assert.equal(updated.full_name, old.full_name);
@@ -117,14 +119,14 @@ test("the student can update a linked profile and replace or clear a private ava
   assert.equal(response.headers.get("content-type"), "image/webp");
   assert.equal((await response.arrayBuffer()).byteLength, Buffer.from(updated.avatar_key.slice(AVATAR_KEY_PREFIX.length), "base64").length);
 
-  assert.equal((await updateStudentProfile(form(pupil, { display_name: "Tên khác" }))).success, true);
+  assert.equal((await updateStudentProfile(form(pupil, { gender: "OTHER" }))).success, true);
   assert.equal(row(pupil).avatar_key, updated.avatar_key, "text-only changes keep the avatar");
   assert.equal((await updateStudentProfile(form(pupil, { avatar_intent: "remove" }))).success, true);
   assert.equal(row(pupil).avatar_key, null);
   assert.equal((await read(pupil)).status, 404);
   const audit = fixture.database.prepare("SELECT details_json FROM audit_logs WHERE action = 'STUDENT_PROFILE_UPDATED'").all();
   assert.equal(audit.length, 3);
-  assert(!JSON.stringify(audit).includes("Tên mẫu"));
+  assert(!JSON.stringify(audit).includes("Tên cũ giả lập"));
 });
 
 test("private profile edits and image reads refuse guests, other accounts and revoked or stale sessions", async () => {
@@ -135,7 +137,8 @@ test("private profile edits and image reads refuse guests, other accounts and re
   assert.equal((await updateStudentProfile(form(pupil, { date_of_birth: "2016-02-30" }))).success, false);
   assert.equal((await updateStudentProfile(form(pupil, { date_of_birth: "2999-01-01" }))).success, false);
   assert.equal((await updateStudentProfile(form(pupil, { full_name: "unallowed" }))).success, false);
-  for (const actor of [null, { user: { id: staff.id } }, studentSession(other), studentSession(pupil, 2)]) {
+  assert.equal((await updateStudentProfile(form(pupil, { display_name: "unallowed" }))).success, false);
+  for (const actor of [null, studentSession(other), studentSession(pupil, 2)]) {
     session = actor;
     assert.equal((await read(pupil)).status, 404);
     assert.equal((await updateStudentProfile(form(pupil))).success, false);
@@ -147,12 +150,45 @@ test("private profile edits and image reads refuse guests, other accounts and re
   assert.deepEqual(row(pupil), before);
 });
 
+test("classmates and assigned staff see the same avatar but cannot edit another pupil", async () => {
+  const [pupil, other] = pupils;
+  const peer = seedPupil("3", "a");
+  const teacher = insertUser(fixture.database, { role: "TEACHER" });
+  const outsider = insertUser(fixture.database, { role: "TEACHER" });
+  fixture.database.prepare("UPDATE users SET email_verified_at = CURRENT_TIMESTAMP WHERE id IN (?,?)").run(teacher.id, outsider.id);
+  fixture.database.prepare("INSERT INTO class_teachers(class_id,user_id,assigned_by) VALUES ('class-a',?,?),('class-b',?,?)")
+    .run(teacher.id, staff.id, outsider.id, staff.id);
+  assert.equal((await updateStudentProfile(form(pupil, { avatar_intent: "replace", avatar: newAvatar() }))).success, true);
+  const saved = row(pupil);
+  const bytes = Buffer.from(saved.avatar_key.slice(AVATAR_KEY_PREFIX.length), "base64");
+  for (const actor of [studentSession(peer), { user: { id: teacher.id } }, { user: { id: staff.id } }]) {
+    session = actor;
+    const response = await read(pupil);
+    assert.equal(response.status, 200);
+    assert.deepEqual(Buffer.from(await response.arrayBuffer()), bytes);
+    assert.equal((await updateStudentProfile(form(pupil))).success, false);
+  }
+  for (const actor of [studentSession(other), { user: { id: outsider.id } }, null]) {
+    session = actor;
+    assert.equal((await read(pupil)).status, 404);
+  }
+  session = studentSession(peer);
+  fixture.database.prepare("UPDATE student_accounts SET must_change_password=1, temporary_password_expires_at='2026-11-23T00:00:00.000Z' WHERE id=?").run(peer.account);
+  assert.equal((await read(pupil)).status, 404);
+  session = { user: { id: teacher.id } };
+  fixture.database.prepare("UPDATE class_teachers SET ended_at=CURRENT_TIMESTAMP WHERE class_id='class-a' AND user_id=?").run(teacher.id);
+  assert.equal((await read(pupil)).status, 404);
+  session = studentSession(pupil);
+  assert.equal((await read(pupil)).status, 200);
+  assert.deepEqual(row(pupil), saved);
+});
+
 test("revocation during an edit prevents both the profile write and its audit record", async () => {
   const pupil = pupils[0];
   const before = row(pupil);
   const fetch = globalThis.fetch;
   globalThis.fetch = (url, options) => {
-    if (options.body.includes("UPDATE students SET display_name")) {
+    if (options.body.includes("UPDATE students SET date_of_birth")) {
       fixture.database.prepare("UPDATE student_accounts SET session_version=2 WHERE id=?").run(pupil.account);
     }
     return fetch(url, options);

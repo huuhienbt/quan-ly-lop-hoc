@@ -1,19 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { updateStudentProfile } from "@/app/hoc-sinh/thong-tin/actions";
+import { StudentAvatar } from "@/components/student-avatar";
 import { AVATAR_FILE_TYPES, AVATAR_SIZE, MAX_AVATAR_SOURCE_BYTES, MAX_AVATAR_UPLOAD_BYTES,
   genderLabels, studentGenders, type StudentEditableProfile } from "@/lib/student-profile-options";
-
-export function StudentProfileAvatar({ name, src }: { name: string; src: string | null }) {
-  const [failed, setFailed] = useState("");
-  return <span className="student-profile-avatar student-profile-avatar-large">
-    {src && src !== failed
-      ? <Image src={src} alt="Ảnh đại diện" width={88} height={88} unoptimized onError={() => setFailed(src)} />
-      : <span aria-hidden="true">{Array.from(name.trim())[0]?.toLocaleUpperCase("vi") ?? "H"}</span>}
-  </span>;
-}
 
 async function prepareAvatar(file: File): Promise<File> {
   if (!file.size || file.size > MAX_AVATAR_SOURCE_BYTES) throw new Error("Em hãy chọn ảnh có dung lượng không quá 2 MB.");
@@ -141,7 +133,7 @@ function StudentProfileFields({ profile, onCancel, onSaved }: {
     <fieldset disabled={processing || saving} className="student-profile-fields">
       <legend className="sr-only">Chỉnh sửa thông tin và ảnh đại diện</legend>
       <div className="student-avatar-edit">
-        <StudentProfileAvatar name={profile.fullName} src={avatar} />
+        <StudentAvatar className="student-profile-avatar student-profile-avatar-large" name={profile.fullName} src={avatar} size={88} decorative={false} />
         <div className="student-avatar-controls">
           <label htmlFor={`${id}-photo`} className="button button-outline button-small">Chọn ảnh đại diện</label>
           <input id={`${id}-photo`} className="student-avatar-input" type="file" accept="image/jpeg,image/png,image/webp"
@@ -150,12 +142,11 @@ function StudentProfileFields({ profile, onCancel, onSaved }: {
             clearPhoto(); setIntent("remove"); setError("");
           }}>Bỏ ảnh</button>}
           <p id={`${id}-limit`}>JPG, PNG hoặc WebP · tối đa 2 MB.</p>
+          <p>Ảnh đại diện cũng hiển thị trong trò chuyện của lớp.</p>
           {photo && <p>Ảnh đã được thu nhỏ, sẵn sàng để lưu.</p>}
         </div>
       </div>
-      <label className="student-field"><span>Tên hiển thị</span>
-        <input name="display_name" defaultValue={profile.displayName ?? ""} placeholder={profile.fullName} maxLength={60} autoComplete="off" />
-      </label>
+      <div className="student-profile-fixed-name"><span>Họ tên học sinh</span><strong>{profile.fullName}</strong></div>
       <div className="student-profile-edit-row">
         <label className="student-field"><span>Ngày sinh</span>
           <input name="date_of_birth" type="date" defaultValue={profile.dateOfBirth ?? ""} min="1900-01-01" max={profile.maxBirthDate} />
@@ -167,7 +158,6 @@ function StudentProfileFields({ profile, onCancel, onSaved }: {
           </select>
         </label>
       </div>
-      <p className="student-field-help">Tên hiển thị được dùng trong trang lớp và trò chuyện. Nếu bỏ trống, website dùng họ tên chính thức.</p>
       <div className="student-profile-edit-actions">
         <button type="button" className="button button-outline button-small" onClick={onCancel}>Hủy</button>
         <button type="submit" className="button button-primary button-small">{saving ? "Đang lưu…" : "Lưu thông tin"}</button>
@@ -178,15 +168,18 @@ function StudentProfileFields({ profile, onCancel, onSaved }: {
   </form>;
 }
 
-export function StudentProfileEditor({ profile }: { profile: StudentEditableProfile }) {
+export function StudentProfileEditor({ profile, showPasswordChange = false }: { profile: StudentEditableProfile; showPasswordChange?: boolean }) {
   const [editing, setEditing] = useState(false);
   const [feedback, setFeedback] = useState("");
   return editing ? <StudentProfileFields profile={profile} onCancel={() => setEditing(false)}
     onSaved={message => { setFeedback(message); setEditing(false); }} />
     : <div className="student-profile-edit-footer">
-      <button type="button" className="button button-outline button-small" onClick={() => { setFeedback(""); setEditing(true); }}>
-        Chỉnh sửa thông tin
-      </button>
+      <div className="student-profile-account-actions">
+        <button type="button" className="button button-outline button-small" onClick={() => { setFeedback(""); setEditing(true); }}>
+          Chỉnh sửa thông tin
+        </button>
+        {showPasswordChange && <Link className="button button-outline button-small" href="/hoc-sinh/doi-mat-khau" prefetch={false}>Đổi mật khẩu</Link>}
+      </div>
       {feedback && <p className="form-message is-success" role="status">{feedback}</p>}
     </div>;
 }

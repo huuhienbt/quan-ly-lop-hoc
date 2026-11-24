@@ -138,25 +138,36 @@ export async function getStudentNewsPost(accountId: string, sessionVersion: numb
   [id, accountId, sessionVersion, accountId, new Date().toISOString()]))[0] ?? null;
 }
 
+export async function getStudentLessonPost(accountId: string, sessionVersion: number, id: string): Promise<ContentPost | null> {
+  if (!validStudentIdentity(accountId, sessionVersion) || !archiveContentSchema.shape.id.safeParse(id).success) return null;
+  return (await query<ContentPost>(`SELECT ${postFields}, p.lesson_content FROM posts p ${classJoins}
+    WHERE p.id = ? AND p.status = 'PUBLISHED' AND p.category = 'DISCOVERY'
+      AND ${activeClass} AND ${lessonStudentAccess}
+      AND EXISTS (SELECT 1 FROM student_accounts login WHERE login.id = ?
+        AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?))`,
+  [id, accountId, sessionVersion, accountId, new Date().toISOString()]))[0] ?? null;
+}
+
 export async function getStudentHomePosts(
   accountId: string, sessionVersion: number, enrollmentId: string, classId: string,
   section: Exclude<StudentHomeSection, "tro-chuyen">,
 ): Promise<ContentPost[]> {
   if (!validStudentIdentity(accountId, sessionVersion)) return [];
   const lesson = section === "hoc-tap";
-  const detailField = lesson ? ", p.lesson_content" : "";
   const categories = lesson ? "p.category = 'DISCOVERY'" : "p.category NOT IN ('DISCOVERY', 'KINDNESS')";
-  return query<ContentPost>(`SELECT ${postFields}${detailField} FROM posts p ${classJoins}
+  return query<ContentPost>(`SELECT ${postFields} FROM posts p ${classJoins}
     WHERE c.id = ? AND p.status = 'PUBLISHED' AND ${categories}
       AND ${activeClass} AND ${studentAccess}
-    ORDER BY ${postOrder} LIMIT 100`, [classId, accountId, sessionVersion, enrollmentId]);
+      AND EXISTS (SELECT 1 FROM student_accounts login WHERE login.id = ?
+        AND (login.temporary_password_expires_at IS NULL OR login.temporary_password_expires_at > ?))
+    ORDER BY ${postOrder} LIMIT 100`, [classId, accountId, sessionVersion, enrollmentId, accountId, new Date().toISOString()]);
 }
 
 export async function getStudentClassContent(accountId: string, sessionVersion: number): Promise<StudentClassContent> {
   const calendar = getVietnamDateWindow();
   if (!validStudentIdentity(accountId, sessionVersion)) return { ...calendar, students: [] };
   const identities = await query<StudentSpaceIdentity>(`SELECT enrollment.id AS enrollment_id,
-      pupil.id AS student_id, COALESCE(NULLIF(pupil.display_name, ''), pupil.full_name) AS student_name,
+      pupil.id AS student_id, pupil.full_name AS student_name,
       c.id AS class_id, c.name AS class_name, c.slug AS class_slug, school.name AS school_name
     FROM student_accounts login
     JOIN student_account_students link ON link.account_id = login.id

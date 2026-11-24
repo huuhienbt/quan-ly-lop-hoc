@@ -7,6 +7,7 @@ import {
   getPublicPosts,
   getStudentClassContent,
   getStudentHomePosts,
+  getStudentLessonPost,
   getStudentNewsPost,
   getTeacherContentOverview,
   getTeacherClasses, getTeacherPostList, getTeacherEditingPost,
@@ -270,11 +271,16 @@ test("the homepage section reads only published content of its kind for the sign
 
   assert.deepEqual((await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "tin-lop")).map((post) => post.id), [privateNote]);
   const lessons = await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "hoc-tap");
-  assert.deepEqual(lessons.map((post) => [post.title, post.lesson_content]), [["Bài học giả lập", document]]);
+  assert.deepEqual(lessons.map((post) => [post.title, post.lesson_content]), [["Bài học giả lập", undefined]]);
+  assert.equal((await getStudentLessonPost(family.id, 1, lessons[0].id)).lesson_content, document);
+  assert.equal(await getStudentLessonPost(other.id, 1, lessons[0].id), null);
+  assert.equal(await getStudentLessonPost(family.id, 2, lessons[0].id), null);
+  assert.equal(await getStudentLessonPost(family.id, 1, privateNote), null);
   assert.deepEqual(await getStudentHomePosts(family.id, 1, otherEnrollment, classB.id, "hoc-tap"), []);
   assert.deepEqual(await getStudentHomePosts(family.id, 2, ownEnrollment, classA.id, "tin-lop"), []);
   fixture.database.prepare("UPDATE student_accounts SET must_change_password = 1 WHERE id = ?").run(family.id);
   assert.deepEqual(await getStudentHomePosts(family.id, 1, ownEnrollment, classA.id, "hoc-tap"), []);
+  assert.equal(await getStudentLessonPost(family.id, 1, lessons[0].id), null);
 });
 
 test("signed-in bulletin cards open the same article layout only for the pupil's authorized news", async () => {
